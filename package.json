@@ -12,7 +12,7 @@
     "test": "tsdx test",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
-    "typedoc": "typedoc --out docs src"
+    "typedoc": "typedoc src"
   },
   "peerDependencies": {},
   "husky": {

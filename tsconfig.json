@@ -29,6 +29,6 @@
   },
   "typedocOptions": {
      "excludeExternals": true,
-     "out": "docs"
+     "out": "site"
   }
 }

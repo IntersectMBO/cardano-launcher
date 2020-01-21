@@ -3,23 +3,28 @@
 set -euo pipefail
 
 rev=$(git rev-parse --short HEAD)
+old_head=$(git symbolic-ref HEAD)
 cd $(git rev-parse --show-toplevel)
-
-echo "Building..."
-rm -rf docs
-npm run typedoc
-touch docs/.nojekyll
+out="$(pwd)/site"
 
 if ! git diff-index --quiet HEAD --; then
     echo "There are uncommitted changes - aborting!"
     exit 1
 fi
 
+echo "Fetching remote branches"
+git fetch origin || true
+
+echo "Building..."
+rm -rf "$out"
+npm run typedoc
+touch "$out/.nojekyll"
+
 echo "Updating git index..."
-git fetch origin
 git checkout gh-pages
+trap "git symbolic-ref HEAD $old_head && git reset --hard" EXIT
 git reset --hard origin/gh-pages
-GIT_WORK_TREE=$(pwd)/docs git add -A
+GIT_WORK_TREE="$out" git add -A
 
 if git diff-index --cached --quiet HEAD --; then
   echo "No changes to commit, exiting."
@@ -27,4 +32,4 @@ if git diff-index --cached --quiet HEAD --; then
 fi
 
 echo "Committing changes..."
-git commit --no-gpg-sign --message "Update gh-pages for $rev"
+GIT_WORK_TREE="$out" git commit --no-gpg-sign --message "Update gh-pages for $rev"
