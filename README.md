@@ -10,6 +10,13 @@ Its primary user is
 could be used by any Javascript application.
 
 
+## Work In Progress
+
+This is a draft of the API for [WB-57](https://jira.iohk.io/browse/WB-57).
+
+See the generated docs at https://input-output-hk.github.io/cardano-launcher/.
+
+
 ## Block diagram
 
 ```
