@@ -11,7 +11,8 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build"
+    "prepare": "tsdx build",
+    "typedoc": "typedoc --out docs src"
   },
   "peerDependencies": {},
   "husky": {
@@ -35,5 +36,8 @@
     "tslib": "^1.10.0",
     "typedoc": "^0.16.7",
     "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "tsee": "^1.3.0"
   }
 }

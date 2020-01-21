@@ -16,7 +16,7 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
@@ -26,5 +26,9 @@
     },
     "jsx": "react",
     "esModuleInterop": true
+  },
+  "typedocOptions": {
+     "excludeExternals": true,
+     "out": "docs"
   }
 }
