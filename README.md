@@ -17,19 +17,13 @@ This is a draft of the API for [ADP-92](https://jira.iohk.io/browse/ADP-92).
 See the generated docs at https://input-output-hk.github.io/cardano-launcher/modules/_index_.html.
 
 
-## Block diagram
+## Component diagram
 
-```
-Daedalus
- |   |
- |   |
- |   |
- |  cardano-launcher
- |          |
- |   +------+---------------+
- |   |                     |
-cardano-wallet -->  cardano-node
-```
+![Component diagram](./docs/component-diagram.svg)
+
+## Message sequence diagram - launch
+
+![Component diagram](./docs/launch.png)
 
 
 ## Local Development
@@ -49,4 +43,4 @@ By default, runs tests related to files changed since the last commit.
 
 ### `npm run typedoc`
 
-Generates API documentation to the `docs` folder.
+Generates API documentation to the `site` folder.
