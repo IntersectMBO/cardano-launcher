@@ -1,7 +1,17 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import ./nix/nivpkgs.nix {} }:
 
 with pkgs;
 
 mkShell {
-  buildInputs = [ npm mscgen gnumake ];
+  buildInputs = [
+    # javascript
+    nodePackages.npm
+    # documentation tools
+    mscgen gnumake
+    # util to update nixpkgs pins
+    niv.niv
+    # cardano
+    cardanoWalletPackages.cardano-wallet-jormungandr
+    cardanoWalletPackages.jormungandr
+  ];
 }
