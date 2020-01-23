@@ -1,4 +1,16 @@
 {
+    "cardano-wallet": {
+        "branch": "master",
+        "description": "Official Wallet Backend & API for Cardano decentralized",
+        "homepage": null,
+        "owner": "input-output-hk",
+        "repo": "cardano-wallet",
+        "rev": "e465aaa11c923231ad63dcc44a30c7f00ea7986d",
+        "sha256": "0rs80m96d8sp0qzmig4n16q5qjxv9py831p0wn20a490q052cs66",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/cardano-wallet/archive/e465aaa11c923231ad63dcc44a30c7f00ea7986d.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "niv": {
         "branch": "master",
         "description": "Easy dependency management for Nix projects",
