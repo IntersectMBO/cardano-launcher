@@ -58,3 +58,13 @@ for information on how to set up Nix.
 To modify the cardano-wallet version, use [`niv update`](https://github.com/nmattia/niv#update).
 
     nix-shell --run "niv update cardano-wallet"
+
+
+## Design docs
+
+ * [`update-system-byron.md`](./docs/update-system-byron.md) -
+   Overview of how the update system works in the old codebase (Byron
+   era).
+
+ * [`windows-clean-shutdown.md`](./docs/windows-clean-shutdown.md) -
+   How to stop the wallet and node processes on Windows.
