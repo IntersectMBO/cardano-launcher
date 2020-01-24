@@ -13,5 +13,6 @@ mkShell {
     # cardano
     cardanoWalletPackages.cardano-wallet-jormungandr
     cardanoWalletPackages.jormungandr
+    cardano-node
   ];
 }

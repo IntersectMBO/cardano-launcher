@@ -59,6 +59,12 @@ To modify the cardano-wallet version, use [`niv update`](https://github.com/nmat
 
     nix-shell --run "niv update cardano-wallet"
 
+To modify the cardano-node version, also use `niv-update`.
+
+    nix-shell --run "niv update cardano-node"
+
+In future, the `cardano-node` version may be defined by
+`cardano-wallet`, is it is for `jormungandr`.
 
 ## Design docs
 
