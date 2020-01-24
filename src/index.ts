@@ -5,6 +5,7 @@
  */
 
 import { EventEmitter } from 'tsee';
+import { spawn, ChildProcess } from 'child_process';
 
 /**
  * Starts the wallet backend.
@@ -36,17 +37,15 @@ interface LaunchConfig {
   /**
    * Configuration for starting `cardano-node`.
    */
-  nodeConfig: ShelleyNodeConfig;
+  nodeConfig: ByronNodeConfig|ShelleyNodeConfig|JormungandrConfig;
 }
 
 /**
- * Configuration parameters for starting the node.
+ * Configuration parameters for starting cardano-node (Shelley).
  */
-interface ShelleyNodeConfig {
-  /**
-   * Network parameters. To be determined.
-   */
-  genesis: GenesisHash|GenesisBlockFile;
+export interface ShelleyNodeConfig {
+  kind: "shelley";
+
   /**
    * File to use for communicating with the node.
    * Defaults to a filename within the state directory.
@@ -54,7 +53,43 @@ interface ShelleyNodeConfig {
   socketFileName?: string;
 
   /**
+   * Extra arguments to add to the `cardano-node` command line.
+   */
+  extraArgs?: string[];
+}
+
+/**
+ * Configuration parameters for starting the rewritten version of
+ * cardano-node (Byron).
+ */
+export interface ByronNodeConfig {
+  kind: "byron";
+
+  /**
    * Contents of the `cardano-node` config file.
+   */
+  extraConfig?: { [propName: string]: any; };
+
+  /**
+   * Extra arguments to add to the `cardano-node` command line.
+   */
+  extraArgs?: string[];
+}
+/**
+ * Configuration parameters for starting the node.
+ */
+export interface JormungandrConfig {
+  kind: "jormungandr";
+
+  /**
+   * Network parameters. To be determined.
+   */
+  genesis: GenesisHash|GenesisBlockFile;
+
+  restPort?: number;
+
+  /**
+   * Contents of the `jormungandr` config file.
    */
   extraConfig?: { [propName: string]: any; };
 
@@ -122,17 +157,22 @@ export class Launcher {
     logger.debug("hello launch");
 
     this.logger = logger;
-    this.walletService = startService();
-    this.nodeService = startService();
+    let start = makeServiceCommands(config)
+    this.walletService = startService(start.wallet);
+    this.nodeService = startService(start.node);
     this.walletBackend = {
-      getApi: () => { return {
-        baseUrl: "http://127.0.0.1:8090/v2/",
-        requestParams: {},
-      }; },
+      getApi: () => new V2Api(start.apiPort),
       events: new EventEmitter<{
         ready: (api: Api) => void,
+        exit: (status: ExitStatus) => void,
       }>(),
     };
+  }
+
+  start(): Promise<Api> {
+    return new Promise(resolve => {
+      this.walletBackend.events.on("ready", resolve);
+    });
   }
 
   /**
@@ -143,11 +183,11 @@ export class Launcher {
    * @param timeoutSeconds - how long to wait before killing the processes.
    * @return a [[Promise]] that is fulfilled at the timeout, or before.
    */
-  stop(timeoutSeconds = 60) {
+  stop(timeoutSeconds = 60): Promise<{ wallet: ServiceExitStatus, node: ServiceExitStatus }> {
     return Promise.all([
       this.walletService.stop(timeoutSeconds),
       this.nodeService.stop(timeoutSeconds)
-    ]);
+    ]).then(([wallet, node]) => { return { wallet, node }; });
   }
 }
 
@@ -166,6 +206,52 @@ export interface Api {
    * `Object.assign`.
    */
   requestParams: { [propName: string]: any; };
+
+  /**
+   * Sets up the parameters for `http.request` for this Api.
+   *
+   * @param path - the api route (without leading slash)
+   * @param options - extra options to be added to the request.
+   * @return an options object suitable for `http.request`
+   */
+  makeRequest(path: string, options?: object): object;
+}
+
+class V2Api implements Api {
+  readonly baseUrl: string;
+  readonly requestParams: { [propName: string]: any; };
+
+  constructor(port: number) {
+    let hostname = "127.0.0.1";
+    let path = "/v2/";
+    this.baseUrl = `http://${hostname}:${port}${path}`;
+    this.requestParams ={  port, path, hostname };
+  }
+
+  makeRequest(path: string, options = {}): object {
+    return Object.assign({}, this.requestParams, {
+      path: this.requestParams.path + path,
+    }, options);
+  }
+}
+
+/**
+ * The result after the launched wallet backend has finished.
+ */
+export interface ExitStatus {
+  wallet: ServiceExitStatus;
+  node: ServiceExitStatus;
+}
+
+export interface ServiceExitStatus {
+  /** Program name. */
+  exe: string;
+  /** Process exit status code, if process exited itself. */
+  code: number|null;
+  /** Signal name, if process was killed. */
+  signal: string|null;
+  /** Error object, if process could not be started, or could not be killed. */
+  err: Error|null;
 }
 
 /**
@@ -174,9 +260,9 @@ export interface Api {
  * from `Started` to `Stopped`.
  */
 export enum ServiceStatus {
-  /** Initial state. Subprocess has been spawned. */
-  Starting,
-  /** Subprocess has started and has a PID. */
+  /** Initial state. */
+  NotStarted,
+  /** Subprocess has been started and has a PID. */
   Started,
   /** Caller has requested to stop the process. Now waiting for it to exit, or for the timeout to elapse. */
   Stopping,
@@ -193,13 +279,13 @@ export interface Service {
    *   started. The returned PID is not guaranteed to be running. It may
    *   already have exited.
    */
-  start(): Promise<Pid>;
+  start(): Pid;
 
   /**
    * Stops the process.
    * @return a promise that will be fulfilled when the process has stopped.
    */
-  stop(timeoutSeconds?: number): Promise<void>;
+  stop(timeoutSeconds?: number): Promise<ServiceExitStatus>;
 
   /**
    * @return the status of this process.
@@ -252,6 +338,7 @@ type ServiceEvents = EventEmitter<{
  */
 type WalletBackendEvents = EventEmitter<{
   ready: (api: Api) => void,
+  exit: (status: ExitStatus) => void,
 }>;
 
 /********************************************************************************
@@ -262,13 +349,135 @@ type WalletBackendEvents = EventEmitter<{
  * Stub function
  * @hidden
  */
-function startService(): Service {
+export function startService(cfg: StartService): Service {
+  const events = new EventEmitter<{
+    statusChanged: (status: ServiceStatus) => void,
+  }>();
+
+  // What the current state is.
+  let status = ServiceStatus.NotStarted;
+  // NodeJS child process object, or null if not running.
+  let proc: ChildProcess|null = null;
+  // How the child process exited, or null if it hasn't yet exited.
+  let exitStatus: ServiceExitStatus|null;
+  // For cancelling the kill timeout.
+  let killTimer: NodeJS.Timeout|null = null;
+
+  const onStopped = (code: number|null = null, signal: string|null = null, err: Error|null = null) => {
+    exitStatus = { exe: cfg.command, code, signal, err };
+    status = ServiceStatus.Stopped;
+    if (killTimer) {
+      clearTimeout(killTimer);
+      killTimer = null;
+    }
+    proc = null;
+    events.emit("statusChanged", status);
+  };
+
   return {
-    start: async () => 0,
-    stop: async (timeoutSeconds) => {},
-    getStatus: () => ServiceStatus.Starting,
-    events: new EventEmitter<{
-      statusChanged: (status: ServiceStatus) => void,
-    }>(),
+    start: () => {
+      proc = spawn(cfg.command, cfg.args, {
+        //cwd: stateDir
+        stdio: ['pipe', 'inherit', 'inherit']
+      });
+      status = ServiceStatus.Started;
+      events.emit("statusChanged", status);
+      proc.on("exit", (code, signal) => {
+        onStopped(code, signal);
+      });
+      proc.on("error", err => {
+        onStopped(null, null, err);
+      });
+
+      return proc.pid;
+    },
+    stop: (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
+      const waitForStop = (): Promise<ServiceExitStatus> => new Promise(resolve => {
+        events.on("statusChanged", status => {
+          if (status === ServiceStatus.Stopped && exitStatus) {
+            resolve(exitStatus);
+          }
+        });
+      });
+      const defaultExitStatus = { exe: cfg.command, code: null, signal: null, err: null };
+      switch (status) {
+        case ServiceStatus.NotStarted:
+          return new Promise(resolve => {
+            status = ServiceStatus.Stopped;
+            exitStatus = defaultExitStatus;
+            resolve(exitStatus);
+          });
+        case ServiceStatus.Started:
+          status = ServiceStatus.Stopping;
+          events.emit("statusChanged", status);
+          if (proc && proc.stdin) {
+            proc.stdin.end();
+          }
+          killTimer = setTimeout(() => {
+            if (proc) {
+              proc.kill();
+            }
+          }, timeoutSeconds * 1000);
+          return waitForStop();
+        case ServiceStatus.Stopping:
+          return waitForStop();
+        case ServiceStatus.Stopped:
+          return new Promise(resolve => resolve(exitStatus || defaultExitStatus));
+      }
+    },
+    getStatus: () => status,
+    events,
+  };
+}
+
+/**
+ * Part of implementation.
+ * @hidden
+ */
+interface StartService {
+  command: string;
+  args: string[];
+}
+
+function makeServiceCommands(config: LaunchConfig): { apiPort: number, wallet: StartService, node: StartService } {
+  const apiPort = config.apiPort || 8090; // todo: find port
+  const wallet = walletExe(config, apiPort);
+  return { apiPort, wallet, node: nodeExe(config, wallet) };
+}
+
+function walletExe(config: LaunchConfig, port: number): StartService {
+  switch (config.nodeConfig.kind) {
+    case "jormungandr": return { command: "cardano-wallet-jormungandr", args: [`--port=${port}`] };
+    case "byron": return { command: "cardano-wallet-byron", args: [`--port=${port}`] };
+    case "shelley": return { command: "cardano-wallet-jormungandr", args: [`--port=${port}`] };
+  }
+}
+
+function nodeExe(config: LaunchConfig, wallet: StartService): StartService {
+  switch (config.nodeConfig.kind) {
+    case "jormungandr": return startJormungandr(config.nodeConfig);
+    case "byron": return startByronNode(config.nodeConfig);
+    case "shelley": return startShelleyNode(config.nodeConfig);
+  }
+}
+
+function startJormungandr(config: JormungandrConfig): StartService {
+  return {
+    command: "jormungandr",
+    args: [
+      "--rest-listen", `127.0.0.1:${config.restPort}`
+    ].concat(config.extraArgs || [])
+  };
+}
+
+function startByronNode(config: ByronNodeConfig): StartService {
+  return {
+    command: "cardano-node", args: ["--socket-dir", "/tmp"]
+  };
+}
+
+function startShelleyNode(config: ShelleyNodeConfig): StartService {
+  return {
+    command: "cardano-node", args: ["--help"]
   };
 }

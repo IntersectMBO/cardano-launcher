@@ -38,8 +38,13 @@ Bundles the package to the `dist` folder.
 
 ### `npm test`
 
-Runs the test watcher (Jest) in an interactive mode.
+Runs the test watcher ([Jest](https://jestjs.io/docs/en/getting-started))
+in an interactive mode.
 By default, runs tests related to files changed since the last commit.
+
+Alternatively, to run only unit tests:
+
+    npx tsdx test unit
 
 ### `npm run typedoc`
 
