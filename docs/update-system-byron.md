@@ -91,7 +91,7 @@ where the update system will immediately run.
 
 #### Update server
 
-The update server is a S3 bucket managed by devops, accessible by
+The update server is a S3 bucket managed by the IOHK Service Reliability team, accessible by
 HTTPS. Before proposing an update on the blockchain, the installer
 files are uploaded to the updates bucket, named with their Blake2b
 hash.
