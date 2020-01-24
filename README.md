@@ -44,3 +44,27 @@ By default, runs tests related to files changed since the last commit.
 ### `npm run typedoc`
 
 Generates API documentation to the `site` folder.
+
+### `nix-shell`
+
+Runs a bash shell with project development dependencies (e.g. `npm`,
+`cardano-wallet`) in the `PATH`.
+
+See [nix.md](https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md)
+for information on how to set up Nix.
+
+### Updating cardano-wallet versiion
+
+To modify the cardano-wallet version, use [`niv update`](https://github.com/nmattia/niv#update).
+
+    nix-shell --run "niv update cardano-wallet"
+
+
+## Design docs
+
+ * [`update-system-byron.md`](./docs/update-system-byron.md) -
+   Overview of how the update system works in the old codebase (Byron
+   era).
+
+ * [`windows-clean-shutdown.md`](./docs/windows-clean-shutdown.md) -
+   How to stop the wallet and node processes on Windows.
