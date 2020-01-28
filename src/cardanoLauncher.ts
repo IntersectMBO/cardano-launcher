@@ -127,11 +127,18 @@ export interface Logger {
 
 
 function appendName(logger: Logger, name: string): Logger {
-  const prefix = (msg: string) => `${name}: ${msg}`;
+  const prefix = (severity: "debug"|"info"|"error", msg: string, param?: object) => {
+    const prefixed = `${name}: ${msg}`;
+    if (param) {
+      logger[severity](prefixed, param);
+    } else {
+      logger[severity](prefixed);
+    }
+  };
   return {
-    debug: (msg: string, param?: object) => logger.debug(prefix(msg), param),
-    info: (msg: string,  param?: object) => logger.info(prefix(msg), param),
-    error: (msg: string,  param?: object) => logger.error(prefix(msg), param),
+    debug: (msg: string, param?: object) => prefix("debug", msg, param),
+    info: (msg: string,  param?: object) => prefix("info", msg, param),
+    error: (msg: string,  param?: object) => prefix("error", msg, param),
   };
 }
 
@@ -164,12 +171,12 @@ export class Launcher {
    * @param logger - logging backend that launcher will use
    **/
   constructor(config: LaunchConfig, logger: Logger) {
-    logger.debug("hello launch");
-
+    logger.debug("Launcher init");
     this.logger = logger;
     let start = makeServiceCommands(config)
     this.walletService = startService(start.wallet, appendName(logger, "wallet"));
     this.nodeService = startService(start.node, appendName(logger, "node"));
+
     this.walletBackend = {
       getApi: () => new V2Api(start.apiPort),
       events: new EventEmitter<{
@@ -177,6 +184,22 @@ export class Launcher {
         exit: (status: ExitStatus) => void,
       }>(),
     };
+
+    const self = this;
+
+    this.walletService.events.on("statusChanged", status => {
+      if (status === ServiceStatus.Stopped) {
+        self.logger.debug("wallet exited, so stopping node");
+        self.stop();
+      }
+    });
+
+    this.nodeService.events.on("statusChanged", status => {
+      if (status === ServiceStatus.Stopped) {
+        self.logger.debug("node exited, so stopping wallet");
+        self.stop();
+      }
+    });
   }
 
   /**
@@ -184,6 +207,9 @@ export class Launcher {
    * server is ready to accept requests.
    */
   start(): Promise<Api> {
+    this.walletService.start();
+    this.nodeService.start();
+
     return new Promise(resolve => {
       this.walletBackend.events.on("ready", resolve);
     });
@@ -198,10 +224,16 @@ export class Launcher {
    * @return a [[Promise]] that is fulfilled at the timeout, or before.
    */
   stop(timeoutSeconds = 60): Promise<{ wallet: ServiceExitStatus, node: ServiceExitStatus }> {
+    this.logger.debug(`Launcher.stop: stopping wallet and node`);
     return Promise.all([
       this.walletService.stop(timeoutSeconds),
       this.nodeService.stop(timeoutSeconds)
-    ]).then(([wallet, node]) => { return { wallet, node }; });
+    ]).then(([wallet, node]) => {
+      const status = { wallet, node };
+      this.logger.debug(`Launcher.stop: both services are stopped.`, status);
+      this.walletBackend.events.emit("exit", status);
+      return status;
+    });
   }
 }
 
@@ -461,7 +493,7 @@ export function startService(cfg: StartService, logger: Logger = console): Servi
   };
 
   const setStatus = (newStatus: ServiceStatus): void => {
-    logger.debug(`setStatus ${status} -> ${newStatus}`);
+    logger.debug(`setStatus ${ServiceStatus[status]} -> ${ServiceStatus[newStatus]}`);
     status = newStatus;
     events.emit("statusChanged", status);
   };
