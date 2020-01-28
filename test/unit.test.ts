@@ -1,4 +1,4 @@
-import { startService, Service, ServiceStatus, ServiceExitStatus } from '../src';
+import { startService, Service, ServiceStatus, ServiceExitStatus, Logger, LogFunc } from '../src/cardanoLauncher';
 
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
@@ -117,6 +117,18 @@ describe('startService', () => {
     }, 1000);
   });
 
+  it('starting a bogus command', async () => {
+    let logger = mockLogger(true);
+    let service = startService({ command: "xyzzy", args: [] }, logger);
+    let events = collectEvents(service);
+    service.start();
+    let result = await service.waitForExit();
+    expect(result.err ? result.err.toString() : null).toBe("Error: spawn xyzzy ENOENT");
+    expect(result.code).toBeNull();
+    expect(result.signal).toBeNull();
+    expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+    expect(logger.getLogs().filter(l => l.severity === "error").length).toBe(1);
+  });
 });
 
 /*******************************************************************************
@@ -138,3 +150,37 @@ const collectEvents = (service: Service): ServiceStatus[] => {
   service.events.on("statusChanged", status => events.push(status));
   return events;
 };
+
+interface MockLog {
+  severity: "debug"|"info"|"error";
+  msg: string;
+  param: object|undefined;
+}
+
+interface MockLogger extends Logger {
+  getLogs(): MockLog[];
+}
+
+function mockLogger(echo: boolean = false): MockLogger {
+  let logs: MockLog[] = [];
+
+  const mockLog = (severity: "debug"|"info"|"error"): LogFunc => {
+    return (msg: string, param?: object) => {
+      if (echo) {
+        if (param) {
+          console[severity](msg, param);
+        } else {
+          console[severity](msg);
+        }
+      }
+      logs.push({ severity, msg, param: param || undefined })
+    };
+  };
+
+  return {
+    debug: mockLog("debug"),
+    info: mockLog("info"),
+    error: mockLog("error"),
+    getLogs: () => logs,
+  };
+}

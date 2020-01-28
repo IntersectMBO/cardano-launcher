@@ -11,6 +11,7 @@ function combineStatus(statuses: ServiceExitStatus[]): number {
 }
 
 export function cli(args: string[]) {
+  const waitForExit = setInterval(function() {}, 3600000);
   console.log(args);
 
   let launcher = launchWalletBackend({
@@ -25,6 +26,7 @@ export function cli(args: string[]) {
   launcher.walletBackend.events.on("exit", (status: ExitStatus) => {
     console.log(`${status.wallet.exe} exited with status ${status.wallet.code}`);
     console.log(`${status.node.exe} exited with status ${status.node.code}`);
+    clearInterval(waitForExit);
     process.exit(combineStatus([status.wallet, status.node]));
   });
 }

@@ -112,17 +112,27 @@ interface GenesisBlockFile {
 /**
  * Function which logs a message and optional object.
  */
-interface LogFunc {
+export interface LogFunc {
   (msg: string, param?: object): void;
 }
 
 /**
  * Logging adapter.
  */
-interface Logger {
+export interface Logger {
   debug: LogFunc,
   info: LogFunc,
   error: LogFunc
+}
+
+
+function appendName(logger: Logger, name: string): Logger {
+  const prefix = (msg: string) => `${name}: ${msg}`;
+  return {
+    debug: (msg: string, param?: object) => logger.debug(prefix(msg), param),
+    info: (msg: string,  param?: object) => logger.info(prefix(msg), param),
+    error: (msg: string,  param?: object) => logger.error(prefix(msg), param),
+  };
 }
 
 /**
@@ -158,8 +168,8 @@ export class Launcher {
 
     this.logger = logger;
     let start = makeServiceCommands(config)
-    this.walletService = startService(start.wallet);
-    this.nodeService = startService(start.node);
+    this.walletService = startService(start.wallet, appendName(logger, "wallet"));
+    this.nodeService = startService(start.node, appendName(logger, "node"));
     this.walletBackend = {
       getApi: () => new V2Api(start.apiPort),
       events: new EventEmitter<{
@@ -169,6 +179,10 @@ export class Launcher {
     };
   }
 
+  /**
+   * @return a promise that will be fulfilled when the wallet API
+   * server is ready to accept requests.
+   */
   start(): Promise<Api> {
     return new Promise(resolve => {
       this.walletBackend.events.on("ready", resolve);
@@ -288,6 +302,14 @@ export interface Service {
   stop(timeoutSeconds?: number): Promise<ServiceExitStatus>;
 
   /**
+   * Waits for the process to finish somehow -- whether it exits by
+   * itself, or exits due to `stop()` being called.
+   *
+   * @return a promise that will be fulfilled when the process has exited.
+   */
+  waitForExit(): Promise<ServiceExitStatus>;
+
+  /**
    * @return the status of this process.
    */
   getStatus(): ServiceStatus;
@@ -349,7 +371,7 @@ type WalletBackendEvents = EventEmitter<{
  * Stub function
  * @hidden
  */
-export function startService(cfg: StartService): Service {
+export function startService(cfg: StartService, logger: Logger = console): Service {
   const events = new EventEmitter<{
     statusChanged: (status: ServiceStatus) => void,
   }>();
@@ -363,14 +385,84 @@ export function startService(cfg: StartService): Service {
   // For cancelling the kill timeout.
   let killTimer: NodeJS.Timeout|null = null;
 
+  const doStart = () => {
+    logger.info(`Service.start: trying to start ${cfg.command}`, cfg);
+
+    try {
+      proc = spawn(cfg.command, cfg.args, {
+        //cwd: stateDir
+        stdio: ['pipe', 'inherit', 'inherit']
+      });
+    } catch (err) {
+      logger.error(`Service.start: child_process.spawn() failed: ${err}`);
+      throw err;
+    }
+    setStatus(ServiceStatus.Started);
+    proc.on("exit", (code, signal) => {
+      onStopped(code, signal);
+    });
+    proc.on("error", err => {
+      logger.error(`Service.start: child_process failed: ${err}`);
+      onStopped(null, null, err);
+    });
+    return proc.pid;
+  };
+
+  const doStop = (timeoutSeconds: number) => {
+    logger.info(`Service.stop: trying to stop ${cfg.command}`, cfg);
+    setStatus(ServiceStatus.Stopping);
+    if (proc && proc.stdin) {
+      proc.stdin.end();
+    }
+    killTimer = setTimeout(() => {
+      if (proc) {
+        logger.info(`Service.stop: timed out after ${timeoutSeconds} seconds. Killing process ${proc.pid}.`);
+        proc.kill();
+      }
+    }, timeoutSeconds * 1000);
+  };
+
   const onStopped = (code: number|null = null, signal: string|null = null, err: Error|null = null) => {
     exitStatus = { exe: cfg.command, code, signal, err };
-    status = ServiceStatus.Stopped;
+    logger.debug(`Service onStopped`, exitStatus);
     if (killTimer) {
       clearTimeout(killTimer);
       killTimer = null;
     }
     proc = null;
+    setStatus(ServiceStatus.Stopped);
+  };
+
+  const waitForStop = (): Promise<ServiceExitStatus> => new Promise(resolve => {
+    logger.debug(`Service.stop: waiting for ServiceStatus.Stopped`);
+    events.on("statusChanged", status => {
+      if (status === ServiceStatus.Stopped && exitStatus) {
+        resolve(exitStatus);
+      }
+    });
+  });
+
+  const waitForExit = (): Promise<ServiceExitStatus> => {
+    const defaultExitStatus = { exe: cfg.command, code: null, signal: null, err: null };
+    switch (status) {
+      case ServiceStatus.NotStarted:
+        return new Promise(resolve => {
+          status = ServiceStatus.Stopped;
+          exitStatus = defaultExitStatus;
+          resolve(exitStatus);
+        });
+      case ServiceStatus.Started:
+        return waitForStop();
+      case ServiceStatus.Stopping:
+        return waitForStop();
+      case ServiceStatus.Stopped:
+        return new Promise(resolve => resolve(exitStatus || defaultExitStatus));
+    }
+  };
+
+  const setStatus = (newStatus: ServiceStatus): void => {
+    logger.debug(`setStatus ${status} -> ${newStatus}`);
+    status = newStatus;
     events.emit("statusChanged", status);
   };
 
@@ -378,61 +470,36 @@ export function startService(cfg: StartService): Service {
     start: () => {
       switch (status) {
         case ServiceStatus.NotStarted:
-          proc = spawn(cfg.command, cfg.args, {
-            //cwd: stateDir
-            stdio: ['pipe', 'inherit', 'inherit']
-          });
-          status = ServiceStatus.Started;
-          events.emit("statusChanged", status);
-          proc.on("exit", (code, signal) => {
-            onStopped(code, signal);
-          });
-          proc.on("error", err => {
-            onStopped(null, null, err);
-          });
-          return proc.pid;
+          return doStart();
         case ServiceStatus.Started:
+          logger.info(`Service.start: already started`);
           return proc ? proc.pid : -1;
         case ServiceStatus.Stopping:
+          logger.info(`Service.start: cannot start - already stopping`);
           return -1;
         case ServiceStatus.Stopped:
+          logger.info(`Service.start: cannot start - already stopped`);
           return -1;
       }
     },
     stop: (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
-      const waitForStop = (): Promise<ServiceExitStatus> => new Promise(resolve => {
-        events.on("statusChanged", status => {
-          if (status === ServiceStatus.Stopped && exitStatus) {
-            resolve(exitStatus);
-          }
-        });
-      });
-      const defaultExitStatus = { exe: cfg.command, code: null, signal: null, err: null };
       switch (status) {
         case ServiceStatus.NotStarted:
-          return new Promise(resolve => {
-            status = ServiceStatus.Stopped;
-            exitStatus = defaultExitStatus;
-            resolve(exitStatus);
-          });
+          logger.info(`Service.stop: cannot stop - never started`);
+          break;
         case ServiceStatus.Started:
-          status = ServiceStatus.Stopping;
-          events.emit("statusChanged", status);
-          if (proc && proc.stdin) {
-            proc.stdin.end();
-          }
-          killTimer = setTimeout(() => {
-            if (proc) {
-              proc.kill();
-            }
-          }, timeoutSeconds * 1000);
-          return waitForStop();
+          doStop(timeoutSeconds);
+          break;
         case ServiceStatus.Stopping:
-          return waitForStop();
+          logger.info(`Service.stop: already stopping`);
+          break;
         case ServiceStatus.Stopped:
-          return new Promise(resolve => resolve(exitStatus || defaultExitStatus));
+          logger.info(`Service.stop: already stopped`);
+          break;
       }
+      return waitForExit();
     },
+    waitForExit,
     getStatus: () => status,
     events,
   };
