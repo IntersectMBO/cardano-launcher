@@ -1,3 +1,13 @@
+/**
+ * `cardano-launcher` command-line interface.
+ *
+ * This tool can be used for testing.
+ *
+ * See also: the entrypoint script `bin/cardano-launcher`.
+ *
+ * @packageDocumentation
+ */
+
 import * as _ from "lodash";
 
 import { launchWalletBackend, ExitStatus, ServiceExitStatus } from './cardanoLauncher';
@@ -10,6 +20,11 @@ function combineStatus(statuses: ServiceExitStatus[]): number {
   return code === null ? (signal === null ? 0 : 127) : code;
 }
 
+/**
+ * Main function of the CLI.
+ *
+ * This is not implemented yet.
+ */
 export function cli(args: string[]) {
   const waitForExit = setInterval(function() {}, 3600000);
   console.log(args);

@@ -14,7 +14,7 @@ could be used by any Javascript application.
 
 This is a draft of the API for [ADP-92](https://jira.iohk.io/browse/ADP-92).
 
-See the generated docs at https://input-output-hk.github.io/cardano-launcher/modules/_index_.html.
+See the generated docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
 
 
 ## Component diagram

@@ -210,8 +210,11 @@ export class Launcher {
     this.walletService.start();
     this.nodeService.start();
 
-    return new Promise(resolve => {
+    // todo: poll for ready
+
+    return new Promise((resolve, reject) => {
       this.walletBackend.events.on("ready", resolve);
+      this.walletBackend.events.on("exit", reject);
     });
   }
 
