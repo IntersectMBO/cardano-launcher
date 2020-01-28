@@ -1,6 +1,16 @@
-import { launchWalletBackend, ExitStatus } from '.';
+import * as _ from "lodash";
 
-function cli(args: string[]) {
+import { launchWalletBackend, ExitStatus, ServiceExitStatus } from './cardanoLauncher';
+
+function combineStatus(statuses: ServiceExitStatus[]): number {
+  let code = _.reduce(statuses, (res: number|null, status) => res === null ? status.code : res, null);
+  let signal = _.reduce(statuses, (res: string|null, status) => res === null ? status.signal : res, null);
+  // let err = _.reduce(statuses, (res, status) => res === null ? status.err : res, null);
+
+  return code === null ? (signal === null ? 0 : 127) : code;
+}
+
+export function cli(args: string[]) {
   console.log(args);
 
   let launcher = launchWalletBackend({
@@ -15,8 +25,6 @@ function cli(args: string[]) {
   launcher.walletBackend.events.on("exit", (status: ExitStatus) => {
     console.log(`${status.wallet.exe} exited with status ${status.wallet.code}`);
     console.log(`${status.node.exe} exited with status ${status.node.code}`);
-    process.exit(Math.max(status.wallet.code, status.node.code));
+    process.exit(combineStatus([status.wallet, status.node]));
   });
 }
-
-cli(process.argv);

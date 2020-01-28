@@ -28,6 +28,7 @@
   },
   "name": "cardano-launcher",
   "author": "IOHK",
+  "repository": "github:input-output-hk/cardano-launcher",
   "module": "dist/cardano-launcher.esm.js",
   "bin": {
     "cardano-launcher": "bin/cardano-launcher"
@@ -42,7 +43,9 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.149",
     "@types/node": "^13.1.8",
+    "lodash": "^4.17.15",
     "tsee": "^1.3.0"
   }
 }
