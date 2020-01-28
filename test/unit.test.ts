@@ -1,4 +1,7 @@
-import { startService, ServiceStatus, ServiceExitStatus } from '../src';
+import { startService, Service, ServiceStatus, ServiceExitStatus } from '../src';
+
+// increase time available for some tests to run
+const longTestTimeoutMs = 15000;
 
 describe('startService', () => {
   it('starting simple command', async () => {
@@ -21,22 +24,22 @@ describe('startService', () => {
     let service = startService({ command: "cat", args: [] });
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
-    service.start();
-
     let pid = service.start();
-    let code = await service.stop();
-    expect(code.signal).toBe("SIGPIPE");
+    let result = await service.stop(2);
     // process should not exist
-    expect(process.kill(pid, 0)).toThrow();
+    expect(() => process.kill(pid, 0)).toThrow();
+    // end of file for cat
+    expect(result).toEqual({ exe: "cat", code: 0, signal: null, err: null });
   });
 
   it('stopping a command (timeout)', async () => {
-    let service = startService({ command: "sleep", args: ["10"] });
+    let service = startService({ command: "sleep", args: ["4"] });
     let pid = service.start();
-    let code = await service.stop(5);
-    expect(code.signal).toBe("SIGTERM");
+    let result = await service.stop(2);
     // process should not exist
-    expect(process.kill(pid, 0)).toThrow();
+    expect(() => process.kill(pid, 0)).toThrow();
+    // exited with signal
+    expect(result).toEqual({ exe: "sleep", code: null, signal: "SIGTERM", err: null });
   });
 
   xit('stopping a command (parent process exits)', () => {
@@ -46,13 +49,13 @@ describe('startService', () => {
   it('command was killed', () => {
     let service = startService({ command: "sleep", args: ["10"] });
     let events: ServiceStatus[] = [];
+    service.events.on("statusChanged", status => events.push(status));
     let pid = service.start();
     return new Promise(done => {
       setTimeout(() => {
         process.kill(pid);
       }, 1000);
       service.events.on("statusChanged", status => {
-        events.push(status);
         if (status === ServiceStatus.Stopped) {
           expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
         }
@@ -64,5 +67,74 @@ describe('startService', () => {
         });
       });
     });
+  }, longTestTimeoutMs);
+
+  it('start is idempotent', async () => {
+    let service = startService({ command: "cat", args: [] });
+    let events = collectEvents(service);
+    let pid1 = service.start();
+    let pid2 = service.start();
+    await service.stop(2);
+    // should have only started once
+    expect(pid1).toBe(pid2);
+    // process should not exist
+    expectProcessToBeGone(pid1);
+    // events fire only once
+    expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopping, ServiceStatus.Stopped]);
   });
+
+  it('stop is idempotent', async () => {
+    let service = startService({ command: "cat", args: [] });
+    let events = collectEvents(service);
+    let pid = service.start();
+    let result1 = await service.stop(2);
+    let result2 = await service.stop(2);
+    // same result
+    expect(result1).toEqual(result2);
+    // process should not exist
+    expectProcessToBeGone(pid);
+    // cat command exits normally
+    expect(result1).toEqual({ exe: "cat", code: 0, signal: null, err: null });
+    // events fire only once
+    expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopping, ServiceStatus.Stopped]);
+  });
+
+  it('stopping an already stopped command', done => {
+    let service = startService({ command: "echo", args: ["hello from tests"] });
+    let events = collectEvents(service);
+    let pid = service.start();
+    setTimeout(() => {
+      // should have exited after 1 second
+      expectProcessToBeGone(pid);
+      // stop what's already stopped
+      service.stop(2).then(result => {
+        // check collected status
+        expect(result).toEqual({ exe: "echo", code: 0, signal: null, err: null });
+        // sequence of events doesn't include Stopping
+        expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+        done();
+      });
+    }, 1000);
+  });
+
 });
+
+/*******************************************************************************
+ * Utils
+ ******************************************************************************/
+
+/**
+ * Expect the given process ID to not exist.
+ */
+const expectProcessToBeGone = (pid: number): void => {
+  expect(() => process.kill(pid, 0)).toThrow();
+};
+
+/**
+ * @return mutable array which will contain events as they occur.
+ */
+const collectEvents = (service: Service): ServiceStatus[] => {
+  let events: ServiceStatus[] = [];
+  service.events.on("statusChanged", status => events.push(status));
+  return events;
+};

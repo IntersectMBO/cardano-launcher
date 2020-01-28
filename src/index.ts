@@ -376,20 +376,28 @@ export function startService(cfg: StartService): Service {
 
   return {
     start: () => {
-      proc = spawn(cfg.command, cfg.args, {
-        //cwd: stateDir
-        stdio: ['pipe', 'inherit', 'inherit']
-      });
-      status = ServiceStatus.Started;
-      events.emit("statusChanged", status);
-      proc.on("exit", (code, signal) => {
-        onStopped(code, signal);
-      });
-      proc.on("error", err => {
-        onStopped(null, null, err);
-      });
-
-      return proc.pid;
+      switch (status) {
+        case ServiceStatus.NotStarted:
+          proc = spawn(cfg.command, cfg.args, {
+            //cwd: stateDir
+            stdio: ['pipe', 'inherit', 'inherit']
+          });
+          status = ServiceStatus.Started;
+          events.emit("statusChanged", status);
+          proc.on("exit", (code, signal) => {
+            onStopped(code, signal);
+          });
+          proc.on("error", err => {
+            onStopped(null, null, err);
+          });
+          return proc.pid;
+        case ServiceStatus.Started:
+          return proc ? proc.pid : -1;
+        case ServiceStatus.Stopping:
+          return -1;
+        case ServiceStatus.Stopped:
+          return -1;
+      }
     },
     stop: (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
       const waitForStop = (): Promise<ServiceExitStatus> => new Promise(resolve => {
