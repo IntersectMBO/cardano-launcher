@@ -21,6 +21,13 @@ export interface ServiceExitStatus {
   err: Error|null;
 }
 
+export function serviceExitStatusMessage(res: ServiceExitStatus): string {
+  const reason = typeof res.code === "number" ? `status ${res.code}` :
+    (res.signal ? `signal ${res.signal}` : `error ${res.err}`);
+
+  return `${res.exe} exited with ${reason}`;
+}
+
 /**
  * States for a launched process.  The processes are not guaranteed to
  * use all of these states. For example, a process may go directly
@@ -115,13 +122,14 @@ export function startService(cfgP: Promise<StartService>, logger: Logger = conso
   const doStart = async () => {
     logger.info(`Service.start: trying to start ${cfg.command} ${cfg.args.join(" ")}`, cfg);
 
+    const stdio = [cfg.supportsCleanShutdown ? 'pipe' : 'ignore', 'inherit', 'inherit'];
+    const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
+    const options = Object.assign({ stdio }, cwd);
     try {
-      proc = spawn(cfg.command, cfg.args, {
-        //cwd: stateDir
-        stdio: [cfg.supportsCleanShutdown ? 'pipe' : 'ignore', 'inherit', 'inherit']
-      });
+      proc = spawn(cfg.command, cfg.args, options);
     } catch (err) {
       logger.error(`Service.start: child_process.spawn() failed: ${err}`);
+      logger.error(`Service.start: child_process.spawn(${cfg.command}, ${cfg.args.join(" ")}, ...)`, options);
       throw err;
     }
     setStatus(ServiceStatus.Started);
@@ -174,7 +182,7 @@ export function startService(cfgP: Promise<StartService>, logger: Logger = conso
   });
 
   const waitForExit = (): Promise<ServiceExitStatus> => {
-    const defaultExitStatus = { exe: cfg.command, code: null, signal: null, err: null };
+    const defaultExitStatus = { exe: cfg ? cfg.command : "", code: null, signal: null, err: null };
     switch (status) {
       case ServiceStatus.NotStarted:
         return new Promise(resolve => {
@@ -245,6 +253,8 @@ export interface StartService {
   command: string;
   /** Command-line arguments. */
   args: string[];
+  /** Directory to start program in. Helpful if it outputs files. */
+  cwd?: string;
   /**
    * Whether this service supports the clean shutdown method documented in
    * `docs/windows-clean-shutdown.md`.

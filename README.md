@@ -88,8 +88,6 @@ Jormungandr self-node:
 
     ./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
 
-
 Byron mainnet:
 
     ./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
-

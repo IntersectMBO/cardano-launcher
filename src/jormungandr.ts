@@ -53,7 +53,7 @@ export interface JormungandrConfig {
   /** Directory containing configurations for all networks. */
   configurationsDir: DirPath;
 
-  networkName: string;
+  /** Network parameters */
   network: JormungandrNetwork;
 
   /** Optionally select a port for the node REST API. Otherwise, any unused port is chosen. */
@@ -116,6 +116,12 @@ export async function startJormungandr(stateDir: DirPath, config: JormungandrCon
     args: [
       "--config", args.configFile,
       "--storage", args.storageDir,
+      // note: To support log file rotation from jormungandr, capture
+      // its logs in json format and echo them into your frontend
+      // logging framework (which presumably supports log rotation).
+      // This will also mean that the node logs are correctly
+      // interleaved with the frontend logs.
+      // "--log-format", "json",
     ]
       .concat(args.restListen ? ["--rest-listen", args.restListen] : [])
       .concat(args.genesisBlock.file ? ["--genesis-block", args.genesisBlock.file] :

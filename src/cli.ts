@@ -10,7 +10,7 @@
 
 import _ from "lodash";
 
-import { launchWalletBackend, ExitStatus, ServiceExitStatus } from './cardanoLauncher';
+import { launchWalletBackend, ExitStatus, ServiceExitStatus, serviceExitStatusMessage } from './cardanoLauncher';
 
 import * as byron from './byron';
 import * as jormungandr from './jormungandr';
@@ -54,7 +54,6 @@ export function cli(args: string[]) {
     nodeConfig = {
       kind: backend,
       configurationsDir,
-      networkName,
       network,
     };
 
@@ -67,20 +66,19 @@ export function cli(args: string[]) {
     nodeConfig = {
       kind: backend,
       configurationsDir,
-      networkName,
       network,
     };
   } else {
     usage();
   }
 
-  const launcher = launchWalletBackend({ stateDir, nodeConfig }, console);
+  const launcher = launchWalletBackend({ stateDir, nodeConfig, networkName }, console);
 
   launcher.start();
 
   launcher.walletBackend.events.on("exit", (status: ExitStatus) => {
-    console.log(`${status.wallet.exe} exited with status ${status.wallet.code}`);
-    console.log(`${status.node.exe} exited with status ${status.node.code}`);
+    console.log(serviceExitStatusMessage(status.wallet));
+    console.log(serviceExitStatusMessage(status.node));
     clearInterval(waitForExit);
     process.exit(combineStatus([status.wallet, status.node]));
   });
