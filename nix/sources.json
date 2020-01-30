@@ -12,16 +12,17 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cardano-wallet": {
-        "branch": "master",
+        "branch": "rvl/1314/launcher-shutdown-handler",
         "description": "Official Wallet Backend & API for Cardano decentralized",
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "cardano-wallet",
-        "rev": "e465aaa11c923231ad63dcc44a30c7f00ea7986d",
-        "sha256": "0rs80m96d8sp0qzmig4n16q5qjxv9py831p0wn20a490q052cs66",
+        "rev": "d73ffe933fe27c49fe59102b10f99fcaee2b5545",
+        "sha256": "0mwykqsy265kb8jfx5r17ff0gsxzs3cbriybvc9smxyf8h6m247p",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-wallet/archive/e465aaa11c923231ad63dcc44a30c7f00ea7986d.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+        "url": "https://github.com/input-output-hk/cardano-wallet/archive/d73ffe933fe27c49fe59102b10f99fcaee2b5545.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
+        "version": "0c17bb046335f43a8facfbf82a588820360f9514"
     },
     "iohk-nix": {
         "branch": "master",
