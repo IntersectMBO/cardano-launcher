@@ -7,11 +7,12 @@ mkShell {
     # javascript
     nodePackages.npm
     # documentation tools
-    mscgen gnumake
+    pandoc mscgen gnumake
     # util to update nixpkgs pins
     niv.niv
     # cardano
     cardanoWalletPackages.cardano-wallet-jormungandr
     cardanoWalletPackages.jormungandr
+    cardano-node
   ];
 }

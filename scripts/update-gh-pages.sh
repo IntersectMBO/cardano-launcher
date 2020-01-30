@@ -20,7 +20,8 @@ rm -rf "$out"
 npm run typedoc
 touch "$out/.nojekyll"
 mkdir -p "$out/docs"
-cp docs/*.png docs/*.svg "$out/docs"
+make -C docs
+cp docs/*.png docs/*.html docs/*.svg "$out/docs"
 
 echo "Updating git index..."
 git checkout gh-pages

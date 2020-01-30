@@ -14,7 +14,7 @@ could be used by any Javascript application.
 
 This is a draft of the API for [ADP-92](https://jira.iohk.io/browse/ADP-92).
 
-See the generated docs at https://input-output-hk.github.io/cardano-launcher/modules/_index_.html.
+See the generated docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
 
 
 ## Component diagram
@@ -38,8 +38,13 @@ Bundles the package to the `dist` folder.
 
 ### `npm test`
 
-Runs the test watcher (Jest) in an interactive mode.
+Runs the test watcher ([Jest](https://jestjs.io/docs/en/getting-started))
+in an interactive mode.
 By default, runs tests related to files changed since the last commit.
+
+Alternatively, to run only unit tests:
+
+    npx tsdx test unit
 
 ### `npm run typedoc`
 
@@ -59,6 +64,12 @@ To modify the cardano-wallet version, use [`niv update`](https://github.com/nmat
 
     nix-shell --run "niv update cardano-wallet"
 
+To modify the cardano-node version, also use `niv-update`.
+
+    nix-shell --run "niv update cardano-node"
+
+In future, the `cardano-node` version may be defined by
+`cardano-wallet`, is it is for `jormungandr`.
 
 ## Design docs
 

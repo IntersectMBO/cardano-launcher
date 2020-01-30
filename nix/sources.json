@@ -1,4 +1,16 @@
 {
+    "cardano-node": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "owner": "input-output-hk",
+        "repo": "cardano-node",
+        "rev": "dd3829fb2e72c3da7a9720429a8b47b2230fb50c",
+        "sha256": "1lgn7dklr0gw9z5m5cjmi2a52b76l6pc1v2v0siix1nznlqvv5g8",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/cardano-node/archive/dd3829fb2e72c3da7a9720429a8b47b2230fb50c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "cardano-wallet": {
         "branch": "master",
         "description": "Official Wallet Backend & API for Cardano decentralized",
