@@ -4,16 +4,21 @@
  * @packageDocumentation
  */
 
+import path from 'path';
+
+import _ from "lodash";
 import { EventEmitter } from 'tsee';
+import getPort from "get-port";
+import waitOn from "wait-on";
 
 import { Logger, prependName } from './logging';
 import { Service, ServiceExitStatus, ServiceStatus, StartService, startService } from './service';
 
-export { ServiceExitStatus } from './service';
-
 import * as byron from './byron';
 import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
+
+export { ServiceExitStatus } from './service';
 
 /**
  * Starts the wallet backend.
@@ -70,6 +75,9 @@ export class Launcher {
   /** Logging adapter */
   protected logger: Logger;
 
+  /** Wallet API server port - set once it's known. */
+  private apiPort = 0;
+
   /**
    * Starts the wallet backend.
    *
@@ -84,15 +92,15 @@ export class Launcher {
     this.walletService = startService(start.wallet, prependName(logger, "wallet"));
     this.nodeService = startService(start.node, prependName(logger, "node"));
 
+    const self = this;
+
     this.walletBackend = {
-      getApi: () => new V2Api(start.apiPort),
+      getApi: () => new V2Api(self.apiPort),
       events: new EventEmitter<{
         ready: (api: Api) => void,
         exit: (status: ExitStatus) => void,
       }>(),
     };
-
-    const self = this;
 
     this.walletService.events.on("statusChanged", status => {
       if (status === ServiceStatus.Stopped) {
@@ -122,14 +130,25 @@ export class Launcher {
    *   or stop.
    */
   start(): Promise<Api> {
-    this.walletService.start();
     this.nodeService.start();
+    this.walletService.start()
 
-    // todo: poll for ready
+    this.waitForApi(this.apiPort).then(() => {
+      this.walletBackend.events.emit("ready", this.walletBackend.getApi());
+    });
 
     return new Promise((resolve, reject) => {
       this.walletBackend.events.on("ready", resolve);
       this.walletBackend.events.on("exit", reject);
+    });
+  }
+
+  waitForApi(port: number): Promise<void> {
+    return waitOn({
+      resources: [`tcp:127.0.0.1:${port}`],
+      delay: 10,// initial delay in ms, default 0
+      interval: 250, // poll interval in ms, default 250
+      timeout: 3600000,// timeout in ms, default Infinity
     });
   }
 
@@ -232,30 +251,49 @@ type WalletBackendEvents = EventEmitter<{
   exit: (status: ExitStatus) => void,
 }>;
 
+interface WalletStartService extends StartService {
+  apiPort: number;
+};
 
-function makeServiceCommands(config: LaunchConfig): { apiPort: number, wallet: StartService, node: StartService } {
-  const apiPort = config.apiPort || 8090; // todo: find port
-  const wallet = walletExe(config, apiPort);
-  return { apiPort, wallet, node: nodeExe(config, wallet) };
+function makeServiceCommands(config: LaunchConfig): { wallet: Promise<WalletStartService>, node: Promise<StartService> } {
+  const node = nodeExe(config);
+  const wallet = node.then(nodeService => walletExe(config, nodeService));
+  return { wallet, node };
 }
 
-function walletExe(config: LaunchConfig, port: number): StartService {
+async function walletExe(config: LaunchConfig, node: StartService): Promise<WalletStartService> {
+  const apiPort = config.apiPort || await getPort();
+  const base: WalletStartService = {
+    command: `cardano-wallet-${config.nodeConfig.kind}`,
+    args: ["serve", "--port", "" + apiPort],
+    supportsCleanShutdown: true,
+    apiPort,
+  };
+  const addArgs = (args: string[]): WalletStartService =>
+     _.assign(base, { args: base.args.concat(args) });
+
   switch (config.nodeConfig.kind) {
-    case "jormungandr": return { command: "cardano-wallet-jormungandr", args: [`--port=${port}`] };
-    case "byron": return { command: "cardano-wallet-byron", args: [`--port=${port}`] };
-    case "shelley": return { command: "cardano-wallet-jormungandr", args: [`--port=${port}`] };
+    case "jormungandr":
+      return addArgs([
+        "--genesis-block-hash", config.nodeConfig.network.genesisBlock.hash,
+        "--node-port", "" + config.nodeConfig.restPort
+      ]);
+    case "byron":
+      return addArgs([]);
+    case "shelley":
+      return base;
   }
 }
 
-function nodeExe(config: LaunchConfig, wallet: StartService): StartService {
+function nodeExe(config: LaunchConfig): Promise<StartService> {
   switch (config.nodeConfig.kind) {
     case "jormungandr":
-      return jormungandr.startJormungandr(config.nodeConfig);
+      const basej = path.join(config.stateDir, config.nodeConfig.kind, config.nodeConfig.networkName);
+      return jormungandr.startJormungandr(basej, config.nodeConfig);
     case "byron":
-      // fixme: path manipulations not compatible with windows.
-      const base = `${config.stateDir}/${config.nodeConfig.kind}/${config.nodeConfig.networkName}`;
-      return byron.startByronNode(base, config.nodeConfig);
+      const baseb = path.join(config.stateDir, config.nodeConfig.kind, config.nodeConfig.networkName);
+      return byron.startByronNode(baseb, config.nodeConfig);
     case "shelley":
-       return shelley.startShelleyNode(config.nodeConfig);
+      return shelley.startShelleyNode(config.nodeConfig);
   }
 }

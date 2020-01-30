@@ -26,7 +26,7 @@ export interface ShelleyNodeConfig {
   extraArgs?: string[];
 }
 
-export function startShelleyNode(config: ShelleyNodeConfig): StartService {
+export async function startShelleyNode(config: ShelleyNodeConfig): Promise<StartService> {
   throw new Error("shelley backend not implemented");
   // return {
   //   command: "cardano-node", args: ["--help"]

@@ -46,7 +46,7 @@ export interface Service {
    *   started. The returned PID is not guaranteed to be running. It may
    *   already have exited.
    */
-  start(): Pid;
+  start(): Promise<Pid>;
 
   /**
    * Stops the process.
@@ -95,13 +95,16 @@ type ServiceEvents = EventEmitter<{
  * @param logger - logging object.
  * @return A handle on the service.
  */
-export function startService(cfg: StartService, logger: Logger = console): Service {
+export function startService(cfgP: Promise<StartService>, logger: Logger = console): Service {
   const events = new EventEmitter<{
     statusChanged: (status: ServiceStatus) => void,
   }>();
 
   // What the current state is.
   let status = ServiceStatus.NotStarted;
+  // Fulfilled promise of service command-line.
+  // This will be defined if status > NotStarted.
+  let cfg: StartService;
   // NodeJS child process object, or null if not running.
   let proc: ChildProcess|null = null;
   // How the child process exited, or null if it hasn't yet exited.
@@ -109,13 +112,13 @@ export function startService(cfg: StartService, logger: Logger = console): Servi
   // For cancelling the kill timeout.
   let killTimer: NodeJS.Timeout|null = null;
 
-  const doStart = () => {
-    logger.info(`Service.start: trying to start ${cfg.command}`, cfg);
+  const doStart = async () => {
+    logger.info(`Service.start: trying to start ${cfg.command} ${cfg.args.join(" ")}`, cfg);
 
     try {
       proc = spawn(cfg.command, cfg.args, {
         //cwd: stateDir
-        stdio: ['pipe', 'inherit', 'inherit']
+        stdio: [cfg.supportsCleanShutdown ? 'pipe' : 'ignore', 'inherit', 'inherit']
       });
     } catch (err) {
       logger.error(`Service.start: child_process.spawn() failed: ${err}`);
@@ -135,13 +138,17 @@ export function startService(cfg: StartService, logger: Logger = console): Servi
   const doStop = (timeoutSeconds: number) => {
     logger.info(`Service.stop: trying to stop ${cfg.command}`, cfg);
     setStatus(ServiceStatus.Stopping);
-    if (proc && proc.stdin) {
-      proc.stdin.end();
+    if (proc) {
+      if (cfg.supportsCleanShutdown && proc.stdin) {
+        proc.stdin.end();
+      } else {
+        proc.kill("SIGTERM");
+      }
     }
     killTimer = setTimeout(() => {
       if (proc) {
         logger.info(`Service.stop: timed out after ${timeoutSeconds} seconds. Killing process ${proc.pid}.`);
-        proc.kill();
+        proc.kill("SIGKILL");
       }
     }, timeoutSeconds * 1000);
   };
@@ -191,9 +198,10 @@ export function startService(cfg: StartService, logger: Logger = console): Servi
   };
 
   return {
-    start: () => {
+    start: async () => {
       switch (status) {
         case ServiceStatus.NotStarted:
+          cfg = await cfgP;
           return doStart();
         case ServiceStatus.Started:
           logger.info(`Service.start: already started`);
@@ -206,7 +214,7 @@ export function startService(cfg: StartService, logger: Logger = console): Servi
           return -1;
       }
     },
-    stop: (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
+    stop: async (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
       switch (status) {
         case ServiceStatus.NotStarted:
           logger.info(`Service.stop: cannot stop - never started`);
@@ -233,6 +241,13 @@ export function startService(cfg: StartService, logger: Logger = console): Servi
  * Command to run for the service.
  */
 export interface StartService {
+  /** Program name. Will be searched for in `PATH`. */
   command: string;
+  /** Command-line arguments. */
   args: string[];
+  /**
+   * Whether this service supports the clean shutdown method documented in
+   * `docs/windows-clean-shutdown.md`.
+   */
+  supportsCleanShutdown: boolean;
 }
