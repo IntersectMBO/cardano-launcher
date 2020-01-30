@@ -82,7 +82,14 @@ In future, the `cardano-node` version may be defined by
 
 ## Testing it out
 
-After building, there is a very basic CLI that you can use to test:
+After building, there is a very basic CLI that you can use to test.
+
+Jormungandr self-node:
 
     ./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
+
+
+Byron mainnet:
+
+    ./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
 
