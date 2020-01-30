@@ -76,7 +76,7 @@
 					<h2>Work In Progress</h2>
 				</a>
 				<p>This is a draft of the API for <a href="https://jira.iohk.io/browse/ADP-92">ADP-92</a>.</p>
-				<p>See the generated docs at <a href="https://input-output-hk.github.io/cardano-launcher/modules/_index_.html">https://input-output-hk.github.io/cardano-launcher/modules/_index_.html</a>.</p>
+				<p>See the generated docs at <a href="https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html">https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html</a>.</p>
 				<a href="#component-diagram" id="component-diagram" style="color: inherit; text-decoration: none;">
 					<h2>Component diagram</h2>
 				</a>
@@ -99,12 +99,48 @@
 				<a href="#codenpm-testcode" id="codenpm-testcode" style="color: inherit; text-decoration: none;">
 					<h3><code>npm test</code></h3>
 				</a>
-				<p>Runs the test watcher (Jest) in an interactive mode.
+				<p>Runs the test watcher (<a href="https://jestjs.io/docs/en/getting-started">Jest</a>)
+					in an interactive mode.
 				By default, runs tests related to files changed since the last commit.</p>
+				<p>Alternatively, to run only unit tests:</p>
+				<pre><code>npx tsdx <span class="hljs-built_in">test</span> unit</code></pre>
 				<a href="#codenpm-run-typedoccode" id="codenpm-run-typedoccode" style="color: inherit; text-decoration: none;">
 					<h3><code>npm run typedoc</code></h3>
 				</a>
 				<p>Generates API documentation to the <code>site</code> folder.</p>
+				<a href="#codenix-shellcode" id="codenix-shellcode" style="color: inherit; text-decoration: none;">
+					<h3><code>nix-shell</code></h3>
+				</a>
+				<p>Runs a bash shell with project development dependencies (e.g. <code>npm</code>,
+				<code>cardano-wallet</code>) in the <code>PATH</code>.</p>
+				<p>See <a href="https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md">nix.md</a>
+				for information on how to set up Nix.</p>
+				<a href="#updating-cardano-wallet-versiion" id="updating-cardano-wallet-versiion" style="color: inherit; text-decoration: none;">
+					<h3>Updating cardano-wallet versiion</h3>
+				</a>
+				<p>To modify the cardano-wallet version, use <a href="https://github.com/nmattia/niv#update"><code>niv update</code></a>.</p>
+				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-wallet"</span></span></code></pre><p>To modify the cardano-node version, also use <code>niv-update</code>.</p>
+				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-node"</span></span></code></pre><p>In future, the <code>cardano-node</code> version may be defined by
+				<code>cardano-wallet</code>, is it is for <code>jormungandr</code>.</p>
+				<a href="#design-docs" id="design-docs" style="color: inherit; text-decoration: none;">
+					<h2>Design docs</h2>
+				</a>
+				<ul>
+					<li><p><a href="./docs/update-system-byron.md"><code>update-system-byron.md</code></a> -
+							Overview of how the update system works in the old codebase (Byron
+						era).</p>
+					</li>
+					<li><p><a href="./docs/windows-clean-shutdown.md"><code>windows-clean-shutdown.md</code></a> -
+						How to stop the wallet and node processes on Windows.</p>
+					</li>
+				</ul>
+				<a href="#testing-it-out" id="testing-it-out" style="color: inherit; text-decoration: none;">
+					<h2>Testing it out</h2>
+				</a>
+				<p>After building, there is a very basic CLI that you can use to test.</p>
+				<p>Jormungandr self-node:</p>
+				<pre><code>./<span class="hljs-keyword">bin/cardano-launcher </span>jormungandr <span class="hljs-keyword">self </span>test/<span class="hljs-meta">data</span>/jormungandr ./state-launcher</code></pre><p>Byron mainnet:</p>
+				<pre><code>./<span class="hljs-keyword">bin/cardano-launcher </span><span class="hljs-keyword">byron </span>mainnet $<span class="hljs-keyword">BYRON_CONFIGS </span>./state-launcher</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -114,7 +150,31 @@
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_byron_.html">&quot;byron&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_cli_.html">&quot;cli&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_common_.html">&quot;common&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_jormungandr_.html">&quot;jormungandr&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_logging_.html">&quot;logging&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_service_.html">&quot;service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_shelley_.html">&quot;shelley&quot;</a>
 					</li>
 				</ul>
 			</nav>

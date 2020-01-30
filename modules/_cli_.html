@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ServiceStatus | cardano-launcher</title>
+	<title>&quot;cli&quot; | cardano-launcher</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_index_.html">&quot;index&quot;</a>
-				</li>
-				<li>
-					<a href="_index_.servicestatus.html">ServiceStatus</a>
+					<a href="_cli_.html">&quot;cli&quot;</a>
 				</li>
 			</ul>
-			<h1>Enumeration ServiceStatus</h1>
+			<h1>External module &quot;cli&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -70,10 +67,10 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>States for a launched process.  The processes are not guaranteed to
-							use all of these states. For example, a process may go directly
-						from <code>Started</code> to <code>Stopped</code>.</p>
+						<p><code>cardano-launcher</code> command-line interface.</p>
 					</div>
+					<p>This tool can be used for testing.</p>
+					<p>See also: the entrypoint script <code>bin/cardano-launcher</code>.</p>
 				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -81,78 +78,86 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Enumeration members</h3>
+							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.servicestatus.html#started" class="tsd-kind-icon">Started</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.servicestatus.html#starting" class="tsd-kind-icon">Starting</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.servicestatus.html#stopped" class="tsd-kind-icon">Stopped</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.servicestatus.html#stopping" class="tsd-kind-icon">Stopping</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_cli_.html#cli" class="tsd-kind-icon">cli</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_cli_.html#combinestatus" class="tsd-kind-icon">combine<wbr>Status</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_cli_.html#usage" class="tsd-kind-icon">usage</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="started" class="tsd-anchor"></a>
-					<h3>Started</h3>
-					<div class="tsd-signature tsd-kind-icon">Started<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L180">index.ts:180</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Subprocess has started and has a PID.</p>
-						</div>
-					</div>
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="cli" class="tsd-anchor"></a>
+					<h3>cli</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">cli<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cli.ts#L31">cli.ts:31</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Main function of the CLI.</p>
+								</div>
+								<p>Is just a very basic interface for testing things.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>args: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="starting" class="tsd-anchor"></a>
-					<h3>Starting</h3>
-					<div class="tsd-signature tsd-kind-icon">Starting<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L178">index.ts:178</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Initial state. Subprocess has been spawned.</p>
-						</div>
-					</div>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="combinestatus" class="tsd-anchor"></a>
+					<h3>combine<wbr>Status</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">combine<wbr>Status<span class="tsd-signature-symbol">(</span>statuses<span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.serviceexitstatus.html" class="tsd-signature-type">ServiceExitStatus</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cli.ts#L18">cli.ts:18</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>statuses: <a href="../interfaces/_service_.serviceexitstatus.html" class="tsd-signature-type">ServiceExitStatus</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="stopped" class="tsd-anchor"></a>
-					<h3>Stopped</h3>
-					<div class="tsd-signature tsd-kind-icon">Stopped<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L184">index.ts:184</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Subprocess has exited or been killed.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="stopping" class="tsd-anchor"></a>
-					<h3>Stopping</h3>
-					<div class="tsd-signature tsd-kind-icon">Stopping<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L182">index.ts:182</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Caller has requested to stop the process. Now waiting for it to exit, or for the timeout to elapse.</p>
-						</div>
-					</div>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="usage" class="tsd-anchor"></a>
+					<h3>usage</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">usage<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cli.ts#L87">cli.ts:87</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -162,75 +167,45 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_byron_.html">&quot;byron&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_index_.html">&quot;index&quot;</a>
+						<a href="_cli_.html">&quot;cli&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_common_.html">&quot;common&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_jormungandr_.html">&quot;jormungandr&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_logging_.html">&quot;logging&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_service_.html">&quot;service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_shelley_.html">&quot;shelley&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_index_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
-						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_index_.servicestatus.html#started" class="tsd-kind-icon">Started</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_index_.servicestatus.html#starting" class="tsd-kind-icon">Starting</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_index_.servicestatus.html#stopped" class="tsd-kind-icon">Stopped</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_index_.servicestatus.html#stopping" class="tsd-kind-icon">Stopping</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_index_.launcher.html" class="tsd-kind-icon">Launcher</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_index_.api.html" class="tsd-kind-icon">Api</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.genesisblockfile.html" class="tsd-kind-icon">Genesis<wbr>Block<wbr>File</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.genesishash.html" class="tsd-kind-icon">Genesis<wbr>Hash</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.logfunc.html" class="tsd-kind-icon">Log<wbr>Func</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.logger.html" class="tsd-kind-icon">Logger</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_index_.service.html" class="tsd-kind-icon">Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_index_.shelleynodeconfig.html" class="tsd-kind-icon">Shelley<wbr>Node<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_index_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#pid" class="tsd-kind-icon">Pid</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#launchwalletbackend" class="tsd-kind-icon">launch<wbr>Wallet<wbr>Backend</a>
+						<a href="_cli_.html#cli" class="tsd-kind-icon">cli</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_cli_.html#combinestatus" class="tsd-kind-icon">combine<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_cli_.html#usage" class="tsd-kind-icon">usage</a>
 					</li>
 				</ul>
 			</nav>

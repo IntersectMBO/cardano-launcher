@@ -54,10 +54,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_index_.html">&quot;index&quot;</a>
+					<a href="../modules/_logging_.html">&quot;logging&quot;</a>
 				</li>
 				<li>
-					<a href="_index_.logfunc.html">LogFunc</a>
+					<a href="_logging_.logfunc.html">LogFunc</a>
 				</li>
 			</ul>
 			<h1>Interface LogFunc</h1>
@@ -84,14 +84,14 @@
 			</section>
 			<section class="tsd-panel">
 				<h3 class="tsd-before-signature">Callable</h3>
-				<ul class="tsd-signatures tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, param<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<ul class="tsd-signatures tsd-kind-interface tsd-parent-kind-external-module">
+					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, param<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L80">index.ts:80</a></li>
+								<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/logging.ts#L21">logging.ts:21</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -105,7 +105,7 @@
 								<h5>msg: <span class="tsd-signature-type">string</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> param: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> param: <span class="tsd-signature-type">any</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -119,61 +119,49 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_byron_.html">&quot;byron&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_cli_.html">&quot;cli&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_common_.html">&quot;common&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_jormungandr_.html">&quot;jormungandr&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_logging_.html">&quot;logging&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_service_.html">&quot;service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_shelley_.html">&quot;shelley&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_index_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_index_.launcher.html" class="tsd-kind-icon">Launcher</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.api.html" class="tsd-kind-icon">Api</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.genesisblockfile.html" class="tsd-kind-icon">Genesis<wbr>Block<wbr>File</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.genesishash.html" class="tsd-kind-icon">Genesis<wbr>Hash</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.logfunc.html" class="tsd-kind-icon">Log<wbr>Func</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_logging_.logfunc.html" class="tsd-kind-icon">Log<wbr>Func</a>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.logger.html" class="tsd-kind-icon">Logger</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.service.html" class="tsd-kind-icon">Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.shelleynodeconfig.html" class="tsd-kind-icon">Shelley<wbr>Node<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#pid" class="tsd-kind-icon">Pid</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
+						<a href="_logging_.logger.html" class="tsd-kind-icon">Logger</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#launchwalletbackend" class="tsd-kind-icon">launch<wbr>Wallet<wbr>Backend</a>
+						<a href="../modules/_logging_.html#prependname" class="tsd-kind-icon">prepend<wbr>Name</a>
 					</li>
 				</ul>
 			</nav>

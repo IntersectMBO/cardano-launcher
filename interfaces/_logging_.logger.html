@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>GenesisBlockFile | cardano-launcher</title>
+	<title>Logger | cardano-launcher</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_index_.html">&quot;index&quot;</a>
+					<a href="../modules/_logging_.html">&quot;logging&quot;</a>
 				</li>
 				<li>
-					<a href="_index_.genesisblockfile.html">GenesisBlockFile</a>
+					<a href="_logging_.logger.html">Logger</a>
 				</li>
 			</ul>
-			<h1>Interface GenesisBlockFile</h1>
+			<h1>Interface Logger</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">GenesisBlockFile</span>
+						<span class="target">Logger</span>
 					</li>
 				</ul>
 			</section>
@@ -79,35 +79,46 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.genesisblockfile.html#filename" class="tsd-kind-icon">filename</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.genesisblockfile.html#kind" class="tsd-kind-icon">kind</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_logging_.logger.html#debug" class="tsd-kind-icon">debug</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_logging_.logger.html#error" class="tsd-kind-icon">error</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_logging_.logger.html#info" class="tsd-kind-icon">info</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="filename" class="tsd-anchor"></a>
-					<h3>filename</h3>
-					<div class="tsd-signature tsd-kind-icon">filename<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="debug" class="tsd-anchor"></a>
+					<h3>debug</h3>
+					<div class="tsd-signature tsd-kind-icon">debug<span class="tsd-signature-symbol">:</span> <a href="_logging_.logfunc.html" class="tsd-signature-type">LogFunc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L74">index.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/logging.ts#L13">logging.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="kind" class="tsd-anchor"></a>
-					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"block"</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="error" class="tsd-anchor"></a>
+					<h3>error</h3>
+					<div class="tsd-signature tsd-kind-icon">error<span class="tsd-signature-symbol">:</span> <a href="_logging_.logfunc.html" class="tsd-signature-type">LogFunc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L73">index.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/logging.ts#L15">logging.ts:15</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="info" class="tsd-anchor"></a>
+					<h3>info</h3>
+					<div class="tsd-signature tsd-kind-icon">info<span class="tsd-signature-symbol">:</span> <a href="_logging_.logfunc.html" class="tsd-signature-type">LogFunc</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/logging.ts#L14">logging.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -119,69 +130,60 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_byron_.html">&quot;byron&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_cli_.html">&quot;cli&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_common_.html">&quot;common&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_jormungandr_.html">&quot;jormungandr&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_logging_.html">&quot;logging&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_service_.html">&quot;service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_shelley_.html">&quot;shelley&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_index_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_index_.launcher.html" class="tsd-kind-icon">Launcher</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.api.html" class="tsd-kind-icon">Api</a>
+						<a href="_logging_.logfunc.html" class="tsd-kind-icon">Log<wbr>Func</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.genesisblockfile.html" class="tsd-kind-icon">Genesis<wbr>Block<wbr>File</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_logging_.logger.html" class="tsd-kind-icon">Logger</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.genesisblockfile.html#filename" class="tsd-kind-icon">filename</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_logging_.logger.html#debug" class="tsd-kind-icon">debug</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.genesisblockfile.html#kind" class="tsd-kind-icon">kind</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_logging_.logger.html#error" class="tsd-kind-icon">error</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_logging_.logger.html#info" class="tsd-kind-icon">info</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.genesishash.html" class="tsd-kind-icon">Genesis<wbr>Hash</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.logfunc.html" class="tsd-kind-icon">Log<wbr>Func</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.logger.html" class="tsd-kind-icon">Logger</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.service.html" class="tsd-kind-icon">Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.shelleynodeconfig.html" class="tsd-kind-icon">Shelley<wbr>Node<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#pid" class="tsd-kind-icon">Pid</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#launchwalletbackend" class="tsd-kind-icon">launch<wbr>Wallet<wbr>Backend</a>
+						<a href="../modules/_logging_.html#prependname" class="tsd-kind-icon">prepend<wbr>Name</a>
 					</li>
 				</ul>
 			</nav>

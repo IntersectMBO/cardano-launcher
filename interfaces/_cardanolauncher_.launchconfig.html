@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ShelleyNodeConfig | cardano-launcher</title>
+	<title>LaunchConfig | cardano-launcher</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_index_.html">&quot;index&quot;</a>
+					<a href="../modules/_cardanolauncher_.html">&quot;cardanoLauncher&quot;</a>
 				</li>
 				<li>
-					<a href="_index_.shelleynodeconfig.html">ShelleyNodeConfig</a>
+					<a href="_cardanolauncher_.launchconfig.html">LaunchConfig</a>
 				</li>
 			</ul>
-			<h1>Interface ShelleyNodeConfig</h1>
+			<h1>Interface LaunchConfig</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Configuration parameters for starting the node.</p>
+						<p>Configuration parameters for starting the wallet backend and node.</p>
 					</div>
 				</div>
 			</section>
@@ -78,7 +78,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ShelleyNodeConfig</span>
+						<span class="target">LaunchConfig</span>
 					</li>
 				</ul>
 			</section>
@@ -89,10 +89,11 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.shelleynodeconfig.html#extraargs" class="tsd-kind-icon">extra<wbr>Args</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.shelleynodeconfig.html#extraconfig" class="tsd-kind-icon">extra<wbr>Config</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.shelleynodeconfig.html#genesis" class="tsd-kind-icon">genesis</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_index_.shelleynodeconfig.html#socketfilename" class="tsd-kind-icon">socket<wbr>File<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_cardanolauncher_.launchconfig.html#apiport" class="tsd-kind-icon">api<wbr>Port</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_cardanolauncher_.launchconfig.html#listenaddress" class="tsd-kind-icon">listen<wbr>Address</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_cardanolauncher_.launchconfig.html#networkname" class="tsd-kind-icon">network<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_cardanolauncher_.launchconfig.html#nodeconfig" class="tsd-kind-icon">node<wbr>Config</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_cardanolauncher_.launchconfig.html#statedir" class="tsd-kind-icon">state<wbr>Dir</a></li>
 							</ul>
 						</section>
 					</div>
@@ -101,63 +102,82 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="extraargs" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> extra<wbr>Args</h3>
-					<div class="tsd-signature tsd-kind-icon">extra<wbr>Args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="apiport" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> api<wbr>Port</h3>
+					<div class="tsd-signature tsd-kind-icon">api<wbr>Port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L64">index.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L50">cardanoLauncher.ts:50</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Extra arguments to add to the <code>cardano-node</code> command line.</p>
+							<p>TCP port to use for the <code>cardano-wallet</code> API server.
+							The default is to select any free port.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="extraconfig" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> extra<wbr>Config</h3>
-					<div class="tsd-signature tsd-kind-icon">extra<wbr>Config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<a name="listenaddress" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> listen<wbr>Address</h3>
+					<div class="tsd-signature tsd-kind-icon">listen<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L59">index.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L57">cardanoLauncher.ts:57</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Contents of the <code>cardano-node</code> config file.</p>
+							<p>IP address or hostname to bind the <code>cardano-wallet</code> API server
+								to. Can be an IPv[46] address, hostname, or &#39;*&#39;. Defaults to
+							127.0.0.1.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="genesis" class="tsd-anchor"></a>
-					<h3>genesis</h3>
-					<div class="tsd-signature tsd-kind-icon">genesis<span class="tsd-signature-symbol">:</span> <a href="_index_.genesishash.html" class="tsd-signature-type">GenesisHash</a><span class="tsd-signature-symbol"> | </span><a href="_index_.genesisblockfile.html" class="tsd-signature-type">GenesisBlockFile</a></div>
+					<a name="networkname" class="tsd-anchor"></a>
+					<h3>network<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">network<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L49">index.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L44">cardanoLauncher.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Network parameters. To be determined.</p>
+							<p>Label for the network that will connected. This is used in the
+							state directory path name.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="socketfilename" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> socket<wbr>File<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">socket<wbr>File<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="nodeconfig" class="tsd-anchor"></a>
+					<h3>node<wbr>Config</h3>
+					<div class="tsd-signature tsd-kind-icon">node<wbr>Config<span class="tsd-signature-symbol">:</span> <a href="_byron_.byronnodeconfig.html" class="tsd-signature-type">ByronNodeConfig</a><span class="tsd-signature-symbol"> | </span><a href="_shelley_.shelleynodeconfig.html" class="tsd-signature-type">ShelleyNodeConfig</a><span class="tsd-signature-symbol"> | </span><a href="_jormungandr_.jormungandrconfig.html" class="tsd-signature-type">JormungandrConfig</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/a775934/src/index.ts#L54">index.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L68">cardanoLauncher.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>File to use for communicating with the node.
-							Defaults to a filename within the state directory.</p>
+							<p>Configuration for starting <code>cardano-node</code>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="statedir" class="tsd-anchor"></a>
+					<h3>state<wbr>Dir</h3>
+					<div class="tsd-signature tsd-kind-icon">state<wbr>Dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L63">cardanoLauncher.ts:63</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Directory to store wallet databases, the blockchain, socket
+							files, etc.</p>
 						</div>
 					</div>
 				</section>
@@ -169,75 +189,102 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_byron_.html">&quot;byron&quot;</a>
+					</li>
 					<li class="current tsd-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_cli_.html">&quot;cli&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_common_.html">&quot;common&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_jormungandr_.html">&quot;jormungandr&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_logging_.html">&quot;logging&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_service_.html">&quot;service&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_shelley_.html">&quot;shelley&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_index_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
+					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html#serviceexitstatus" class="tsd-kind-icon">Service<wbr>Exit<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_index_.launcher.html" class="tsd-kind-icon">Launcher</a>
+						<a href="../classes/_cardanolauncher_.launcher.html" class="tsd-kind-icon">Launcher</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_cardanolauncher_.v2api.html" class="tsd-kind-icon">V2<wbr>Api</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.api.html" class="tsd-kind-icon">Api</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.genesisblockfile.html" class="tsd-kind-icon">Genesis<wbr>Block<wbr>File</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.genesishash.html" class="tsd-kind-icon">Genesis<wbr>Hash</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.logfunc.html" class="tsd-kind-icon">Log<wbr>Func</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.logger.html" class="tsd-kind-icon">Logger</a>
+						<a href="_cardanolauncher_.api.html" class="tsd-kind-icon">Api</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.service.html" class="tsd-kind-icon">Service</a>
+						<a href="_cardanolauncher_.exitstatus.html" class="tsd-kind-icon">Exit<wbr>Status</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_index_.shelleynodeconfig.html" class="tsd-kind-icon">Shelley<wbr>Node<wbr>Config</a>
+						<a href="_cardanolauncher_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.shelleynodeconfig.html#extraargs" class="tsd-kind-icon">extra<wbr>Args</a>
+								<a href="_cardanolauncher_.launchconfig.html#apiport" class="tsd-kind-icon">api<wbr>Port</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.shelleynodeconfig.html#extraconfig" class="tsd-kind-icon">extra<wbr>Config</a>
+								<a href="_cardanolauncher_.launchconfig.html#listenaddress" class="tsd-kind-icon">listen<wbr>Address</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.shelleynodeconfig.html#genesis" class="tsd-kind-icon">genesis</a>
+								<a href="_cardanolauncher_.launchconfig.html#networkname" class="tsd-kind-icon">network<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_index_.shelleynodeconfig.html#socketfilename" class="tsd-kind-icon">socket<wbr>File<wbr>Name</a>
+								<a href="_cardanolauncher_.launchconfig.html#nodeconfig" class="tsd-kind-icon">node<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_cardanolauncher_.launchconfig.html#statedir" class="tsd-kind-icon">state<wbr>Dir</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_cardanolauncher_.requestparams.html" class="tsd-kind-icon">Request<wbr>Params</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_index_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a>
+						<a href="_cardanolauncher_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#pid" class="tsd-kind-icon">Pid</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_cardanolauncher_.walletstartservice.html" class="tsd-kind-icon">Wallet<wbr>Start<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_index_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
+						<a href="../modules/_cardanolauncher_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_index_.html#launchwalletbackend" class="tsd-kind-icon">launch<wbr>Wallet<wbr>Backend</a>
+						<a href="../modules/_cardanolauncher_.html#launchwalletbackend" class="tsd-kind-icon">launch<wbr>Wallet<wbr>Backend</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanolauncher_.html#makeservicecommands" class="tsd-kind-icon">make<wbr>Service<wbr>Commands</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanolauncher_.html#nodeexe" class="tsd-kind-icon">node<wbr>Exe</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanolauncher_.html#walletexe" class="tsd-kind-icon">wallet<wbr>Exe</a>
 					</li>
 				</ul>
 			</nav>
