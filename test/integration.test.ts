@@ -1,13 +1,16 @@
 import { launchWalletBackend, ServiceStatus, Api } from '../src';
 
 import * as http from "http";
+import * as os from "os";
+import * as path from "path";
 
 describe('Starting cardano-wallet (and its node)', () => {
-  it('works', async () => {
+  it('jormungandr works', async () => {
+    let stateDir = path.join(os.tmpdir(), "launcher-integration-test");
     let launcher = launchWalletBackend({
-      stateDir: "/tmp/test-state-dir",
+      stateDir,
       nodeConfig: {
-        genesis: { kind: "hash", hash: "yolo" }
+        genesis: { hash: "yolo" }
       }
     });
 
@@ -30,7 +33,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     console.log("started", api);
 
     const info = await new Promise(resolve => {
-      http.request(api.makeRequest("network/information"), res => {
+      http.request(makeRequest(api, "network/information"), res => {
         res.on('data', d => resolve(d));
       });
     });
@@ -50,3 +53,18 @@ describe('Selects a free port for the API server', () => {
 
 describe('Receives events when the node is started/stopped', () => {
 });
+
+
+
+/**
+ * Sets up the parameters for `http.request` for this Api.
+ *
+ * @param path - the api route (without leading slash)
+ * @param options - extra options to be added to the request.
+ * @return an options object suitable for `http.request`
+ */
+function makeRequest(api: Api, path: string, options?: object): object {
+  return Object.assign({}, api.requestParams, {
+    path: api.requestParams.path + path,
+  }, options);
+}

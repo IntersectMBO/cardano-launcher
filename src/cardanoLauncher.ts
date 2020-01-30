@@ -79,7 +79,8 @@ export class Launcher {
   constructor(config: LaunchConfig, logger: Logger) {
     logger.debug("Launcher init");
     this.logger = logger;
-    let start = makeServiceCommands(config)
+
+    const start = makeServiceCommands(config)
     this.walletService = startService(start.wallet, prependName(logger, "wallet"));
     this.nodeService = startService(start.node, prependName(logger, "node"));
 
@@ -157,6 +158,12 @@ export class Launcher {
   }
 }
 
+interface RequestParams {
+  port: number;
+  path: string;
+  hostname: string;
+};
+
 /**
  * Connection parameters for the `cardano-wallet` API.
  * These should be used to build the HTTP requests.
@@ -168,36 +175,24 @@ export interface Api {
   baseUrl: string;
 
   /**
-   * Extra options that should be added to the request with
-   * `Object.assign`.
+   * URL components which can be used with the HTTP client library of
+   * your choice.
    */
-  requestParams: { [propName: string]: any; };
-
-  /**
-   * Sets up the parameters for `http.request` for this Api.
-   *
-   * @param path - the api route (without leading slash)
-   * @param options - extra options to be added to the request.
-   * @return an options object suitable for `http.request`
-   */
-  makeRequest(path: string, options?: object): object;
+  requestParams: RequestParams;
 }
 
 class V2Api implements Api {
+  /** URL of the API, including a trailling slash. */
   readonly baseUrl: string;
-  readonly requestParams: { [propName: string]: any; };
+  /** URL components which can be used with the HTTP client library of
+   * your choice. */
+  readonly requestParams: RequestParams;
 
   constructor(port: number) {
     let hostname = "127.0.0.1";
     let path = "/v2/";
     this.baseUrl = `http://${hostname}:${port}${path}`;
-    this.requestParams ={  port, path, hostname };
-  }
-
-  makeRequest(path: string, options = {}): object {
-    return Object.assign({}, this.requestParams, {
-      path: this.requestParams.path + path,
-    }, options);
+    this.requestParams = { port, path, hostname };
   }
 }
 
