@@ -1,11 +1,12 @@
-import { startService, Service, ServiceStatus, ServiceExitStatus, Logger, LogFunc } from '../src/cardanoLauncher';
+import { startService, StartService, Service, ServiceStatus, ServiceExitStatus } from '../src/service';
+import { Logger, LogFunc } from '../src/logging';
 
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
 
 describe('startService', () => {
   it('starting simple command', async () => {
-    let service = startService({ command: "echo", args: ["test echo"] });
+    let service = startService(testService("echo", ["test echo"]));
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
     service.start();
@@ -21,10 +22,10 @@ describe('startService', () => {
   });
 
   it('stopping a command', async () => {
-    let service = startService({ command: "cat", args: [] });
+    let service = startService(testService("cat",  []));
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
-    let pid = service.start();
+    let pid = await service.start();
     let result = await service.stop(2);
     // process should not exist
     expect(() => process.kill(pid, 0)).toThrow();
@@ -33,13 +34,13 @@ describe('startService', () => {
   });
 
   it('stopping a command (timeout)', async () => {
-    let service = startService({ command: "sleep", args: ["4"] });
-    let pid = service.start();
+    let service = startService(testService("sleep",  ["4"]));
+    let pid = await service.start();
     let result = await service.stop(2);
     // process should not exist
     expect(() => process.kill(pid, 0)).toThrow();
     // exited with signal
-    expect(result).toEqual({ exe: "sleep", code: null, signal: "SIGTERM", err: null });
+    expect(result).toEqual({ exe: "sleep", code: null, signal: "SIGKILL", err: null });
   });
 
   xit('stopping a command (parent process exits)', () => {
@@ -47,13 +48,13 @@ describe('startService', () => {
   });
 
   it('command was killed', () => {
-    let service = startService({ command: "sleep", args: ["10"] });
+    let service = startService(testService("sleep",  ["10"]));
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
-    let pid = service.start();
+    let pidP = service.start();
     return new Promise(done => {
       setTimeout(() => {
-        process.kill(pid);
+        pidP.then(pid => process.kill(pid));
       }, 1000);
       service.events.on("statusChanged", status => {
         if (status === ServiceStatus.Stopped) {
@@ -70,10 +71,10 @@ describe('startService', () => {
   }, longTestTimeoutMs);
 
   it('start is idempotent', async () => {
-    let service = startService({ command: "cat", args: [] });
+    let service = startService(testService("cat",  []));
     let events = collectEvents(service);
-    let pid1 = service.start();
-    let pid2 = service.start();
+    let pid1 = await service.start();
+    let pid2 = await service.start();
     await service.stop(2);
     // should have only started once
     expect(pid1).toBe(pid2);
@@ -84,9 +85,9 @@ describe('startService', () => {
   });
 
   it('stop is idempotent', async () => {
-    let service = startService({ command: "cat", args: [] });
+    let service = startService(testService("cat",  []));
     let events = collectEvents(service);
-    let pid = service.start();
+    let pid = await service.start();
     let result1 = await service.stop(2);
     let result2 = await service.stop(2);
     // same result
@@ -100,26 +101,28 @@ describe('startService', () => {
   });
 
   it('stopping an already stopped command', done => {
-    let service = startService({ command: "echo", args: ["hello from tests"] });
+    let service = startService(testService("echo",  ["hello from tests"]));
     let events = collectEvents(service);
-    let pid = service.start();
+    let pidP = service.start();
     setTimeout(() => {
       // should have exited after 1 second
-      expectProcessToBeGone(pid);
-      // stop what's already stopped
-      service.stop(2).then(result => {
-        // check collected status
-        expect(result).toEqual({ exe: "echo", code: 0, signal: null, err: null });
-        // sequence of events doesn't include Stopping
-        expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
-        done();
+      pidP.then(pid => {
+        expectProcessToBeGone(pid);
+        // stop what's already stopped
+        service.stop(2).then(result => {
+          // check collected status
+          expect(result).toEqual({ exe: "echo", code: 0, signal: null, err: null });
+          // sequence of events doesn't include Stopping
+          expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+          done();
+        });
       });
     }, 1000);
   });
 
   it('starting a bogus command', async () => {
     let logger = mockLogger(true);
-    let service = startService({ command: "xyzzy", args: [] }, logger);
+    let service = startService(testService("xyzzy", []), logger);
     let events = collectEvents(service);
     service.start();
     let result = await service.waitForExit();
@@ -134,6 +137,11 @@ describe('startService', () => {
 /*******************************************************************************
  * Utils
  ******************************************************************************/
+
+/** Construct a promise to a service command. */
+function testService(command: string, args: string[]): Promise<StartService> {
+  return new Promise(resolve => resolve({ command, args, supportsCleanShutdown: true }));
+}
 
 /**
  * Expect the given process ID to not exist.
