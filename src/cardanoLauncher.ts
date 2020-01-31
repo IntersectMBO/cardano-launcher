@@ -8,6 +8,7 @@
 
 import path from 'path';
 import fs from 'fs';
+import process from 'process';
 
 import _ from "lodash";
 import { EventEmitter } from 'tsee';
@@ -22,7 +23,7 @@ import * as byron from './byron';
 import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
 
-export { ServiceExitStatus,  serviceExitStatusMessage } from './service';
+export { ServiceStatus, ServiceExitStatus, serviceExitStatusMessage, Service } from './service';
 
 /**
  * Configuration parameters for starting the wallet backend and node.
@@ -144,6 +145,8 @@ export class Launcher {
         this.stop();
       }
     });
+
+    this.installSignalHandlers();
   }
 
   /**
@@ -210,6 +213,19 @@ export class Launcher {
       this.walletBackend.events.emit("exit", status);
       return status;
     });
+  }
+
+  /**
+   * Stop services when this process gets killed.
+   */
+  private installSignalHandlers(): void {
+    const cleanup = (signal: string) => {
+      this.logger.info(`Received ${signal} - stopping services...`);
+      this.walletService.stop();
+      this.nodeService.stop();
+    };
+    ["SIGINT", "SIGTERM", "SIGHUP", "SIGBREAK"]
+      .forEach((signal: string) => process.on(<any>signal, cleanup));
   }
 }
 
