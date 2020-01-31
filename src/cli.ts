@@ -8,9 +8,12 @@
  * @packageDocumentation
  */
 
-import * as _ from "lodash";
+import _ from "lodash";
 
-import { launchWalletBackend, ExitStatus, ServiceExitStatus } from './cardanoLauncher';
+import { Launcher, ExitStatus, ServiceExitStatus, serviceExitStatusMessage } from './cardanoLauncher';
+
+import * as byron from './byron';
+import * as jormungandr from './jormungandr';
 
 function combineStatus(statuses: ServiceExitStatus[]): number {
   let code = _.reduce(statuses, (res: number|null, status) => res === null ? status.code : res, null);
@@ -23,25 +26,69 @@ function combineStatus(statuses: ServiceExitStatus[]): number {
 /**
  * Main function of the CLI.
  *
- * This is not implemented yet.
+ * Is just a very basic interface for testing things.
  */
 export function cli(args: string[]) {
   const waitForExit = setInterval(function() {}, 3600000);
-  console.log(args);
 
-  let launcher = launchWalletBackend({
-    stateDir: "/tmp/test-state-dir",
-    nodeConfig: {
-      kind: "jormungandr",
-      genesis: { kind: "hash", hash: "yolo" }
+  args.shift(); // /usr/bin/node
+  args.shift(); // cardano-launcher
+
+  if (args.length < 4) {
+    usage();
+  }
+
+  const backend = <string>args.shift();
+  const networkName = <string>args.shift();
+  const configurationDir = <string>args.shift();
+  const stateDir = <string>args.shift();
+
+  let nodeConfig: any;
+
+  if (backend === "byron") {
+    if (!(networkName in byron.networks)) {
+      console.error(`unknown network: ${networkName}`);
+      process.exit(2);
     }
-  });
+    const network = byron.networks[networkName];
+    nodeConfig = {
+      kind: backend,
+      configurationDir,
+      network,
+    };
+
+  } else if (backend === "jormungandr") {
+    if (!(networkName in jormungandr.networks)) {
+      console.error(`unknown network: ${networkName}`);
+      process.exit(2);
+    }
+    const network = jormungandr.networks[networkName];
+    nodeConfig = {
+      kind: backend,
+      configurationDir,
+      network,
+    };
+  } else {
+    usage();
+  }
+
+  const launcher = new Launcher({ stateDir, nodeConfig, networkName }, console);
+
   launcher.start();
 
   launcher.walletBackend.events.on("exit", (status: ExitStatus) => {
-    console.log(`${status.wallet.exe} exited with status ${status.wallet.code}`);
-    console.log(`${status.node.exe} exited with status ${status.node.code}`);
+    console.log(serviceExitStatusMessage(status.wallet));
+    console.log(serviceExitStatusMessage(status.node));
     clearInterval(waitForExit);
     process.exit(combineStatus([status.wallet, status.node]));
   });
+}
+
+function usage() {
+  console.log("usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR");
+  console.log("  BACKEND    - either jormungandr or byron");
+  console.log("  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1");
+  console.log("  CONFIG-DIR - directory which contains config files for a backend");
+  console.log("  STATE-DIR  - directory to put blockchains, databases, etc.");
+  process.exit(1);
 }

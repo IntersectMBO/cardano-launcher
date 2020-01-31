@@ -4,15 +4,14 @@
  * @packageDocumentation
  */
 
-import { StartService } from './service';
+import path from 'path';
+import getPort from "get-port";
 
-/** Type alias to indicate the path of a file. */
-export type FilePath = string;
-/** Type alias to indicate the path of a directory. */
-export type DirPath = string;
+import { StartService } from './service';
+import { FilePath, DirPath } from './common';
 
 /** Predefined networks. */
-export const byronNetworks: { [propName: string]: ByronNetwork; }  = {
+export const networks: { [propName: string]: ByronNetwork; }  = {
   mainnet: {
     configFile: "configuration-mainnet.yaml",
     genesisFile: "mainnet-genesis.json",
@@ -39,15 +38,17 @@ export interface ByronNodeConfig {
   kind: "byron";
 
   /** Directory containing configurations for all networks. */
-  configurationsDir: DirPath;
+  configurationDir: DirPath;
 
-  networkName: string;
+  /** Network parameters */
   network: ByronNetwork;
 
   /**
-   * Contents of the `cardano-node` config file.
+   * Directory which will contain a socket file to use for
+   * communicating with the node. Optional -- will be set
+   * automatically if not provided.
    */
-  extraConfig?: { [propName: string]: any; };
+  socketDir?: DirPath;
 }
 
 /**
@@ -103,20 +104,26 @@ export interface ByronNodeArgs {
   extra?: string[];
 }
 
-
-function makeArgs(stateDir: DirPath, config: ByronNodeConfig): ByronNodeArgs {
+/**
+ * Convert a [[ByronNodeConfig]] into command-line arguments
+ * ([[ByronNodeArgs]]) for `cardano-node`.
+ */
+function makeArgs(stateDir: DirPath, config: ByronNodeConfig, listenPort: number): ByronNodeArgs {
+  if (!config.socketDir) {
+    config.socketDir = "sockets"; // relative to working directory
+  }
   return {
-    socketDir: `${stateDir}/sockets`,
-    topologyFile: `${config.configurationsDir}/${config.network.topologyFile}`,
-    databaseDir: `${stateDir}/chain`,
+    socketDir: config.socketDir,
+    topologyFile: path.join(config.configurationDir, config.network.topologyFile),
+    databaseDir: "chain", // relative to working directory
     genesis: {
-      file: `${config.configurationsDir}/${config.network.genesisFile}`,
-      hash: `${config.configurationsDir}/${config.network.genesisHash}`,
+      file: path.join(config.configurationDir, config.network.genesisFile),
+      hash: config.network.genesisHash,
     },
     listen: {
-      port: 9000, // fixme: hardcoded
+      port: listenPort,
     },
-    configFile: `${config.configurationsDir}/${config.network.configFile}`,
+    configFile: path.join(config.configurationDir, config.network.configFile),
   };
 }
 
@@ -127,8 +134,9 @@ function makeArgs(stateDir: DirPath, config: ByronNodeConfig): ByronNodeArgs {
  * @param config - parameters for starting the node.
  * @return the command-line for starting this node.
  */
-export function startByronNode(stateDir: DirPath, config: ByronNodeConfig): StartService {
-  const args = makeArgs(stateDir, config);
+export async function startByronNode(stateDir: DirPath, config: ByronNodeConfig): Promise<StartService> {
+  const listenPort = await getPort();
+  const args = makeArgs(stateDir, config, listenPort);
   return {
     command: "cardano-node",
     args: [
@@ -145,5 +153,8 @@ export function startByronNode(stateDir: DirPath, config: ByronNodeConfig): Star
       .concat(args.signingKey ? ["--signing-key", args.signingKey] : [])
       .concat(args.delegationCertificate ? ["--delegation-certificate", args.delegationCertificate] : [])
       .concat(args.extra || []),
+    supportsCleanShutdown: false,
+    // set working directory to stateDir -- config file may have relative paths for logs.
+    cwd: stateDir,
   };
 }

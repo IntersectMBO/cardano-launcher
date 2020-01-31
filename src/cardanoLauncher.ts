@@ -1,41 +1,33 @@
 /**
  * Module for starting and managing a Cardano node and wallet backend.
  *
+ * The main class is [[Launcher]].
+ *
  * @packageDocumentation
  */
 
+import path from 'path';
+import fs from 'fs';
+
+import _ from "lodash";
 import { EventEmitter } from 'tsee';
+import getPort from "get-port";
+import waitOn from "wait-on";
 
 import { Logger, prependName } from './logging';
-import { Service, ServiceExitStatus, ServiceStatus, StartService, startService } from './service';
-
-export { ServiceExitStatus } from './service';
+import { Service, ServiceExitStatus, ServiceStatus, StartService, setupService, serviceExitStatusMessage } from './service';
+import { DirPath } from './common';
 
 import * as byron from './byron';
 import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
 
-/**
- * Starts the wallet backend.
- *
- * @param config - controls how the wallet and node are started
- * @param logger - logging backend that launcher will use
- * @returns an object that can be used to access the wallet backend
- */
-export function launchWalletBackend(config: LaunchConfig, logger: Logger = console): Launcher {
-  return new Launcher(config, logger);
-}
+export { ServiceExitStatus,  serviceExitStatusMessage } from './service';
 
 /**
  * Configuration parameters for starting the wallet backend and node.
  */
 interface LaunchConfig {
-  /**
-   * TCP port to use for the `cardano-wallet` API server.
-   * The default is to select any free port.
-   */
-  apiPort?: number;
-
   /**
    * Directory to store wallet databases, the blockchain, socket
    * files, etc.
@@ -43,13 +35,57 @@ interface LaunchConfig {
   stateDir: string;
 
   /**
-   * Configuration for starting `cardano-node`.
+   * Label for the network that will connected. This is used in the
+   * state directory path name.
+   */
+  networkName: string;
+
+  /**
+   * TCP port to use for the `cardano-wallet` API server.
+   * The default is to select any free port.
+   */
+  apiPort?: number;
+
+  /**
+   * IP address or hostname to bind the `cardano-wallet` API server
+   * to. Can be an IPv[46] address, hostname, or `'*'`. Defaults to
+   * 127.0.0.1.
+   */
+  listenAddress?: string;
+
+  /**
+   * Configuration for starting `cardano-node`. The `kind` property will be one of
+   *  * `"byron"` - [[ByronNodeConfig]]
+   *  * `"shelley"` - [[ShelleyNodeConfig]]
+   *  * `"jormungandr"` - [[JormungandrConfig]]
    */
   nodeConfig: byron.ByronNodeConfig|shelley.ShelleyNodeConfig|jormungandr.JormungandrConfig;
 }
 
 /**
- * This is the main object which controls the launched wallet backend and its node.
+ * This is the main object which controls the launched wallet backend
+ * and its node.
+ *
+ * Example:
+ *
+ * ```javascript
+ * var launcher = new cardanoLauncher.Launcher({
+ *   networkName: "mainnet",
+ *   stateDir: "/tmp/state-launcher",
+ *   nodeConfig: {
+ *     kind: "byron",
+ *     configurationDir: "/home/user/cardano-node/configuration",
+ *     network: {
+ *       configFile: "configuration-mainnet.yaml",
+ *       genesisFile: "mainnet-genesis.json",
+ *       genesisHash: "5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb",
+ *       topologyFile: "mainnet-topology.json"
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * Initially, the backend is not started. Use [[Launcher.start]] for that.
  */
 export class Launcher {
   /**
@@ -70,66 +106,85 @@ export class Launcher {
   /** Logging adapter */
   protected logger: Logger;
 
+  /** Wallet API server port - set once it's known. */
+  private apiPort = 0;
+
   /**
-   * Starts the wallet backend.
+   * Sets up a Launcher which can start and control the wallet backend.
    *
    * @param config - controls how the wallet and node are started
    * @param logger - logging backend that launcher will use
-   **/
-  constructor(config: LaunchConfig, logger: Logger) {
+   */
+  constructor(config: LaunchConfig, logger: Logger = console) {
     logger.debug("Launcher init");
     this.logger = logger;
 
-    const start = makeServiceCommands(config)
-    this.walletService = startService(start.wallet, prependName(logger, "wallet"));
-    this.nodeService = startService(start.node, prependName(logger, "node"));
+    const start = makeServiceCommands(config, logger)
+    this.walletService = setupService(start.wallet, prependName(logger, "wallet"));
+    this.nodeService = setupService(start.node, prependName(logger, "node"));
 
     this.walletBackend = {
-      getApi: () => new V2Api(start.apiPort),
+      getApi: () => new V2Api(this.apiPort),
       events: new EventEmitter<{
         ready: (api: Api) => void,
         exit: (status: ExitStatus) => void,
       }>(),
     };
 
-    const self = this;
-
     this.walletService.events.on("statusChanged", status => {
       if (status === ServiceStatus.Stopped) {
-        self.logger.debug("wallet exited, so stopping node");
-        self.stop();
+        this.logger.debug("wallet exited");
+        this.stop();
       }
     });
 
     this.nodeService.events.on("statusChanged", status => {
       if (status === ServiceStatus.Stopped) {
-        self.logger.debug("node exited, so stopping wallet");
-        self.stop();
+        this.logger.debug("node exited");
+        this.stop();
       }
     });
   }
 
   /**
+   * Starts the wallet and node.
+   *
+   * Example:
+   *
+   * ```javascript
+   * launcher.start().then(function(api) {
+   *   console.log("*** cardano-wallet backend is ready, base URL is " + api.baseUrl);
+   * });
+   * ```
+   *
    * @return a promise that will be fulfilled when the wallet API
    * server is ready to accept requests.
-   *
-   * @event ready - `walletBackend.events` will emit this when the API
-   *   server is ready to accept requests.
-   * @event exit - `walletBackend.events` will emit this when the
-   *   wallet and node have both exited.
-   * @event statusChanged - `walletService.events` and
-   *   `nodeService.events` will emit this when their processes start
-   *   or stop.
    */
   start(): Promise<Api> {
-    this.walletService.start();
     this.nodeService.start();
+    this.walletService.start()
 
-    // todo: poll for ready
+    this.waitForApi(this.apiPort).then(() => {
+      this.walletBackend.events.emit("ready", this.walletBackend.getApi());
+    });
 
     return new Promise((resolve, reject) => {
       this.walletBackend.events.on("ready", resolve);
       this.walletBackend.events.on("exit", reject);
+    });
+  }
+
+  /**
+   * Poll TCP port of wallet API server until it accepts connections.
+   * @param port - TCP port number
+   * @return a promise that is completed once the wallet API server accepts connections.
+   */
+  private waitForApi(port: number): Promise<void> {
+    return waitOn({
+      resources: [`tcp:127.0.0.1:${port}`],
+      delay: 10,// initial delay in ms, default 0
+      interval: 250, // poll interval in ms, default 250
+      timeout: 3600000,// timeout in ms, default Infinity
     });
   }
 
@@ -205,6 +260,13 @@ export interface ExitStatus {
 }
 
 /**
+ * Format an [[ExitStatus]] as a multiline human-readable string.
+ */
+export function exitStatusMessage(status: ExitStatus): string {
+  return _.map(status, serviceExitStatusMessage).join("\n");
+}
+
+/**
  * Represents the API service of `cardano-wallet`.
  */
 export interface WalletBackend {
@@ -228,34 +290,64 @@ export interface WalletBackend {
  * The type of events for [[WalletBackend]].
  */
 type WalletBackendEvents = EventEmitter<{
+  /**
+   * [[Launcher.walletBackend.events]] will emit this when the API
+   *  server is ready to accept requests.
+   * @event
+   */
   ready: (api: Api) => void,
+  /** [[Launcher.walletBackend.events]] will emit this when the
+   *  wallet and node have both exited.
+   * @event
+   */
   exit: (status: ExitStatus) => void,
 }>;
 
+interface WalletStartService extends StartService {
+  apiPort: number;
+};
 
-function makeServiceCommands(config: LaunchConfig): { apiPort: number, wallet: StartService, node: StartService } {
-  const apiPort = config.apiPort || 8090; // todo: find port
-  const wallet = walletExe(config, apiPort);
-  return { apiPort, wallet, node: nodeExe(config, wallet) };
+function makeServiceCommands(config: LaunchConfig, logger: Logger): { wallet: Promise<WalletStartService>, node: Promise<StartService> } {
+  const baseDir = path.join(config.stateDir, config.nodeConfig.kind, config.networkName);
+  logger.info(`Creating base directory ${baseDir} (if it doesn't already exist)`);
+  const mkBaseDir = fs.promises.mkdir(baseDir, { recursive: true })
+  const node = mkBaseDir.then(() => nodeExe(baseDir, config));
+  const wallet = node.then(nodeService => walletExe(baseDir, config, nodeService));
+  return { wallet, node };
 }
 
-function walletExe(config: LaunchConfig, port: number): StartService {
+async function walletExe(baseDir: DirPath, config: LaunchConfig, node: StartService): Promise<WalletStartService> {
+  const apiPort = config.apiPort || await getPort();
+  const base: WalletStartService = {
+    command: `cardano-wallet-${config.nodeConfig.kind}`,
+    args: ["serve", "--port", "" + apiPort, "--database", path.join(baseDir, "wallet")]
+      .concat(config.listenAddress ? ["--listen-address", config.listenAddress] : []),
+    supportsCleanShutdown: true,
+    apiPort,
+  };
+  const addArgs = (args: string[]): WalletStartService =>
+     _.assign(base, { args: base.args.concat(args) });
+
   switch (config.nodeConfig.kind) {
-    case "jormungandr": return { command: "cardano-wallet-jormungandr", args: [`--port=${port}`] };
-    case "byron": return { command: "cardano-wallet-byron", args: [`--port=${port}`] };
-    case "shelley": return { command: "cardano-wallet-jormungandr", args: [`--port=${port}`] };
+    case "jormungandr":
+      return addArgs([
+        "--genesis-block-hash", config.nodeConfig.network.genesisBlock.hash,
+        "--node-port", "" + config.nodeConfig.restPort
+      ]);
+    case "byron":
+      return addArgs(config.nodeConfig.socketDir ? ["--node-socket", config.nodeConfig.socketDir] : []);
+    case "shelley":
+      return base;
   }
 }
 
-function nodeExe(config: LaunchConfig, wallet: StartService): StartService {
+function nodeExe(baseDir: DirPath, config: LaunchConfig): Promise<StartService> {
   switch (config.nodeConfig.kind) {
     case "jormungandr":
-      return jormungandr.startJormungandr(config.nodeConfig);
+      return jormungandr.startJormungandr(baseDir, config.nodeConfig);
     case "byron":
-      // fixme: path manipulations not compatible with windows.
-      const base = `${config.stateDir}/${config.nodeConfig.kind}/${config.nodeConfig.networkName}`;
-      return byron.startByronNode(base, config.nodeConfig);
+      return byron.startByronNode(baseDir, config.nodeConfig);
     case "shelley":
-       return shelley.startShelleyNode(config.nodeConfig);
+      return shelley.startShelleyNode(config.nodeConfig);
   }
 }
