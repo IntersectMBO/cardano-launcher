@@ -9,17 +9,15 @@ Its primary user is
 [Daedalus](https://github.com/input-output-hk/daedalus); however it
 could be used by any Javascript application.
 
+## Documentation
 
-## Work In Progress
+See the generated API docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
 
-This is a draft of the API for [ADP-92](https://jira.iohk.io/browse/ADP-92).
-
-See the generated docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
-
+See [docs/example.js](./docs/example.js) for example code.
 
 ## Component diagram
 
-![Component diagram](./docs/component-diagram.svg)
+![Component diagram](./docs/component-diagram.png)
 
 ## Message sequence diagram - launch
 
@@ -72,6 +70,9 @@ In future, the `cardano-node` version may be defined by
 `cardano-wallet`, is it is for `jormungandr`.
 
 ## Design docs
+
+ * [ADP-92](https://jira.iohk.io/browse/ADP-92) - Jira ticket
+   containing user stories and task acceptance criteria.
 
  * [`update-system-byron.md`](./docs/update-system-byron.md) -
    Overview of how the update system works in the old codebase (Byron

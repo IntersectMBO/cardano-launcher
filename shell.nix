@@ -7,7 +7,7 @@ mkShell {
     # javascript
     nodePackages.npm
     # documentation tools
-    pandoc mscgen gnumake
+    pandoc mscgen librsvg gnumake
     # util to update nixpkgs pins
     niv.niv
     # cardano jormungandr
