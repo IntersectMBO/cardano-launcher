@@ -1,5 +1,5 @@
-import { setupService, StartService, Service, ServiceStatus, ServiceExitStatus } from '../src/service';
-import { Logger, LogFunc } from '../src/logging';
+import { setupService, ServiceStatus, ServiceExitStatus } from '../src/service';
+import { testService, collectEvents, expectProcessToBeGone, mockLogger } from './utils';
 
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
@@ -14,7 +14,7 @@ describe('setupService', () => {
     return new Promise(done => {
       service.events.on("statusChanged", status => {
         if (status === ServiceStatus.Stopped) {
-          expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+          expect(events).toEqual([ServiceStatus.Starting, ServiceStatus.Started, ServiceStatus.Stopped]);
         }
         done();
       });
@@ -54,14 +54,14 @@ describe('setupService', () => {
       }, 1000);
       service.events.on("statusChanged", status => {
         if (status === ServiceStatus.Stopped) {
-          expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+          expect(events).toEqual([ServiceStatus.Starting, ServiceStatus.Started, ServiceStatus.Stopped]);
+          service.stop().then((status: ServiceExitStatus) => {
+            expect(status.code).toBeNull();
+            expect(status.signal).toBe("SIGTERM");
+            expect(status.exe).toBe("sleep");
+            done();
+          });
         }
-        service.stop().then((status: ServiceExitStatus) => {
-          expect(status.code).toBeNull();
-          expect(status.signal).toBe("SIGTERM");
-          expect(status.exe).toBe("sleep");
-          done();
-        });
       });
     });
   }, longTestTimeoutMs);
@@ -77,7 +77,7 @@ describe('setupService', () => {
     // process should not exist
     expectProcessToBeGone(pid1);
     // events fire only once
-    expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopping, ServiceStatus.Stopped]);
+    expect(events).toEqual([ServiceStatus.Starting, ServiceStatus.Started, ServiceStatus.Stopping, ServiceStatus.Stopped]);
   });
 
   it('stop is idempotent', async () => {
@@ -93,7 +93,7 @@ describe('setupService', () => {
     // cat command exits normally
     expect(result1).toEqual({ exe: "cat", code: 0, signal: null, err: null });
     // events fire only once
-    expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopping, ServiceStatus.Stopped]);
+    expect(events).toEqual([ServiceStatus.Starting, ServiceStatus.Started, ServiceStatus.Stopping, ServiceStatus.Stopped]);
   });
 
   it('stopping an already stopped command', done => {
@@ -109,7 +109,7 @@ describe('setupService', () => {
           // check collected status
           expect(result).toEqual({ exe: "echo", code: 0, signal: null, err: null });
           // sequence of events doesn't include Stopping
-          expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+          expect(events).toEqual([ServiceStatus.Starting, ServiceStatus.Started, ServiceStatus.Stopped]);
           done();
         });
       });
@@ -120,12 +120,12 @@ describe('setupService', () => {
     let logger = mockLogger(true);
     let service = setupService(testService("xyzzy", []), logger);
     let events = collectEvents(service);
-    service.start();
+    await service.start();
     let result = await service.waitForExit();
     expect(result.err ? result.err.toString() : null).toBe("Error: spawn xyzzy ENOENT");
     expect(result.code).toBeNull();
     expect(result.signal).toBeNull();
-    expect(events).toEqual([ServiceStatus.Started, ServiceStatus.Stopped]);
+    expect(events).toEqual([ServiceStatus.Starting, ServiceStatus.Started, ServiceStatus.Stopped]);
     expect(logger.getLogs().filter(l => l.severity === "error").length).toBe(1);
   });
 });
