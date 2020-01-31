@@ -69,6 +69,7 @@
 					<div class="lead">
 						<p>Functions for starting and stopping an individual backend service.</p>
 					</div>
+					<p>The important function is <a href="_service_.html#setupservice">setupService</a> which creates a <a href="../interfaces/_service_.service.html">Service</a>.</p>
 				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -100,7 +101,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_service_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_service_.html#startservice-1" class="tsd-kind-icon">start<wbr>Service</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_service_.html#setupservice" class="tsd-kind-icon">setup<wbr>Service</a></li>
 							</ul>
 						</section>
 					</div>
@@ -114,7 +115,7 @@
 					<div class="tsd-signature tsd-kind-icon">Pid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/service.ts#L89">service.ts:89</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L96">service.ts:96</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -129,7 +130,7 @@
 					<div class="tsd-signature tsd-kind-icon">Service<wbr>Events<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>statusChanged<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_service_.servicestatus.html" class="tsd-signature-type">ServiceStatus</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/service.ts#L94">service.ts:94</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L101">service.ts:101</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -151,41 +152,55 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/service.ts#L24">service.ts:24</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>res: <a href="../interfaces/_service_.serviceexitstatus.html" class="tsd-signature-type">ServiceExitStatus</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
-					<a name="startservice-1" class="tsd-anchor"></a>
-					<h3>start<wbr>Service</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">start<wbr>Service<span class="tsd-signature-symbol">(</span>cfgP<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span>, logger<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/service.ts#L105">service.ts:105</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L31">service.ts:31</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Spawn a service and control its lifetime.</p>
+									<p>Produce an exit message from an exit status.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>cfgP: <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>res: <a href="../interfaces/_service_.serviceexitstatus.html" class="tsd-signature-type">ServiceExitStatus</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>exit status of service.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>a human readable exit message.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="setupservice" class="tsd-anchor"></a>
+					<h3>setup<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">setup<wbr>Service<span class="tsd-signature-symbol">(</span>cfgPromise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span>, logger<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L121">service.ts:121</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Initialise a <a href="../interfaces/_service_.service.html">Service</a> which can control the lifetime of a
+									backend process.</p>
+								</div>
+								<p>This does not start the process. Use <a href="../interfaces/_service_.service.html#start">Service.start</a> for that.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>cfgPromise: <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>a promise which will return the command to run.</p>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> logger: <a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol"> = console</span></h5>
@@ -195,7 +210,7 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></h4>
-							<p>A handle on the service.</p>
+							<p>A handle on the <a href="../interfaces/_service_.service.html">Service</a>.</p>
 						</li>
 					</ul>
 				</section>
@@ -260,7 +275,7 @@
 						<a href="_service_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="_service_.html#startservice-1" class="tsd-kind-icon">start<wbr>Service</a>
+						<a href="_service_.html#setupservice" class="tsd-kind-icon">setup<wbr>Service</a>
 					</li>
 				</ul>
 			</nav>

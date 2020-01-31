@@ -107,7 +107,7 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L50">cardanoLauncher.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/cardanoLauncher.ts#L47">cardanoLauncher.ts:47</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -123,13 +123,13 @@
 					<div class="tsd-signature tsd-kind-icon">listen<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L57">cardanoLauncher.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/cardanoLauncher.ts#L54">cardanoLauncher.ts:54</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>IP address or hostname to bind the <code>cardano-wallet</code> API server
-								to. Can be an IPv[46] address, hostname, or &#39;*&#39;. Defaults to
+								to. Can be an IPv[46] address, hostname, or <code>&#39;*&#39;</code>. Defaults to
 							127.0.0.1.</p>
 						</div>
 					</div>
@@ -140,7 +140,7 @@
 					<div class="tsd-signature tsd-kind-icon">network<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L44">cardanoLauncher.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/cardanoLauncher.ts#L41">cardanoLauncher.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -156,12 +156,17 @@
 					<div class="tsd-signature tsd-kind-icon">node<wbr>Config<span class="tsd-signature-symbol">:</span> <a href="_byron_.byronnodeconfig.html" class="tsd-signature-type">ByronNodeConfig</a><span class="tsd-signature-symbol"> | </span><a href="_shelley_.shelleynodeconfig.html" class="tsd-signature-type">ShelleyNodeConfig</a><span class="tsd-signature-symbol"> | </span><a href="_jormungandr_.jormungandrconfig.html" class="tsd-signature-type">JormungandrConfig</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L68">cardanoLauncher.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/cardanoLauncher.ts#L62">cardanoLauncher.ts:62</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Configuration for starting <code>cardano-node</code>.</p>
+							<p>Configuration for starting <code>cardano-node</code>. The <code>kind</code> property will be one of</p>
+							<ul>
+								<li><code>&quot;byron&quot;</code> - <a href="_byron_.byronnodeconfig.html">ByronNodeConfig</a></li>
+								<li><code>&quot;shelley&quot;</code> - <a href="_shelley_.shelleynodeconfig.html">ShelleyNodeConfig</a></li>
+								<li><code>&quot;jormungandr&quot;</code> - <a href="_jormungandr_.jormungandrconfig.html">JormungandrConfig</a></li>
+							</ul>
 						</div>
 					</div>
 				</section>
@@ -171,7 +176,7 @@
 					<div class="tsd-signature tsd-kind-icon">state<wbr>Dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/004f930/src/cardanoLauncher.ts#L63">cardanoLauncher.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/cardanoLauncher.ts#L35">cardanoLauncher.ts:35</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -275,7 +280,7 @@
 						<a href="../modules/_cardanolauncher_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_cardanolauncher_.html#launchwalletbackend" class="tsd-kind-icon">launch<wbr>Wallet<wbr>Backend</a>
+						<a href="../modules/_cardanolauncher_.html#exitstatusmessage" class="tsd-kind-icon">exit<wbr>Status<wbr>Message</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_cardanolauncher_.html#makeservicecommands" class="tsd-kind-icon">make<wbr>Service<wbr>Commands</a>
