@@ -221,8 +221,8 @@ export class Launcher {
   private installSignalHandlers(): void {
     const cleanup = (signal: string) => {
       this.logger.info(`Received ${signal} - stopping services...`);
-      this.walletService.stop();
-      this.nodeService.stop();
+      this.walletService.stop(0);
+      this.nodeService.stop(0);
     };
     ["SIGINT", "SIGTERM", "SIGHUP", "SIGBREAK"]
       .forEach((signal: string) => process.on(<any>signal, cleanup));

@@ -43,10 +43,6 @@ describe('setupService', () => {
     expect(result).toEqual({ exe: "sleep", code: null, signal: "SIGKILL", err: null });
   });
 
-  xit('stopping a command (parent process exits)', () => {
-    // todo run cardano-launcher cli and kill that
-  });
-
   it('command was killed', () => {
     let service = setupService(testService("sleep",  ["10"]));
     let events: ServiceStatus[] = [];
@@ -133,62 +129,3 @@ describe('setupService', () => {
     expect(logger.getLogs().filter(l => l.severity === "error").length).toBe(1);
   });
 });
-
-/*******************************************************************************
- * Utils
- ******************************************************************************/
-
-/** Construct a promise to a service command. */
-function testService(command: string, args: string[]): Promise<StartService> {
-  return new Promise(resolve => resolve({ command, args, supportsCleanShutdown: true }));
-}
-
-/**
- * Expect the given process ID to not exist.
- */
-const expectProcessToBeGone = (pid: number): void => {
-  expect(() => process.kill(pid, 0)).toThrow();
-};
-
-/**
- * @return mutable array which will contain events as they occur.
- */
-const collectEvents = (service: Service): ServiceStatus[] => {
-  let events: ServiceStatus[] = [];
-  service.events.on("statusChanged", status => events.push(status));
-  return events;
-};
-
-interface MockLog {
-  severity: "debug"|"info"|"error";
-  msg: string;
-  param: object|undefined;
-}
-
-interface MockLogger extends Logger {
-  getLogs(): MockLog[];
-}
-
-function mockLogger(echo: boolean = false): MockLogger {
-  let logs: MockLog[] = [];
-
-  const mockLog = (severity: "debug"|"info"|"error"): LogFunc => {
-    return (msg: string, param?: object) => {
-      if (echo) {
-        if (param) {
-          console[severity](msg, param);
-        } else {
-          console[severity](msg);
-        }
-      }
-      logs.push({ severity, msg, param: param || undefined })
-    };
-  };
-
-  return {
-    debug: mockLog("debug"),
-    info: mockLog("info"),
-    error: mockLog("error"),
-    getLogs: () => logs,
-  };
-}

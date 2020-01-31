@@ -43,6 +43,8 @@ export function serviceExitStatusMessage(res: ServiceExitStatus): string {
 export enum ServiceStatus {
   /** Initial state. */
   NotStarted,
+  /** Waiting for [[StartService]] info. */
+  Starting,
   /** Subprocess has been started and has a PID. */
   Started,
   /** Caller has requested to stop the process. Now waiting for it to exit, or for the timeout to elapse. */
@@ -64,6 +66,8 @@ export interface Service {
 
   /**
    * Stops the process.
+   * @param timeoutSeconds - how long to wait for the service to stop itself before killing it.
+   *   If `0`, any running timeout kill be cancelled and the process killed immediately.
    * @return a promise that will be fulfilled when the process has stopped.
    */
   stop(timeoutSeconds?: number): Promise<ServiceExitStatus>;
@@ -126,7 +130,7 @@ export function setupService(cfgPromise: Promise<StartService>, logger: Logger =
   // What the current state is.
   let status = ServiceStatus.NotStarted;
   // Fulfilled promise of service command-line.
-  // This will always be defined if status != NotStarted.
+  // This will always be defined if status > Starting.
   let cfg: StartService;
   // NodeJS child process object, or null if not running.
   let proc: ChildProcess|null = null;
@@ -134,6 +138,7 @@ export function setupService(cfgPromise: Promise<StartService>, logger: Logger =
   let exitStatus: ServiceExitStatus|null;
   // For cancelling the kill timeout.
   let killTimer: NodeJS.Timeout|null = null;
+  let startPromise: Promise<Pid>;
 
   const doStart = async () => {
     logger.info(`Service.start: trying to start ${cfg.command} ${cfg.args.join(" ")}`, cfg);
@@ -201,6 +206,7 @@ export function setupService(cfgPromise: Promise<StartService>, logger: Logger =
     const defaultExitStatus = { exe: cfg ? cfg.command : "", code: null, signal: null, err: null };
     switch (status) {
       case ServiceStatus.NotStarted:
+      case ServiceStatus.Starting:
         return new Promise(resolve => {
           status = ServiceStatus.Stopped;
           exitStatus = defaultExitStatus;
@@ -225,8 +231,15 @@ export function setupService(cfgPromise: Promise<StartService>, logger: Logger =
     start: async () => {
       switch (status) {
         case ServiceStatus.NotStarted:
-          cfg = await cfgPromise;
-          return doStart();
+          setStatus(ServiceStatus.Starting);
+          startPromise = cfgPromise.then(theCfg => {
+              cfg = theCfg;
+              return doStart();
+          });
+          return startPromise;
+        case ServiceStatus.Starting:
+          logger.info(`Service.start: already starting`);
+          return startPromise;
         case ServiceStatus.Started:
           logger.info(`Service.start: already started`);
           return proc ? proc.pid : -1;
@@ -243,11 +256,17 @@ export function setupService(cfgPromise: Promise<StartService>, logger: Logger =
         case ServiceStatus.NotStarted:
           logger.info(`Service.stop: cannot stop - never started`);
           break;
+        case ServiceStatus.Starting:
         case ServiceStatus.Started:
           doStop(timeoutSeconds);
           break;
         case ServiceStatus.Stopping:
-          logger.info(`Service.stop: already stopping`);
+          if (timeoutSeconds === 0 && proc) {
+            logger.info(`Service.stop: was already stopping, but will now kill process ${proc.pid} immediately`);
+            proc.kill("SIGKILL");
+          } else {
+            logger.info(`Service.stop: already stopping`);
+          }
           break;
         case ServiceStatus.Stopped:
           logger.info(`Service.stop: already stopped`);

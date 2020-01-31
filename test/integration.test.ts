@@ -1,14 +1,14 @@
 import { Launcher, ServiceStatus, Api } from '../src';
 
 import * as http from "http";
-import * as os from "os";
-import * as path from "path";
+import * as tmp from "tmp-promise";
 
-import * as jormungandr from './jormungandr';
+import * as jormungandr from '../src/jormungandr';
 
 describe('Starting cardano-wallet (and its node)', () => {
   it('jormungandr works', async () => {
-    let stateDir = path.join(os.tmpdir(), "launcher-integration-test");
+    // let stateDir = path.join(os.tmpdir(), "launcher-integration-test");
+    let stateDir = (await tmp.dir({ unsafeCleanup: true, prefix: "launcher-integration-test" })).path;
     let launcher = new Launcher({
       stateDir,
       networkName: "self",
