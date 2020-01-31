@@ -1,5 +1,7 @@
 # cardano-launcher Shelley
 
+[![Build status](https://badge.buildkite.com/98083d5651511146dab7911b99f20ff9b60b4f8be25298a82f.svg)](https://buildkite.com/input-output-hk/cardano-launcher)
+
 `cardano-launcher` is a Node.js module for starting
 [cardano-wallet](https://github.com/input-output-hk/cardano-wallet)
 and the Shelley
