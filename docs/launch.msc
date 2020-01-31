@@ -5,9 +5,9 @@ msc {
   |||;
 
   daedalus rbox daedalus [ label = "User runs Daedalus Frontend" ];
-  daedalus=>cardano_launcher [ label = "var wallet = launchWalletBackend(config);" ];
+  daedalus=>cardano_launcher [ label = "var wallet = new Launcher(config);" ];
 
-  cardano_launcher=>cardano_launcher [ label = "create socket file" ];
+  # cardano_launcher=>cardano_launcher [ label = "create socket file" ]; ## todo
   cardano_launcher=>cardano_launcher [ label = "find a free TCP port" ];
 
   cardano_launcher=>cardano_wallet [ label = "spawn cardano-wallet cli" ];
