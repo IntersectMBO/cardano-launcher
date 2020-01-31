@@ -5,7 +5,7 @@ with pkgs;
 mkShell {
   buildInputs = [
     # javascript
-    nodePackages.npm
+    nodejs nodePackages.npm
     # documentation tools
     pandoc mscgen librsvg gnumake
     # util to update nixpkgs pins

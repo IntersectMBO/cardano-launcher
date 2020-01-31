@@ -44,6 +44,9 @@ Alternatively, to run only unit tests:
 
     npx tsdx test unit
 
+See the [Jest command-line reference](https://jestjs.io/docs/en/cli)
+for all the options.
+
 ### `npm run typedoc`
 
 Generates API documentation to the `site` folder.
