@@ -1,12 +1,12 @@
-import { startService, StartService, Service, ServiceStatus, ServiceExitStatus } from '../src/service';
+import { setupService, StartService, Service, ServiceStatus, ServiceExitStatus } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
 
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
 
-describe('startService', () => {
+describe('setupService', () => {
   it('starting simple command', async () => {
-    let service = startService(testService("echo", ["test echo"]));
+    let service = setupService(testService("echo", ["test echo"]));
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
     service.start();
@@ -22,7 +22,7 @@ describe('startService', () => {
   });
 
   it('stopping a command', async () => {
-    let service = startService(testService("cat",  []));
+    let service = setupService(testService("cat",  []));
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
     let pid = await service.start();
@@ -34,7 +34,7 @@ describe('startService', () => {
   });
 
   it('stopping a command (timeout)', async () => {
-    let service = startService(testService("sleep",  ["4"]));
+    let service = setupService(testService("sleep",  ["4"]));
     let pid = await service.start();
     let result = await service.stop(2);
     // process should not exist
@@ -48,7 +48,7 @@ describe('startService', () => {
   });
 
   it('command was killed', () => {
-    let service = startService(testService("sleep",  ["10"]));
+    let service = setupService(testService("sleep",  ["10"]));
     let events: ServiceStatus[] = [];
     service.events.on("statusChanged", status => events.push(status));
     let pidP = service.start();
@@ -71,7 +71,7 @@ describe('startService', () => {
   }, longTestTimeoutMs);
 
   it('start is idempotent', async () => {
-    let service = startService(testService("cat",  []));
+    let service = setupService(testService("cat",  []));
     let events = collectEvents(service);
     let pid1 = await service.start();
     let pid2 = await service.start();
@@ -85,7 +85,7 @@ describe('startService', () => {
   });
 
   it('stop is idempotent', async () => {
-    let service = startService(testService("cat",  []));
+    let service = setupService(testService("cat",  []));
     let events = collectEvents(service);
     let pid = await service.start();
     let result1 = await service.stop(2);
@@ -101,7 +101,7 @@ describe('startService', () => {
   });
 
   it('stopping an already stopped command', done => {
-    let service = startService(testService("echo",  ["hello from tests"]));
+    let service = setupService(testService("echo",  ["hello from tests"]));
     let events = collectEvents(service);
     let pidP = service.start();
     setTimeout(() => {
@@ -122,7 +122,7 @@ describe('startService', () => {
 
   it('starting a bogus command', async () => {
     let logger = mockLogger(true);
-    let service = startService(testService("xyzzy", []), logger);
+    let service = setupService(testService("xyzzy", []), logger);
     let events = collectEvents(service);
     service.start();
     let result = await service.waitForExit();

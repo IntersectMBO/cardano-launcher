@@ -1,6 +1,8 @@
 /**
  * Module for starting and managing a Cardano node and wallet backend.
  *
+ * The main class is [[Launcher]].
+ *
  * @packageDocumentation
  */
 
@@ -13,7 +15,7 @@ import getPort from "get-port";
 import waitOn from "wait-on";
 
 import { Logger, prependName } from './logging';
-import { Service, ServiceExitStatus, ServiceStatus, StartService, startService } from './service';
+import { Service, ServiceExitStatus, ServiceStatus, StartService, setupService, serviceExitStatusMessage } from './service';
 import { DirPath } from './common';
 
 import * as byron from './byron';
@@ -23,20 +25,15 @@ import * as jormungandr from './jormungandr';
 export { ServiceExitStatus,  serviceExitStatusMessage } from './service';
 
 /**
- * Starts the wallet backend.
- *
- * @param config - controls how the wallet and node are started
- * @param logger - logging backend that launcher will use
- * @returns an object that can be used to access the wallet backend
- */
-export function launchWalletBackend(config: LaunchConfig, logger: Logger = console): Launcher {
-  return new Launcher(config, logger);
-}
-
-/**
  * Configuration parameters for starting the wallet backend and node.
  */
 interface LaunchConfig {
+  /**
+   * Directory to store wallet databases, the blockchain, socket
+   * files, etc.
+   */
+  stateDir: string;
+
   /**
    * Label for the network that will connected. This is used in the
    * state directory path name.
@@ -51,25 +48,44 @@ interface LaunchConfig {
 
   /**
    * IP address or hostname to bind the `cardano-wallet` API server
-   * to. Can be an IPv[46] address, hostname, or '*'. Defaults to
+   * to. Can be an IPv[46] address, hostname, or `'*'`. Defaults to
    * 127.0.0.1.
    */
   listenAddress?: string;
 
   /**
-   * Directory to store wallet databases, the blockchain, socket
-   * files, etc.
-   */
-  stateDir: string;
-
-  /**
-   * Configuration for starting `cardano-node`.
+   * Configuration for starting `cardano-node`. The `kind` property will be one of
+   *  * `"byron"` - [[ByronNodeConfig]]
+   *  * `"shelley"` - [[ShelleyNodeConfig]]
+   *  * `"jormungandr"` - [[JormungandrConfig]]
    */
   nodeConfig: byron.ByronNodeConfig|shelley.ShelleyNodeConfig|jormungandr.JormungandrConfig;
 }
 
 /**
- * This is the main object which controls the launched wallet backend and its node.
+ * This is the main object which controls the launched wallet backend
+ * and its node.
+ *
+ * Example:
+ *
+ * ```javascript
+ * var launcher = new cardanoLauncher.Launcher({
+ *   networkName: "mainnet",
+ *   stateDir: "/tmp/state-launcher",
+ *   nodeConfig: {
+ *     kind: "byron",
+ *     configurationDir: "/home/user/cardano-node/configuration",
+ *     network: {
+ *       configFile: "configuration-mainnet.yaml",
+ *       genesisFile: "mainnet-genesis.json",
+ *       genesisHash: "5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb",
+ *       topologyFile: "mainnet-topology.json"
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * Initially, the backend is not started. Use [[Launcher.start]] for that.
  */
 export class Launcher {
   /**
@@ -94,23 +110,21 @@ export class Launcher {
   private apiPort = 0;
 
   /**
-   * Starts the wallet backend.
+   * Sets up a Launcher which can start and control the wallet backend.
    *
    * @param config - controls how the wallet and node are started
    * @param logger - logging backend that launcher will use
-   **/
-  constructor(config: LaunchConfig, logger: Logger) {
+   */
+  constructor(config: LaunchConfig, logger: Logger = console) {
     logger.debug("Launcher init");
     this.logger = logger;
 
     const start = makeServiceCommands(config, logger)
-    this.walletService = startService(start.wallet, prependName(logger, "wallet"));
-    this.nodeService = startService(start.node, prependName(logger, "node"));
-
-    const self = this;
+    this.walletService = setupService(start.wallet, prependName(logger, "wallet"));
+    this.nodeService = setupService(start.node, prependName(logger, "node"));
 
     this.walletBackend = {
-      getApi: () => new V2Api(self.apiPort),
+      getApi: () => new V2Api(this.apiPort),
       events: new EventEmitter<{
         ready: (api: Api) => void,
         exit: (status: ExitStatus) => void,
@@ -119,30 +133,32 @@ export class Launcher {
 
     this.walletService.events.on("statusChanged", status => {
       if (status === ServiceStatus.Stopped) {
-        self.logger.debug("wallet exited");
-        self.stop();
+        this.logger.debug("wallet exited");
+        this.stop();
       }
     });
 
     this.nodeService.events.on("statusChanged", status => {
       if (status === ServiceStatus.Stopped) {
-        self.logger.debug("node exited");
-        self.stop();
+        this.logger.debug("node exited");
+        this.stop();
       }
     });
   }
 
   /**
+   * Starts the wallet and node.
+   *
+   * Example:
+   *
+   * ```javascript
+   * launcher.start().then(function(api) {
+   *   console.log("*** cardano-wallet backend is ready, base URL is " + api.baseUrl);
+   * });
+   * ```
+   *
    * @return a promise that will be fulfilled when the wallet API
    * server is ready to accept requests.
-   *
-   * @event ready - `walletBackend.events` will emit this when the API
-   *   server is ready to accept requests.
-   * @event exit - `walletBackend.events` will emit this when the
-   *   wallet and node have both exited.
-   * @event statusChanged - `walletService.events` and
-   *   `nodeService.events` will emit this when their processes start
-   *   or stop.
    */
   start(): Promise<Api> {
     this.nodeService.start();
@@ -244,6 +260,13 @@ export interface ExitStatus {
 }
 
 /**
+ * Format an [[ExitStatus]] as a multiline human-readable string.
+ */
+export function exitStatusMessage(status: ExitStatus): string {
+  return _.map(status, serviceExitStatusMessage).join("\n");
+}
+
+/**
  * Represents the API service of `cardano-wallet`.
  */
 export interface WalletBackend {
@@ -267,7 +290,16 @@ export interface WalletBackend {
  * The type of events for [[WalletBackend]].
  */
 type WalletBackendEvents = EventEmitter<{
+  /**
+   * [[Launcher.walletBackend.events]] will emit this when the API
+   *  server is ready to accept requests.
+   * @event
+   */
   ready: (api: Api) => void,
+  /** [[Launcher.walletBackend.events]] will emit this when the
+   *  wallet and node have both exited.
+   * @event
+   */
   exit: (status: ExitStatus) => void,
 }>;
 

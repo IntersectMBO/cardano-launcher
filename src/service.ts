@@ -1,6 +1,8 @@
 /**
  * Functions for starting and stopping an individual backend service.
  *
+ * The important function is [[setupService]] which creates a [[Service]].
+ *
  * @packageDocumentation
  */
 
@@ -21,6 +23,11 @@ export interface ServiceExitStatus {
   err: Error|null;
 }
 
+/**
+ * Produce an exit message from an exit status.
+ * @param res - exit status of service.
+ * @return a human readable exit message.
+ */
 export function serviceExitStatusMessage(res: ServiceExitStatus): string {
   const reason = typeof res.code === "number" ? `status ${res.code}` :
     (res.signal ? `signal ${res.signal}` : `error ${res.err}`);
@@ -92,17 +99,26 @@ export type Pid = number;
  * The type of events for [[Service]].
  */
 type ServiceEvents = EventEmitter<{
+  /**
+   * [[Launcher.walletService.events]] and
+   * [[Launcher.nodeService.events]] will emit this when their
+   * processes start or stop.
+   * @event
+   */
   statusChanged: (status: ServiceStatus) => void,
 }>;
 
 /**
- * Spawn a service and control its lifetime.
+ * Initialise a [[Service]] which can control the lifetime of a
+ * backend process.
  *
- * @param cfg - command to run.
+ * This does not start the process. Use [[Service.start]] for that.
+ *
+ * @param cfgPromise - a promise which will return the command to run.
  * @param logger - logging object.
- * @return A handle on the service.
+ * @return A handle on the [[Service]].
  */
-export function startService(cfgP: Promise<StartService>, logger: Logger = console): Service {
+export function setupService(cfgPromise: Promise<StartService>, logger: Logger = console): Service {
   const events = new EventEmitter<{
     statusChanged: (status: ServiceStatus) => void,
   }>();
@@ -110,7 +126,7 @@ export function startService(cfgP: Promise<StartService>, logger: Logger = conso
   // What the current state is.
   let status = ServiceStatus.NotStarted;
   // Fulfilled promise of service command-line.
-  // This will be defined if status > NotStarted.
+  // This will always be defined if status != NotStarted.
   let cfg: StartService;
   // NodeJS child process object, or null if not running.
   let proc: ChildProcess|null = null;
@@ -209,7 +225,7 @@ export function startService(cfgP: Promise<StartService>, logger: Logger = conso
     start: async () => {
       switch (status) {
         case ServiceStatus.NotStarted:
-          cfg = await cfgP;
+          cfg = await cfgPromise;
           return doStart();
         case ServiceStatus.Started:
           logger.info(`Service.start: already started`);
@@ -246,7 +262,7 @@ export function startService(cfgP: Promise<StartService>, logger: Logger = conso
 }
 
 /**
- * Command to run for the service.
+ * Describes the command to run for the service.
  */
 export interface StartService {
   /** Program name. Will be searched for in `PATH`. */

@@ -38,15 +38,10 @@ export interface ByronNodeConfig {
   kind: "byron";
 
   /** Directory containing configurations for all networks. */
-  configurationsDir: DirPath;
+  configurationDir: DirPath;
 
   /** Network parameters */
   network: ByronNetwork;
-
-  /**
-   * Contents of the `cardano-node` config file.
-   */
-  extraConfig?: { [propName: string]: any; };
 
   /**
    * Directory which will contain a socket file to use for
@@ -109,23 +104,26 @@ export interface ByronNodeArgs {
   extra?: string[];
 }
 
-
+/**
+ * Convert a [[ByronNodeConfig]] into command-line arguments
+ * ([[ByronNodeArgs]]) for `cardano-node`.
+ */
 function makeArgs(stateDir: DirPath, config: ByronNodeConfig, listenPort: number): ByronNodeArgs {
   if (!config.socketDir) {
     config.socketDir = "sockets"; // relative to working directory
   }
   return {
     socketDir: config.socketDir,
-    topologyFile: path.join(config.configurationsDir, config.network.topologyFile),
+    topologyFile: path.join(config.configurationDir, config.network.topologyFile),
     databaseDir: "chain", // relative to working directory
     genesis: {
-      file: path.join(config.configurationsDir, config.network.genesisFile),
+      file: path.join(config.configurationDir, config.network.genesisFile),
       hash: config.network.genesisHash,
     },
     listen: {
       port: listenPort,
     },
-    configFile: path.join(config.configurationsDir, config.network.configFile),
+    configFile: path.join(config.configurationDir, config.network.configFile),
   };
 }
 
@@ -155,7 +153,8 @@ export async function startByronNode(stateDir: DirPath, config: ByronNodeConfig)
       .concat(args.signingKey ? ["--signing-key", args.signingKey] : [])
       .concat(args.delegationCertificate ? ["--delegation-certificate", args.delegationCertificate] : [])
       .concat(args.extra || []),
-    cwd: stateDir,
     supportsCleanShutdown: false,
+    // set working directory to stateDir -- config file may have relative paths for logs.
+    cwd: stateDir,
   };
 }

@@ -21,6 +21,11 @@ export interface ShelleyNodeConfig {
   socketDir?: string;
 
   /**
+   * Contents of the `cardano-node` config file.
+   */
+  extraConfig?: { [propName: string]: any; };
+
+  /**
    * Extra arguments to add to the `cardano-node` command line.
    */
   extraArgs?: string[];

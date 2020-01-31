@@ -1,16 +1,21 @@
-import { launchWalletBackend, ServiceStatus, Api } from '../src';
+import { Launcher, ServiceStatus, Api } from '../src';
 
 import * as http from "http";
 import * as os from "os";
 import * as path from "path";
 
+import * as jormungandr from './jormungandr';
+
 describe('Starting cardano-wallet (and its node)', () => {
   it('jormungandr works', async () => {
     let stateDir = path.join(os.tmpdir(), "launcher-integration-test");
-    let launcher = launchWalletBackend({
+    let launcher = new Launcher({
       stateDir,
+      networkName: "self",
       nodeConfig: {
-        genesis: { hash: "yolo" }
+        kind: "jormungandr",
+        configurationDir: "test/data/jormungandr",
+        network: jormungandr.networks.self,
       }
     });
 

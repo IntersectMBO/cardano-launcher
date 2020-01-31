@@ -10,7 +10,7 @@
 
 import _ from "lodash";
 
-import { launchWalletBackend, ExitStatus, ServiceExitStatus, serviceExitStatusMessage } from './cardanoLauncher';
+import { Launcher, ExitStatus, ServiceExitStatus, serviceExitStatusMessage } from './cardanoLauncher';
 
 import * as byron from './byron';
 import * as jormungandr from './jormungandr';
@@ -40,7 +40,7 @@ export function cli(args: string[]) {
 
   const backend = <string>args.shift();
   const networkName = <string>args.shift();
-  const configurationsDir = <string>args.shift();
+  const configurationDir = <string>args.shift();
   const stateDir = <string>args.shift();
 
   let nodeConfig: any;
@@ -53,7 +53,7 @@ export function cli(args: string[]) {
     const network = byron.networks[networkName];
     nodeConfig = {
       kind: backend,
-      configurationsDir,
+      configurationDir,
       network,
     };
 
@@ -65,14 +65,14 @@ export function cli(args: string[]) {
     const network = jormungandr.networks[networkName];
     nodeConfig = {
       kind: backend,
-      configurationsDir,
+      configurationDir,
       network,
     };
   } else {
     usage();
   }
 
-  const launcher = launchWalletBackend({ stateDir, nodeConfig, networkName }, console);
+  const launcher = new Launcher({ stateDir, nodeConfig, networkName }, console);
 
   launcher.start();
 

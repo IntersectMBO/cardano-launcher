@@ -51,18 +51,13 @@ export interface JormungandrConfig {
   kind: "jormungandr";
 
   /** Directory containing configurations for all networks. */
-  configurationsDir: DirPath;
+  configurationDir: DirPath;
 
   /** Network parameters */
   network: JormungandrNetwork;
 
   /** Optionally select a port for the node REST API. Otherwise, any unused port is chosen. */
   restPort?: number;
-
-  /**
-   * Additional contents for the `jormungandr` config file.
-   */
-  extraConfig?: { [propName: string]: any; };
 
   /**
    * Extra arguments to add to the `jormungandr` command line.
@@ -134,13 +129,14 @@ export async function startJormungandr(stateDir: DirPath, config: JormungandrCon
 
 function makeArgs(stateDir: DirPath, config: JormungandrConfig): JormungandrArgs {
   return {
-    configFile: path.join(config.configurationsDir, config.network.configFile),
+    configFile: path.join(config.configurationDir, config.network.configFile),
     restListen: `127.0.0.1:${config.restPort || 0}`,
     genesisBlock: {
-      file: "file" in config.network.genesisBlock ? path.join(config.configurationsDir, config.network.genesisBlock.file) : undefined,
+      file: "file" in config.network.genesisBlock ? path.join(config.configurationDir, config.network.genesisBlock.file) : undefined,
       hash: "hash" in config.network.genesisBlock ? config.network.genesisBlock.hash : undefined,
     },
     storageDir: path.join(stateDir, "chain"),
-    secretFile: _.map(config.network.secretFile || [], secret => path.join(config.configurationsDir, secret)),
+    secretFile: _.map(config.network.secretFile || [], secret => path.join(config.configurationDir, secret)),
+    extra: config.extraArgs,
   };
 }
