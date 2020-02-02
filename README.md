@@ -81,6 +81,8 @@ In future, the `cardano-node` version may be defined by
  * [`windows-clean-shutdown.md`](./docs/windows-clean-shutdown.md) -
    How to stop the wallet and node processes on Windows.
 
+ * [`dev.md`](./docs/dev.md) - Development information.
+
 ## Testing it out
 
 After building, there is a very basic CLI that you can use to test.
