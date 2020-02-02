@@ -28,7 +28,7 @@ export { ServiceStatus, ServiceExitStatus, serviceExitStatusMessage, Service } f
 /**
  * Configuration parameters for starting the wallet backend and node.
  */
-interface LaunchConfig {
+export interface LaunchConfig {
   /**
    * Directory to store wallet databases, the blockchain, socket
    * files, etc.

@@ -4,6 +4,10 @@ import { testService, collectEvents, expectProcessToBeGone, mockLogger } from '.
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
 
+// Note: These tests use simple coreutils commands as mock services.
+// For example, `cat` will read its standard input and exit on EOF.
+// On Windows, they are installed as part of Git For Windows.
+
 describe('setupService', () => {
   it('starting simple command', async () => {
     let service = setupService(testService("echo", ["test echo"]));

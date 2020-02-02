@@ -1,27 +1,19 @@
-import { Launcher, ServiceStatus, Api } from '../src';
+import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
 
 import * as http from "http";
 import * as tmp from "tmp-promise";
 
 import * as jormungandr from '../src/jormungandr';
+import * as byron from '../src/byron';
 import { makeRequest } from './utils';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
 
 describe('Starting cardano-wallet (and its node)', () => {
-  it('cardano-wallet-jormungandr responds to requests', async () => {
-    // let stateDir = path.join(os.tmpdir(), "launcher-integration-test");
+  const launcherTest = async (config: ((stateDir: string) => LaunchConfig)) => {
     let stateDir = (await tmp.dir({ unsafeCleanup: true, prefix: "launcher-integration-test" })).path;
-    let launcher = new Launcher({
-      stateDir,
-      networkName: "self",
-      nodeConfig: {
-        kind: "jormungandr",
-        configurationDir: "test/data/jormungandr",
-        network: jormungandr.networks.self,
-      }
-    });
+    let launcher = new Launcher(config(stateDir));
 
     expect(launcher).toBeTruthy();
 
@@ -58,5 +50,31 @@ describe('Starting cardano-wallet (and its node)', () => {
     await launcher.stop();
 
     console.log("stopped");
-  }, longTestTimeoutMs);
+  };
+
+  it('cardano-wallet-jormungandr responds to requests', () => launcherTest(stateDir => {
+    return {
+      stateDir,
+      networkName: "self",
+      nodeConfig: {
+        kind: "jormungandr",
+        configurationDir: "test/data/jormungandr",
+        network: jormungandr.networks.self,
+      }
+    };
+  }), longTestTimeoutMs);
+
+  // cardano-wallet-byron is still wip
+  xit('cardano-wallet-byron responds to requests', () => launcherTest(stateDir => {
+    return {
+      stateDir,
+      networkName: "mainnet",
+      nodeConfig: {
+        kind: "byron",
+        configurationDir: "" + process.env.BYRON_CONFIGS,
+        network: byron.networks.mainnet,
+      }
+    };
+  }), longTestTimeoutMs);
+
 });
