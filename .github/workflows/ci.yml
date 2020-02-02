@@ -18,7 +18,7 @@ jobs:
           $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-jormungandr-win64/latest/download/1"
           $output = "cardano-wallet-jormungandr-win64.zip"
           Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -LiteralPath $output
+          Expand-Archive -LiteralPath $output -DestinationPath .
           Get-ChildItem
       - run: npm install
       - run: npm test
