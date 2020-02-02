@@ -1,8 +1,12 @@
 import * as process from 'process';
 import * as tmp from 'tmp-promise';
+import * as path from 'path';
 
 import { delay, expectProcessToBeGone } from './utils';
 import { spawn } from 'child_process';
+
+// Note: for Windows, the cli needs to be a .cmd file. I have no idea
+// how to set that up with typescript.
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async () => {
@@ -29,7 +33,7 @@ describe('CLI tests', () => {
     expectProcessToBeGone(<any>walletPid, 9);
   };
 
-  const jormungandr = ["jormungandr", "self", "test/data/jormungandr"];
+  const jormungandr = ["jormungandr", "self", path.join("test", "data", "jormungandr")];
   const byron = ["byron", "mainnet", "" + process.env.BYRON_CONFIGS];
 
   it('when the parent process is killed, child jormungandr gets stopped', <any>killTest(jormungandr));

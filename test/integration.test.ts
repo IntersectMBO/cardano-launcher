@@ -1,7 +1,8 @@
 import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
 
-import * as http from "http";
-import * as tmp from "tmp-promise";
+import * as http from 'http';
+import * as tmp from 'tmp-promise';
+import * as path from 'path';
 
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
@@ -58,7 +59,7 @@ describe('Starting cardano-wallet (and its node)', () => {
       networkName: "self",
       nodeConfig: {
         kind: "jormungandr",
-        configurationDir: "test/data/jormungandr",
+        configurationDir: path.join("test", "data", "jormungandr"),
         network: jormungandr.networks.self,
       }
     };
