@@ -8,11 +8,12 @@
 
 import path from 'path';
 import fs from 'fs';
+import process from 'process';
+import net from 'net';
 
 import _ from "lodash";
 import { EventEmitter } from 'tsee';
 import getPort from "get-port";
-import waitOn from "wait-on";
 
 import { Logger, prependName } from './logging';
 import { Service, ServiceExitStatus, ServiceStatus, StartService, setupService, serviceExitStatusMessage } from './service';
@@ -22,12 +23,12 @@ import * as byron from './byron';
 import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
 
-export { ServiceExitStatus,  serviceExitStatusMessage } from './service';
+export { ServiceStatus, ServiceExitStatus, serviceExitStatusMessage, Service } from './service';
 
 /**
  * Configuration parameters for starting the wallet backend and node.
  */
-interface LaunchConfig {
+export interface LaunchConfig {
   /**
    * Directory to store wallet databases, the blockchain, socket
    * files, etc.
@@ -131,6 +132,10 @@ export class Launcher {
       }>(),
     };
 
+    start.wallet.then((startService: WalletStartService) => {
+      this.apiPort = startService.apiPort;
+    });
+
     this.walletService.events.on("statusChanged", status => {
       if (status === ServiceStatus.Stopped) {
         this.logger.debug("wallet exited");
@@ -144,6 +149,8 @@ export class Launcher {
         this.stop();
       }
     });
+
+    this.installSignalHandlers();
   }
 
   /**
@@ -164,7 +171,7 @@ export class Launcher {
     this.nodeService.start();
     this.walletService.start()
 
-    this.waitForApi(this.apiPort).then(() => {
+    this.waitForApi().then(() => {
       this.walletBackend.events.emit("ready", this.walletBackend.getApi());
     });
 
@@ -179,12 +186,33 @@ export class Launcher {
    * @param port - TCP port number
    * @return a promise that is completed once the wallet API server accepts connections.
    */
-  private waitForApi(port: number): Promise<void> {
-    return waitOn({
-      resources: [`tcp:127.0.0.1:${port}`],
-      delay: 10,// initial delay in ms, default 0
-      interval: 250, // poll interval in ms, default 250
-      timeout: 3600000,// timeout in ms, default Infinity
+  private waitForApi(): Promise<void> {
+    this.logger.debug("waitForApi");
+    return new Promise(resolve => {
+      let addr: net.SocketConnectOpts;
+      var client: net.Socket;
+      const poll = () => {
+        if (this.apiPort) {
+          if (!addr) {
+            addr = { port: this.apiPort, host: "127.0.0.1" };
+            this.logger.info(`Waiting for tcp port ${addr.host}:${addr.port} to accept connections...`);
+          }
+
+          if (client) {
+            client.destroy();
+          }
+          client = new net.Socket();
+          client.connect(addr, () => {
+            this.logger.info(`... port is ready.`);
+            clearInterval(timer);
+            resolve();
+          });
+          client.on("error", err => {
+            this.logger.debug(`waitForApi: not ready yet: ${err}`);
+          });
+        };
+      };
+      const timer = setInterval(poll, 250);
     });
   }
 
@@ -210,6 +238,19 @@ export class Launcher {
       this.walletBackend.events.emit("exit", status);
       return status;
     });
+  }
+
+  /**
+   * Stop services when this process gets killed.
+   */
+  private installSignalHandlers(): void {
+    const cleanup = (signal: string) => {
+      this.logger.info(`Received ${signal} - stopping services...`);
+      this.walletService.stop(0);
+      this.nodeService.stop(0);
+    };
+    ["SIGINT", "SIGTERM", "SIGHUP", "SIGBREAK"]
+      .forEach((signal: string) => process.on(<any>signal, cleanup));
   }
 }
 

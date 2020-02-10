@@ -8,6 +8,7 @@
  * @packageDocumentation
  */
 
+import process from "process";
 import _ from "lodash";
 
 import { Launcher, ExitStatus, ServiceExitStatus, serviceExitStatusMessage } from './cardanoLauncher';
@@ -76,6 +77,10 @@ export function cli(args: string[]) {
 
   launcher.start();
 
+  // inform tests of subprocess pids
+  launcher.nodeService.start().then(pid => sendMaybe({ node: pid }));
+  launcher.walletService.start().then(pid => sendMaybe({ wallet: pid }));
+
   launcher.walletBackend.events.on("exit", (status: ExitStatus) => {
     console.log(serviceExitStatusMessage(status.wallet));
     console.log(serviceExitStatusMessage(status.node));
@@ -91,4 +96,10 @@ function usage() {
   console.log("  CONFIG-DIR - directory which contains config files for a backend");
   console.log("  STATE-DIR  - directory to put blockchains, databases, etc.");
   process.exit(1);
+}
+
+function sendMaybe(message: object) {
+  if (process.send) {
+    process.send(message);
+  }
 }

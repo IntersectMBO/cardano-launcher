@@ -1,23 +1,20 @@
-import { Launcher, ServiceStatus, Api } from '../src';
+import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
 
-import * as http from "http";
-import * as os from "os";
-import * as path from "path";
+import * as http from 'http';
+import * as tmp from 'tmp-promise';
+import * as path from 'path';
 
-import * as jormungandr from './jormungandr';
+import * as jormungandr from '../src/jormungandr';
+import * as byron from '../src/byron';
+import { makeRequest } from './utils';
+
+// increase time available for tests to run
+const longTestTimeoutMs = 15000;
 
 describe('Starting cardano-wallet (and its node)', () => {
-  it('jormungandr works', async () => {
-    let stateDir = path.join(os.tmpdir(), "launcher-integration-test");
-    let launcher = new Launcher({
-      stateDir,
-      networkName: "self",
-      nodeConfig: {
-        kind: "jormungandr",
-        configurationDir: "test/data/jormungandr",
-        network: jormungandr.networks.self,
-      }
-    });
+  const launcherTest = async (config: ((stateDir: string) => LaunchConfig)) => {
+    let stateDir = (await tmp.dir({ unsafeCleanup: true, prefix: "launcher-integration-test" })).path;
+    let launcher = new Launcher(config(stateDir));
 
     expect(launcher).toBeTruthy();
 
@@ -35,41 +32,50 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     const api = await launcher.start();
 
-    console.log("started", api);
-
-    const info = await new Promise(resolve => {
-      http.request(makeRequest(api, "network/information"), res => {
-        res.on('data', d => resolve(d));
+    const info: any = await new Promise(resolve => {
+      console.log("running req");
+      const req = http.request(makeRequest(api, "network/information"), res => {
+        res.setEncoding('utf8');
+        res.on('data', d => resolve(JSON.parse(d)));
       });
+      req.on('error', (e: any) => {
+        console.error(`problem with request: ${e.message}`);
+      });
+      req.end();
     });
 
     console.log("info is ", info);
 
-    expect(info).toBeTruthy();
+    expect(info.node_tip).toBeTruthy();
 
     await launcher.stop();
 
     console.log("stopped");
-  });
+  };
+
+  it('cardano-wallet-jormungandr responds to requests', () => launcherTest(stateDir => {
+    return {
+      stateDir,
+      networkName: "self",
+      nodeConfig: {
+        kind: "jormungandr",
+        configurationDir: path.join("test", "data", "jormungandr"),
+        network: jormungandr.networks.self,
+      }
+    };
+  }), longTestTimeoutMs);
+
+  // cardano-wallet-byron is still wip
+  xit('cardano-wallet-byron responds to requests', () => launcherTest(stateDir => {
+    return {
+      stateDir,
+      networkName: "mainnet",
+      nodeConfig: {
+        kind: "byron",
+        configurationDir: "" + process.env.BYRON_CONFIGS,
+        network: byron.networks.mainnet,
+      }
+    };
+  }), longTestTimeoutMs);
+
 });
-
-describe('Selects a free port for the API server', () => {
-});
-
-describe('Receives events when the node is started/stopped', () => {
-});
-
-
-
-/**
- * Sets up the parameters for `http.request` for this Api.
- *
- * @param path - the api route (without leading slash)
- * @param options - extra options to be added to the request.
- * @return an options object suitable for `http.request`
- */
-function makeRequest(api: Api, path: string, options?: object): object {
-  return Object.assign({}, api.requestParams, {
-    path: api.requestParams.path + path,
-  }, options);
-}
