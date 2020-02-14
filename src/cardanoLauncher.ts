@@ -7,7 +7,7 @@
  */
 
 import path from 'path';
-import fs from 'fs';
+import mkdirp from 'mkdirp';
 import process from 'process';
 import net from 'net';
 
@@ -351,7 +351,7 @@ interface WalletStartService extends StartService {
 function makeServiceCommands(config: LaunchConfig, logger: Logger): { wallet: Promise<WalletStartService>, node: Promise<StartService> } {
   const baseDir = path.join(config.stateDir, config.nodeConfig.kind, config.networkName);
   logger.info(`Creating base directory ${baseDir} (if it doesn't already exist)`);
-  const mkBaseDir = fs.promises.mkdir(baseDir, { recursive: true })
+  const mkBaseDir = mkdirp(baseDir)
   const node = mkBaseDir.then(() => nodeExe(baseDir, config));
   const wallet = node.then(nodeService => walletExe(baseDir, config, nodeService));
   return { wallet, node };
