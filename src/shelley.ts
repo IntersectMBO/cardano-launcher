@@ -12,7 +12,7 @@ import { StartService } from './service';
  * Unimplemented!
  */
 export interface ShelleyNodeConfig {
-  kind: "shelley";
+  kind: 'shelley';
 
   /**
    * Directory which will contain a socket file to use for communicating with the node.
@@ -23,7 +23,7 @@ export interface ShelleyNodeConfig {
   /**
    * Contents of the `cardano-node` config file.
    */
-  extraConfig?: { [propName: string]: any; };
+  extraConfig?: { [propName: string]: any };
 
   /**
    * Extra arguments to add to the `cardano-node` command line.
@@ -31,8 +31,10 @@ export interface ShelleyNodeConfig {
   extraArgs?: string[];
 }
 
-export async function startShelleyNode(config: ShelleyNodeConfig): Promise<StartService> {
-  throw new Error("shelley backend not implemented");
+export async function startShelleyNode(
+  config: ShelleyNodeConfig
+): Promise<StartService> {
+  throw new Error('shelley backend not implemented');
   // return {
   //   command: "cardano-node", args: ["--help"]
   // };

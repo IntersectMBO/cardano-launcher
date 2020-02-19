@@ -5,18 +5,19 @@
  */
 
 import path from 'path';
-import getPort from "get-port";
+import getPort from 'get-port';
 
 import { StartService } from './service';
 import { FilePath, DirPath } from './common';
 
 /** Predefined networks. */
-export const networks: { [propName: string]: ByronNetwork; }  = {
+export const networks: { [propName: string]: ByronNetwork } = {
   mainnet: {
-    configFile: "configuration-mainnet.yaml",
-    genesisFile: "mainnet-genesis.json",
-    genesisHash: "5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb",
-    topologyFile: "mainnet-topology.json",
+    configFile: 'configuration-mainnet.yaml',
+    genesisFile: 'mainnet-genesis.json',
+    genesisHash:
+      '5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb',
+    topologyFile: 'mainnet-topology.json',
   },
 };
 
@@ -28,14 +29,14 @@ export interface ByronNetwork {
   genesisFile: FilePath;
   genesisHash: string;
   topologyFile: FilePath;
-};
+}
 
 /**
  * Configuration parameters for starting the rewritten version of
  * cardano-node (Byron).
  */
 export interface ByronNodeConfig {
-  kind: "byron";
+  kind: 'byron';
 
   /** Directory containing configurations for all networks. */
   configurationDir: DirPath;
@@ -108,14 +109,21 @@ export interface ByronNodeArgs {
  * Convert a [[ByronNodeConfig]] into command-line arguments
  * ([[ByronNodeArgs]]) for `cardano-node`.
  */
-function makeArgs(stateDir: DirPath, config: ByronNodeConfig, listenPort: number): ByronNodeArgs {
+function makeArgs(
+  stateDir: DirPath,
+  config: ByronNodeConfig,
+  listenPort: number
+): ByronNodeArgs {
   if (!config.socketDir) {
-    config.socketDir = "sockets"; // relative to working directory
+    config.socketDir = 'sockets'; // relative to working directory
   }
   return {
     socketDir: config.socketDir,
-    topologyFile: path.join(config.configurationDir, config.network.topologyFile),
-    databaseDir: "chain", // relative to working directory
+    topologyFile: path.join(
+      config.configurationDir,
+      config.network.topologyFile
+    ),
+    databaseDir: 'chain', // relative to working directory
     genesis: {
       file: path.join(config.configurationDir, config.network.genesisFile),
       hash: config.network.genesisHash,
@@ -134,24 +142,38 @@ function makeArgs(stateDir: DirPath, config: ByronNodeConfig, listenPort: number
  * @param config - parameters for starting the node.
  * @return the command-line for starting this node.
  */
-export async function startByronNode(stateDir: DirPath, config: ByronNodeConfig): Promise<StartService> {
+export async function startByronNode(
+  stateDir: DirPath,
+  config: ByronNodeConfig
+): Promise<StartService> {
   const listenPort = await getPort();
   const args = makeArgs(stateDir, config, listenPort);
   return {
-    command: "cardano-node",
+    command: 'cardano-node',
     args: [
-      "--socket-dir", args.socketDir,
-      "--topology", args.topologyFile,
-      "--database-path", args.databaseDir,
-      "--genesis-file", args.genesis.file,
-      "--genesis-hash", args.genesis.hash,
-      "--port", "" + args.listen.port,
-      "--config", args.configFile
+      '--socket-dir',
+      args.socketDir,
+      '--topology',
+      args.topologyFile,
+      '--database-path',
+      args.databaseDir,
+      '--genesis-file',
+      args.genesis.file,
+      '--genesis-hash',
+      args.genesis.hash,
+      '--port',
+      '' + args.listen.port,
+      '--config',
+      args.configFile,
     ]
-      .concat(args.listen.address ? ["--host-addr", args.listen.address] : [])
-      .concat(args.validateDb || false ? ["--validate-db"] : [])
-      .concat(args.signingKey ? ["--signing-key", args.signingKey] : [])
-      .concat(args.delegationCertificate ? ["--delegation-certificate", args.delegationCertificate] : [])
+      .concat(args.listen.address ? ['--host-addr', args.listen.address] : [])
+      .concat(args.validateDb || false ? ['--validate-db'] : [])
+      .concat(args.signingKey ? ['--signing-key', args.signingKey] : [])
+      .concat(
+        args.delegationCertificate
+          ? ['--delegation-certificate', args.delegationCertificate]
+          : []
+      )
       .concat(args.extra || []),
     supportsCleanShutdown: false,
     // set working directory to stateDir -- config file may have relative paths for logs.
