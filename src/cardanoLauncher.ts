@@ -272,7 +272,7 @@ export class Launcher {
       this.nodeService.stop(0);
     };
     ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'].forEach((signal: string) =>
-      process.on(<any>signal, cleanup)
+      process.on(signal as any, cleanup)
     );
   }
 }

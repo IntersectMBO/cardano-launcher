@@ -52,10 +52,10 @@ export function cli(args: string[]) {
     usage();
   }
 
-  const backend = <string>args.shift();
-  const networkName = <string>args.shift();
-  const configurationDir = <string>args.shift();
-  const stateDir = <string>args.shift();
+  const backend = args.shift() as string;
+  const networkName = args.shift() as string;
+  const configurationDir = args.shift() as string;
+  const stateDir = args.shift() as string;
 
   let nodeConfig: any;
 
