@@ -7,7 +7,7 @@
  */
 
 import path from 'path';
-import fs from 'fs';
+import mkdirp from 'mkdirp';
 import process from 'process';
 import net from 'net';
 
@@ -383,8 +383,7 @@ function makeServiceCommands(
   logger.info(
     `Creating base directory ${baseDir} (if it doesn't already exist)`
   );
-  const mkBaseDir = fs.promises.mkdir(baseDir, { recursive: true });
-  const node = mkBaseDir.then(() => nodeExe(baseDir, config));
+  const node = mkdirp(baseDir).then(() => nodeExe(baseDir, config));
   const wallet = node.then(nodeService =>
     walletExe(baseDir, config, nodeService)
   );
