@@ -10,9 +10,9 @@
  * Logging adapter.
  */
 export interface Logger {
-  debug: LogFunc,
-  info: LogFunc,
-  error: LogFunc
+  debug: LogFunc;
+  info: LogFunc;
+  error: LogFunc;
 }
 
 /**
@@ -30,7 +30,11 @@ export interface LogFunc {
  * @return - a new logger.
  */
 export function prependName(logger: Logger, name: string): Logger {
-  const prefix = (severity: "debug"|"info"|"error", msg: string, param?: any) => {
+  const prefix = (
+    severity: 'debug' | 'info' | 'error',
+    msg: string,
+    param?: any
+  ) => {
     const prefixed = `${name}: ${msg}`;
     if (param) {
       logger[severity](prefixed, param);
@@ -39,8 +43,8 @@ export function prependName(logger: Logger, name: string): Logger {
     }
   };
   return {
-    debug: (msg: string, param?: any) => prefix("debug", msg, param),
-    info: (msg: string,  param?: any) => prefix("info", msg, param),
-    error: (msg: string,  param?: any) => prefix("error", msg, param),
+    debug: (msg: string, param?: any) => prefix('debug', msg, param),
+    info: (msg: string, param?: any) => prefix('info', msg, param),
+    error: (msg: string, param?: any) => prefix('error', msg, param),
   };
 }

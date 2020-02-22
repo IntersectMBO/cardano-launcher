@@ -7,14 +7,22 @@ import { Logger, LogFunc } from '../src/logging';
  ******************************************************************************/
 
 /** Construct a promise to a service command. */
-export function testService(command: string, args: string[]): Promise<StartService> {
-  return new Promise(resolve => resolve({ command, args, supportsCleanShutdown: true }));
+export function testService(
+  command: string,
+  args: string[]
+): Promise<StartService> {
+  return new Promise(resolve =>
+    resolve({ command, args, supportsCleanShutdown: true })
+  );
 }
 
 /**
  * Expect the given process ID to not exist.
  */
-export const expectProcessToBeGone = (pid: number, signal: number = 0): void => {
+export const expectProcessToBeGone = (
+  pid: number,
+  signal: number = 0
+): void => {
   expect(() => process.kill(pid, signal)).toThrow();
 };
 
@@ -23,14 +31,14 @@ export const expectProcessToBeGone = (pid: number, signal: number = 0): void => 
  */
 export const collectEvents = (service: Service): ServiceStatus[] => {
   let events: ServiceStatus[] = [];
-  service.events.on("statusChanged", status => events.push(status));
+  service.events.on('statusChanged', status => events.push(status));
   return events;
 };
 
 export interface MockLog {
-  severity: "debug"|"info"|"error";
+  severity: 'debug' | 'info' | 'error';
   msg: string;
-  param: object|undefined;
+  param: object | undefined;
 }
 
 export interface MockLogger extends Logger {
@@ -40,7 +48,7 @@ export interface MockLogger extends Logger {
 export function mockLogger(echo: boolean = false): MockLogger {
   let logs: MockLog[] = [];
 
-  const mockLog = (severity: "debug"|"info"|"error"): LogFunc => {
+  const mockLog = (severity: 'debug' | 'info' | 'error'): LogFunc => {
     return (msg: string, param?: object) => {
       if (echo) {
         if (param) {
@@ -49,18 +57,17 @@ export function mockLogger(echo: boolean = false): MockLogger {
           console[severity](msg);
         }
       }
-      logs.push({ severity, msg, param: param || undefined })
+      logs.push({ severity, msg, param: param || undefined });
     };
   };
 
   return {
-    debug: mockLog("debug"),
-    info: mockLog("info"),
-    error: mockLog("error"),
+    debug: mockLog('debug'),
+    info: mockLog('info'),
+    error: mockLog('error'),
     getLogs: () => logs,
   };
 }
-
 
 export function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -74,7 +81,12 @@ export function delay(ms: number) {
  * @return an options object suitable for `http.request`
  */
 export function makeRequest(api: Api, path: string, options?: object): object {
-  return Object.assign({}, api.requestParams, {
-    path: api.requestParams.path + path,
-  }, options);
+  return Object.assign(
+    {},
+    api.requestParams,
+    {
+      path: api.requestParams.path + path,
+    },
+    options
+  );
 }

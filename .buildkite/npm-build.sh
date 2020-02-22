@@ -14,6 +14,10 @@ echo "--- Test"
 
 npx tsdx test --collect-coverage 
 
+echo "--- Lint"
+
+npx tsdx lint src test
+
 echo "--- Rebuild docs"
 
 npm run typedoc
