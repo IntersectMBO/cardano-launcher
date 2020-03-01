@@ -26,12 +26,12 @@ describe('Starting cardano-wallet (and its node)', () => {
     launcher.walletService.events.on(
       'statusChanged',
       (status: ServiceStatus) => {
-        console.log('wallet service status changed ' + status);
+        console.log('wallet service status changed ' + ServiceStatus[status]);
       }
     );
 
     launcher.nodeService.events.on('statusChanged', (status: ServiceStatus) => {
-      console.log('node service status changed ' + status);
+      console.log('node service status changed ' + ServiceStatus[status]);
     });
 
     launcher.walletBackend.events.on('ready', (api: Api) => {
@@ -40,7 +40,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     const api = await launcher.start();
 
-    const info: any = await new Promise(resolve => {
+    const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
       const req = http.request(makeRequest(api, 'network/information'), res => {
         res.setEncoding('utf8');
@@ -48,6 +48,7 @@ describe('Starting cardano-wallet (and its node)', () => {
       });
       req.on('error', (e: any) => {
         console.error(`problem with request: ${e.message}`);
+        reject(e);
       });
       req.end();
     });
@@ -56,7 +57,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(info.node_tip).toBeTruthy();
 
-    await launcher.stop();
+    await launcher.stop(5);
 
     console.log('stopped');
   };

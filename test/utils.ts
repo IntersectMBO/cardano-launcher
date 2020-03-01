@@ -9,10 +9,11 @@ import { Logger, LogFunc } from '../src/logging';
 /** Construct a promise to a service command. */
 export function testService(
   command: string,
-  args: string[]
+  args: string[],
+  supportsCleanShutdown = true
 ): Promise<StartService> {
   return new Promise(resolve =>
-    resolve({ command, args, supportsCleanShutdown: true })
+    resolve({ command, args, supportsCleanShutdown })
   );
 }
 

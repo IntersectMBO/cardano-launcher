@@ -64,14 +64,19 @@ describe('setupService', () => {
   it(
     'command was killed',
     () => {
-      let service = setupService(testService('sleep', ['10']));
-      let events: ServiceStatus[] = [];
+      const service = setupService(testService('sleep', ['10'], false));
+      const events: ServiceStatus[] = [];
       service.events.on('statusChanged', status => events.push(status));
-      let pidP = service.start();
+      const pidP = service.start();
       return new Promise(done => {
-        setTimeout(() => {
-          pidP.then(pid => process.kill(pid));
-        }, 1000);
+        setTimeout(
+          () =>
+            pidP.then(pid => {
+              console.log('Killing the process ' + pid);
+              process.kill(pid);
+            }),
+          1000
+        );
         service.events.on('statusChanged', status => {
           if (status === ServiceStatus.Stopped) {
             expect(events).toEqual([
@@ -80,8 +85,12 @@ describe('setupService', () => {
               ServiceStatus.Stopped,
             ]);
             service.stop().then((status: ServiceExitStatus) => {
-              expect(status.code).toBeNull();
-              expect(status.signal).toBe('SIGTERM');
+              if (process.platform === 'win32') {
+                expect(status.code).toBe(1);
+              } else {
+                expect(status.code).toBeNull();
+                expect(status.signal).toBe('SIGTERM');
+              }
               expect(status.exe).toBe('sleep');
               done();
             });
