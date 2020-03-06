@@ -15,7 +15,9 @@ could be used by any Javascript application.
 
 See the generated API docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
 
-See [docs/example.js](./docs/example.js) for example code.
+See [docs/example.js](./docs/example.js)
+and [docs/example-jormungandr.js](./docs/example-jormungandr.js)
+for example code.
 
 ## Component diagram
 

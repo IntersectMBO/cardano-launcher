@@ -1,19 +1,20 @@
-// Example of launching the wallet for mainnet.
-// (Byron rewrite of cardano-node)
+// Example of launching the wallet for incentivized testnet.
+// (Jörmungandr backend)
 
 var cardanoLauncher = require("cardanoLauncher");
 
 var launcher = new cardanoLauncher.Launcher({
-  networkName: "mainnet",
+  networkName: "itn_rewards_v1",
   stateDir: "/tmp/state-launcher",
   nodeConfig: {
-    kind: "byron",
-    configurationDir: "/home/rodney/iohk/cardano-node/configuration",
+    kind: "jormungandr",
+    // nix-build <iohk_nix/release.nix> -A jormungandrConfigs.itn_rewards_v1
+    configurationDir: "/nix/store/im8zdvg17f32fhpv3y4sm0ar9wrgpmrj-jormungandr-config",
     network: {
-      configFile: "configuration-mainnet.yaml",
-      genesisFile: "mainnet-genesis.json",
-      genesisHash: "5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb",
-      topologyFile: "mainnet-topology.json"
+      configFile: 'config.yaml',
+      genesisBlock: {
+        hash: '8e4d2a343f3dcf9330ad9035b3e8d168e6728904262f2c434a4f8f934ec7b676',
+      },
     }
   }
 });
