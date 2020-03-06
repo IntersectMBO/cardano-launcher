@@ -15,8 +15,8 @@ mkShell {
     cardanoWalletPackages.jormungandr
     # cardano byron
     cardanoWalletPackages.cardano-wallet-byron
-    cardano-node
+    cardanoWalletPackages.cardano-node
   ];
 
-  BYRON_CONFIGS = cardano-node.configs;
+  BYRON_CONFIGS = cardanoWalletPackages.cardano-node.configs;
 }
