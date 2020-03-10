@@ -400,6 +400,7 @@ async function walletExe(
     command: `cardano-wallet-${config.nodeConfig.kind}`,
     args: [
       'serve',
+      '--shutdown-handler',
       '--port',
       '' + apiPort,
       '--database',
