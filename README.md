@@ -63,18 +63,21 @@ Runs a bash shell with project development dependencies (e.g. `npm`,
 See [nix.md](https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md)
 for information on how to set up Nix.
 
-### Updating cardano-wallet versiion
+### Updating cardano-wallet version
 
 To modify the cardano-wallet version, use [`niv update`](https://github.com/nmattia/niv#update).
 
     nix-shell --run "niv update cardano-wallet"
 
-To modify the cardano-node version, also use `niv-update`.
+The version of `cardano-node` and `jormungandr` are defined by
+cardano-wallet because it has specific version requirements for its
+backends.
 
-    nix-shell --run "niv update cardano-node"
+#### Overriding node backend versions
 
-In future, the `cardano-node` version may be defined by
-`cardano-wallet`, is it is for `jormungandr`.
+To use your own build of `cardano-node` or `jormungandr`, export your
+`PATH` environment variable so that your build is ahead of those set
+by the `nix-shell`.
 
 ## Design docs
 
