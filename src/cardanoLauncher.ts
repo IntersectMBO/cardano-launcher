@@ -67,6 +67,13 @@ export interface LaunchConfig {
   listenAddress?: string;
 
   /**
+   * Maximum time difference (in seconds) between the tip slot and the
+   * latest applied block within which we consider a wallet being
+   * synced with the network. Defaults to 300 seconds.
+   */
+  syncToleranceSeconds?: number;
+
+  /**
    * Configuration for starting `cardano-node`. The `kind` property will be one of
    *  * `"byron"` - [[ByronNodeConfig]]
    *  * `"shelley"` - [[ShelleyNodeConfig]]
@@ -406,7 +413,10 @@ async function walletExe(
       '--database',
       path.join(baseDir, 'wallet'),
     ].concat(
-      config.listenAddress ? ['--listen-address', config.listenAddress] : []
+      config.listenAddress ? ['--listen-address', config.listenAddress] : [],
+      config.syncToleranceSeconds
+        ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
+        : []
     ),
     supportsCleanShutdown: true,
     apiPort,
