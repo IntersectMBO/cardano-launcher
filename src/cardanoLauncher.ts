@@ -77,7 +77,7 @@ export interface LaunchConfig {
    * https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/archive/master.zip.
    */
   stakePoolRegistryUrl?: string;
-   
+
   /**
    * Maximum time difference (in seconds) between the tip slot and the
    * latest applied block within which we consider a wallet being
