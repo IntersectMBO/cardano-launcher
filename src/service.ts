@@ -8,6 +8,7 @@
 
 import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'tsee';
+import _ from 'lodash';
 
 import { Logger } from './logging';
 
@@ -147,10 +148,12 @@ export function setupService(
   let startPromise: Promise<Pid>;
 
   const doStart = async () => {
-    logger.info(
-      `Service.start: trying to start ${cfg.command} ${cfg.args.join(' ')}`,
-      cfg
-    );
+    const envStr = _.map(
+      cfg.extraEnv,
+      (value, name) => `${name}=${value} `
+    ).join('');
+    const commandStr = `${envStr}${cfg.command} ${cfg.args.join(' ')}`;
+    logger.info(`Service.start: trying to start ${commandStr}`, cfg);
 
     const stdio = [
       cfg.supportsCleanShutdown ? 'pipe' : 'ignore',
@@ -158,7 +161,10 @@ export function setupService(
       'inherit',
     ];
     const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
-    const options = Object.assign({ stdio }, cwd);
+    const env = cfg.extraEnv
+      ? { env: Object.assign({}, process.env, cfg.extraEnv) }
+      : {};
+    const options = Object.assign({ stdio }, cwd, env);
     try {
       proc = spawn(cfg.command, cfg.args, options);
     } catch (err) {
@@ -324,6 +330,8 @@ export interface StartService {
   args: string[];
   /** Directory to start program in. Helpful if it outputs files. */
   cwd?: string;
+  /** Additional environment variables to set, on top of the current process environment. */
+  extraEnv?: { [propName: string]: string };
   /**
    * Whether this service supports the clean shutdown method documented in
    * `docs/windows-clean-shutdown.md`.

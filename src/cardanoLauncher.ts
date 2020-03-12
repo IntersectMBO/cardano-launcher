@@ -67,6 +67,18 @@ export interface LaunchConfig {
   listenAddress?: string;
 
   /**
+   * Overrides the URL to the zip file containing stake pool metadata
+   * which is downloaded by cardano-wallet.
+   *
+   * This is only useful in testing scenarios, or when running a local
+   * development testnet.
+   *
+   * For Jörmungandr ITN, the default is
+   * https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/archive/master.zip.
+   */
+  stakePoolRegistryUrl?: string;
+
+  /**
    * Maximum time difference (in seconds) between the tip slot and the
    * latest applied block within which we consider a wallet being
    * synced with the network. Defaults to 300 seconds.
@@ -418,6 +430,9 @@ async function walletExe(
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
         : []
     ),
+    extraEnv: config.stakePoolRegistryUrl
+      ? { CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl }
+      : undefined,
     supportsCleanShutdown: true,
     apiPort,
   };
