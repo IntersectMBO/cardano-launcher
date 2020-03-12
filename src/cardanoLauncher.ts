@@ -77,6 +77,13 @@ export interface LaunchConfig {
    * https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/archive/master.zip.
    */
   stakePoolRegistryUrl?: string;
+   
+  /**
+   * Maximum time difference (in seconds) between the tip slot and the
+   * latest applied block within which we consider a wallet being
+   * synced with the network. Defaults to 300 seconds.
+   */
+  syncToleranceSeconds?: number;
 
   /**
    * Configuration for starting `cardano-node`. The `kind` property will be one of
@@ -418,7 +425,10 @@ async function walletExe(
       '--database',
       path.join(baseDir, 'wallet'),
     ].concat(
-      config.listenAddress ? ['--listen-address', config.listenAddress] : []
+      config.listenAddress ? ['--listen-address', config.listenAddress] : [],
+      config.syncToleranceSeconds
+        ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
+        : []
     ),
     extraEnv: config.stakePoolRegistryUrl
       ? { CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl }
