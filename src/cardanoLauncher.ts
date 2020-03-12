@@ -67,6 +67,18 @@ export interface LaunchConfig {
   listenAddress?: string;
 
   /**
+   * Overrides the URL to the zip file containing stake pool metadata
+   * which is downloaded by cardano-wallet.
+   *
+   * This is only useful in testing scenarios, or when running a local
+   * development testnet.
+   *
+   * For Jörmungandr ITN, the default is
+   * https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/archive/master.zip.
+   */
+  stakePoolRegistryUrl?: string;
+
+  /**
    * Configuration for starting `cardano-node`. The `kind` property will be one of
    *  * `"byron"` - [[ByronNodeConfig]]
    *  * `"shelley"` - [[ShelleyNodeConfig]]
@@ -408,6 +420,9 @@ async function walletExe(
     ].concat(
       config.listenAddress ? ['--listen-address', config.listenAddress] : []
     ),
+    extraEnv: config.stakePoolRegistryUrl
+      ? { CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl }
+      : undefined,
     supportsCleanShutdown: true,
     apiPort,
   };
