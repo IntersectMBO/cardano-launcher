@@ -449,9 +449,11 @@ async function walletExe(
       ]);
     case 'byron':
       return addArgs(
-        config.nodeConfig.socketDir
-          ? ['--node-socket', config.nodeConfig.socketDir]
-          : []
+        [`--${config.networkName}`].concat(
+          config.nodeConfig.socketFile
+            ? ['--node-socket', config.nodeConfig.socketFile]
+            : []
+        )
       );
     case 'shelley':
       return base;

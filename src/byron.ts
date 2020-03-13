@@ -45,11 +45,10 @@ export interface ByronNodeConfig {
   network: ByronNetwork;
 
   /**
-   * Directory which will contain a socket file to use for
-   * communicating with the node. Optional -- will be set
-   * automatically if not provided.
+   * Filename for the socket to use for communicating with the
+   * node. Optional -- will be set automatically if not provided.
    */
-  socketDir?: DirPath;
+  socketFile?: FilePath;
 }
 
 /**
@@ -57,10 +56,10 @@ export interface ByronNodeConfig {
  */
 export interface ByronNodeArgs {
   /**
-   * Directory which will contain a socket file to use for
-   * communicating with the node.
+   * Filename for the socket file to use for communicating with the
+   * node.
    */
-  socketDir: DirPath;
+  socketFile: FilePath;
 
   /**
    * The path to a file describing the topology.
@@ -114,11 +113,11 @@ function makeArgs(
   config: ByronNodeConfig,
   listenPort: number
 ): ByronNodeArgs {
-  if (!config.socketDir) {
-    config.socketDir = 'sockets'; // relative to working directory
+  if (!config.socketFile) {
+    config.socketFile = 'cardano-node.socket'; // relative to working directory
   }
   return {
-    socketDir: config.socketDir,
+    socketFile: config.socketFile,
     topologyFile: path.join(
       config.configurationDir,
       config.network.topologyFile
@@ -151,8 +150,9 @@ export async function startByronNode(
   return {
     command: 'cardano-node',
     args: [
-      '--socket-dir',
-      args.socketDir,
+      'run',
+      '--socket-path',
+      args.socketFile,
       '--topology',
       args.topologyFile,
       '--database-path',
