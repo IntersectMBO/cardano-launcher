@@ -67,7 +67,7 @@ for information on how to set up Nix.
 
 To modify the cardano-wallet version, use [`niv update`](https://github.com/nmattia/niv#update).
 
-    nix-shell --run "niv update cardano-wallet -a rev={COMMIT_HASH}"
+    nix-shell --run "niv update cardano-wallet -a version={GIT_TAG}"
 
 The version of `cardano-node` and `jormungandr` are defined by
 cardano-wallet because it has specific version requirements for its
