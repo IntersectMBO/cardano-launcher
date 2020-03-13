@@ -40,6 +40,9 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     const api = await launcher.start();
 
+    expect(launcher.walletService.getProcess()).toHaveProperty('pid');
+    expect(launcher.nodeService.getProcess()).toHaveProperty('pid');
+
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
       const req = http.request(makeRequest(api, 'network/information'), res => {

@@ -18,8 +18,8 @@ describe('setupService', () => {
     let service = setupService(testService('echo', ['test echo']));
     let events: ServiceStatus[] = [];
     service.events.on('statusChanged', status => events.push(status));
-    service.start();
-
+    await service.start();
+    expect(service.getProcess()).toHaveProperty('pid');
     return new Promise(done => {
       service.events.on('statusChanged', status => {
         if (status === ServiceStatus.Stopped) {
