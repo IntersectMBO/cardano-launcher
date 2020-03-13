@@ -90,7 +90,7 @@ export interface Service {
   getStatus(): ServiceStatus;
 
   /**
-   * @return the ChildProcess running the service.
+   * @return the ChildProcess running the service, or null if the service has not been started yet.
    */
   getProcess(): ChildProcess | null;
 
