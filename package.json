@@ -11,7 +11,8 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "postinstall": "tsdx build",
+    "postinstall": "npm run build",
+    "prepublish": "npm run build",
     "typedoc": "typedoc src"
   },
   "peerDependencies": {},
