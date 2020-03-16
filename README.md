@@ -11,6 +11,17 @@ Its primary user is
 [Daedalus](https://github.com/input-output-hk/daedalus); however it
 could be used by any Javascript application.
 
+## Installation
+The package is designed to be installed from Github, with TypeScript transpiled locally as part of the installation step. No additional dependencies are required.
+Pinning to a git commit hash is the recommended approach prior to official releases. 
+### Yarn
+```
+yarn add input-output-hk/cardano-launcher#{COMMIT_HASH|BRANCH}
+```
+### Npm
+```
+npm install -S input-output-hk/cardano-launcher#{COMMIT_HASH|BRANCH}
+```
 ## Documentation
 
 See the generated API docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
