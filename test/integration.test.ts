@@ -12,14 +12,16 @@ import { makeRequest } from './utils';
 const longTestTimeoutMs = 15000;
 
 describe('Starting cardano-wallet (and its node)', () => {
-  const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
-    let stateDir = (
+  const setupTestLauncher = async (
+    config: (stateDir: string) => LaunchConfig
+  ) => {
+    const stateDir = (
       await tmp.dir({
         unsafeCleanup: true,
         prefix: 'launcher-integration-test',
       })
     ).path;
-    let launcher = new Launcher(config(stateDir));
+    const launcher = new Launcher(config(stateDir));
 
     expect(launcher).toBeTruthy();
 
@@ -38,6 +40,11 @@ describe('Starting cardano-wallet (and its node)', () => {
       console.log('ready event ', api);
     });
 
+    return launcher;
+  };
+
+  const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
+    const launcher = await setupTestLauncher(config);
     const api = await launcher.start();
 
     expect(launcher.walletService.getProcess()).toHaveProperty('pid');
@@ -81,6 +88,29 @@ describe('Starting cardano-wallet (and its node)', () => {
       }),
     longTestTimeoutMs
   );
+
+  it('emits one and only one exit event', async () => {
+    const launcher = await setupTestLauncher(stateDir => {
+      return {
+        stateDir,
+        networkName: 'self',
+        nodeConfig: {
+          kind: 'jormungandr',
+          configurationDir: path.join('test', 'data', 'jormungandr'),
+          network: jormungandr.networks.self,
+        },
+      };
+    });
+
+    const events = [];
+    launcher.walletBackend.events.on('exit', st => events.push(st));
+
+    await launcher.start();
+    await Promise.all([launcher.stop(), launcher.stop(), launcher.stop()]);
+    await launcher.stop();
+
+    expect(events.length).toBe(1);
+  });
 
   // cardano-wallet-byron is still wip
   xit(
