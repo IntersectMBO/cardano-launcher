@@ -144,6 +144,9 @@ export class Launcher {
   /** Wallet API server port - set once it's known. */
   private apiPort = 0;
 
+  /** A state flag for whether the backend services have exited yet. */
+  private exited = false;
+
   /**
    * Sets up a Launcher which can start and control the wallet backend.
    *
@@ -276,7 +279,10 @@ export class Launcher {
     ]).then(([wallet, node]) => {
       const status = { wallet, node };
       this.logger.debug(`Launcher.stop: both services are stopped.`, status);
-      this.walletBackend.events.emit('exit', status);
+      if (!this.exited) {
+        this.walletBackend.events.emit('exit', status);
+        this.exited = true;
+      }
       return status;
     });
   }
