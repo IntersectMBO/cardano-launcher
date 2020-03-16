@@ -133,8 +133,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     );
   });
 
-  // cardano-wallet-byron is still wip
-  xit(
+  it(
     'cardano-wallet-byron responds to requests',
     () =>
       launcherTest(stateDir => {
