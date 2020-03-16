@@ -11,7 +11,7 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "postinstall": "npm run build",
+    "postinstall": "npx tsdx build",
     "prepublish": "npm run build",
     "typedoc": "typedoc src"
   },
@@ -35,22 +35,22 @@
     "cardano-launcher": "bin/cardano-launcher"
   },
   "devDependencies": {
-    "husky": "^4.0.10",
-    "tmp-promise": "^2.0.2",
-    "ts-node": "^8.6.2",
-    "tslib": "^1.10.0",
-    "typedoc": "^0.16.7"
-  },
-  "dependencies": {
     "@types/jest": "^24.9.0",
     "@types/lodash": "^4.14.149",
     "@types/mkdirp": "^1.0.0",
     "@types/node": "^13.1.8",
+    "husky": "^4.0.10",
+    "tmp-promise": "^2.0.2",
+    "ts-node": "^8.6.2",
+    "tsdx": "^0.12.3",
+    "tslib": "^1.10.0",
+    "typedoc": "^0.16.7",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
     "get-port": "^5.1.1",
     "lodash": "^4.17.15",
     "mkdirp": "^1.0.3",
-    "tsdx": "^0.12.3",
-    "tsee": "^1.3.0",
-    "typescript": "^3.7.5"
+    "tsee": "^1.3.0"
   }
 }
