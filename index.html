@@ -65,6 +65,7 @@
 				<a href="#cardano-launcher-shelley" id="cardano-launcher-shelley" style="color: inherit; text-decoration: none;">
 					<h1>cardano-launcher Shelley</h1>
 				</a>
+				<p><a href="https://buildkite.com/input-output-hk/cardano-launcher"><img src="https://badge.buildkite.com/98083d5651511146dab7911b99f20ff9b60b4f8be25298a82f.svg" alt="Build status"></a></p>
 				<p><code>cardano-launcher</code> is a Node.js module for starting
 					<a href="https://github.com/input-output-hk/cardano-wallet">cardano-wallet</a>
 					and the Shelley
@@ -72,15 +73,17 @@
 				<p>Its primary user is
 					<a href="https://github.com/input-output-hk/daedalus">Daedalus</a>; however it
 				could be used by any Javascript application.</p>
-				<a href="#work-in-progress" id="work-in-progress" style="color: inherit; text-decoration: none;">
-					<h2>Work In Progress</h2>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h2>Documentation</h2>
 				</a>
-				<p>This is a draft of the API for <a href="https://jira.iohk.io/browse/ADP-92">ADP-92</a>.</p>
-				<p>See the generated docs at <a href="https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html">https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html</a>.</p>
+				<p>See the generated API docs at <a href="https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html">https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html</a>.</p>
+				<p>See <a href="./docs/example.js">docs/example.js</a>
+					and <a href="./docs/example-jormungandr.js">docs/example-jormungandr.js</a>
+				for example code.</p>
 				<a href="#component-diagram" id="component-diagram" style="color: inherit; text-decoration: none;">
 					<h2>Component diagram</h2>
 				</a>
-				<p><img src="./docs/component-diagram.svg" alt="Component diagram"></p>
+				<p><img src="./docs/component-diagram.png" alt="Component diagram"></p>
 				<a href="#message-sequence-diagram---launch" id="message-sequence-diagram---launch" style="color: inherit; text-decoration: none;">
 					<h2>Message sequence diagram - launch</h2>
 				</a>
@@ -103,7 +106,8 @@
 					in an interactive mode.
 				By default, runs tests related to files changed since the last commit.</p>
 				<p>Alternatively, to run only unit tests:</p>
-				<pre><code>npx tsdx <span class="hljs-built_in">test</span> unit</code></pre>
+				<pre><code>npx tsdx <span class="hljs-built_in">test</span> unit</code></pre><p>See the <a href="https://jestjs.io/docs/en/cli">Jest command-line reference</a>
+				for all the options.</p>
 				<a href="#codenpm-run-typedoccode" id="codenpm-run-typedoccode" style="color: inherit; text-decoration: none;">
 					<h3><code>npm run typedoc</code></h3>
 				</a>
@@ -115,23 +119,34 @@
 				<code>cardano-wallet</code>) in the <code>PATH</code>.</p>
 				<p>See <a href="https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md">nix.md</a>
 				for information on how to set up Nix.</p>
-				<a href="#updating-cardano-wallet-versiion" id="updating-cardano-wallet-versiion" style="color: inherit; text-decoration: none;">
-					<h3>Updating cardano-wallet versiion</h3>
+				<a href="#updating-cardano-wallet-version" id="updating-cardano-wallet-version" style="color: inherit; text-decoration: none;">
+					<h3>Updating cardano-wallet version</h3>
 				</a>
 				<p>To modify the cardano-wallet version, use <a href="https://github.com/nmattia/niv#update"><code>niv update</code></a>.</p>
-				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-wallet"</span></span></code></pre><p>To modify the cardano-node version, also use <code>niv-update</code>.</p>
-				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-node"</span></span></code></pre><p>In future, the <code>cardano-node</code> version may be defined by
-				<code>cardano-wallet</code>, is it is for <code>jormungandr</code>.</p>
+				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-wallet -a version={GIT_TAG}"</span></span></code></pre><p>The version of <code>cardano-node</code> and <code>jormungandr</code> are defined by
+					cardano-wallet because it has specific version requirements for its
+				backends.</p>
+				<a href="#overriding-node-backend-versions" id="overriding-node-backend-versions" style="color: inherit; text-decoration: none;">
+					<h4>Overriding node backend versions</h4>
+				</a>
+				<p>To use your own build of <code>cardano-node</code> or <code>jormungandr</code>, export your
+					<code>PATH</code> environment variable so that your build is ahead of those set
+				by the <code>nix-shell</code>.</p>
 				<a href="#design-docs" id="design-docs" style="color: inherit; text-decoration: none;">
 					<h2>Design docs</h2>
 				</a>
 				<ul>
+					<li><p><a href="https://jira.iohk.io/browse/ADP-92">ADP-92</a> - Jira ticket
+						containing user stories and task acceptance criteria.</p>
+					</li>
 					<li><p><a href="./docs/update-system-byron.md"><code>update-system-byron.md</code></a> -
 							Overview of how the update system works in the old codebase (Byron
 						era).</p>
 					</li>
 					<li><p><a href="./docs/windows-clean-shutdown.md"><code>windows-clean-shutdown.md</code></a> -
 						How to stop the wallet and node processes on Windows.</p>
+					</li>
+					<li><p><a href="./docs/dev.md"><code>dev.md</code></a> - Development information.</p>
 					</li>
 				</ul>
 				<a href="#testing-it-out" id="testing-it-out" style="color: inherit; text-decoration: none;">

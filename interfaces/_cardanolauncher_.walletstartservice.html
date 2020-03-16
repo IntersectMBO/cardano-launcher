@@ -91,6 +91,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_cardanolauncher_.walletstartservice.html#args" class="tsd-kind-icon">args</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_cardanolauncher_.walletstartservice.html#command" class="tsd-kind-icon">command</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_cardanolauncher_.walletstartservice.html#cwd" class="tsd-kind-icon">cwd</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_cardanolauncher_.walletstartservice.html#extraenv" class="tsd-kind-icon">extra<wbr>Env</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported"><a href="_cardanolauncher_.walletstartservice.html#supportscleanshutdown" class="tsd-kind-icon">supports<wbr>Clean<wbr>Shutdown</a></li>
 							</ul>
 						</section>
@@ -105,7 +106,7 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/cardanoLauncher.ts#L307">cardanoLauncher.ts:307</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L390">cardanoLauncher.ts:390</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -116,7 +117,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_service_.startservice.html">StartService</a>.<a href="_service_.startservice.html#args">args</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L271">service.ts:271</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L336">service.ts:336</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -132,7 +133,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_service_.startservice.html">StartService</a>.<a href="_service_.startservice.html#command">command</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L269">service.ts:269</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L334">service.ts:334</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -148,12 +149,28 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_service_.startservice.html">StartService</a>.<a href="_service_.startservice.html#cwd">cwd</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L273">service.ts:273</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L338">service.ts:338</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Directory to start program in. Helpful if it outputs files.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+					<a name="extraenv" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> extra<wbr>Env</h3>
+					<div class="tsd-signature tsd-kind-icon">extra<wbr>Env<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_service_.startservice.html">StartService</a>.<a href="_service_.startservice.html#extraenv">extraEnv</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L340">service.ts:340</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Additional environment variables to set, on top of the current process environment.</p>
 						</div>
 					</div>
 				</section>
@@ -164,7 +181,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_service_.startservice.html">StartService</a>.<a href="_service_.startservice.html#supportscleanshutdown">supportsCleanShutdown</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L278">service.ts:278</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L345">service.ts:345</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -214,7 +231,13 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html#service" class="tsd-kind-icon">Service</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
 						<a href="../modules/_cardanolauncher_.html#serviceexitstatus" class="tsd-kind-icon">Service<wbr>Exit<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
+						<a href="../modules/_cardanolauncher_.html#servicestatus" class="tsd-kind-icon">Service<wbr>Status</a>
 					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
 						<a href="../modules/_cardanolauncher_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>
@@ -231,7 +254,7 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_cardanolauncher_.exitstatus.html" class="tsd-kind-icon">Exit<wbr>Status</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_cardanolauncher_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
@@ -256,6 +279,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
 								<a href="_cardanolauncher_.walletstartservice.html#cwd" class="tsd-kind-icon">cwd</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
+								<a href="_cardanolauncher_.walletstartservice.html#extraenv" class="tsd-kind-icon">extra<wbr>Env</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited tsd-is-not-exported">
 								<a href="_cardanolauncher_.walletstartservice.html#supportscleanshutdown" class="tsd-kind-icon">supports<wbr>Clean<wbr>Shutdown</a>

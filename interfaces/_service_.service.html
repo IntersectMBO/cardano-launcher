@@ -95,6 +95,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_service_.service.html#getprocess" class="tsd-kind-icon">get<wbr>Process</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_service_.service.html#getstatus" class="tsd-kind-icon">get<wbr>Status</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_service_.service.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_service_.service.html#stop" class="tsd-kind-icon">stop</a></li>
@@ -112,7 +113,7 @@
 					<div class="tsd-signature tsd-kind-icon">events<span class="tsd-signature-symbol">:</span> <a href="../modules/_service_.html#serviceevents" class="tsd-signature-type">ServiceEvents</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L92">service.ts:92</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L105">service.ts:105</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -127,6 +128,26 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getprocess" class="tsd-anchor"></a>
+					<h3>get<wbr>Process</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Process<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ChildProcess</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L95">service.ts:95</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ChildProcess</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+							<p>the ChildProcess running the service, or null if the service has not been started yet.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="getstatus" class="tsd-anchor"></a>
 					<h3>get<wbr>Status</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -136,7 +157,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L82">service.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L90">service.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -156,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L63">service.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L69">service.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -178,7 +199,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L69">service.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L77">service.ts:77</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -190,6 +211,10 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> timeoutSeconds: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>how long to wait for the service to stop itself before killing it.
+										If <code>0</code>, any running timeout kill be cancelled and the process killed immediately.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_service_.serviceexitstatus.html" class="tsd-signature-type">ServiceExitStatus</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -207,7 +232,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/892c2e1/src/service.ts#L77">service.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L85">service.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -270,6 +295,9 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_service_.service.html#events" class="tsd-kind-icon">events</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_service_.service.html#getprocess" class="tsd-kind-icon">get<wbr>Process</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_service_.service.html#getstatus" class="tsd-kind-icon">get<wbr>Status</a>
