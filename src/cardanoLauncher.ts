@@ -394,17 +394,14 @@ function makeServiceCommands(
   config: LaunchConfig,
   logger: Logger
 ): { wallet: Promise<WalletStartService>; node: Promise<StartService> } {
-  const baseDir = path.join(
-    config.stateDir,
-    config.nodeConfig.kind,
-    config.networkName
-  );
   logger.info(
-    `Creating base directory ${baseDir} (if it doesn't already exist)`
+    `Creating state directory ${config.stateDir} (if it doesn't already exist)`
   );
-  const node = mkdirp(baseDir).then(() => nodeExe(baseDir, config));
+  const node = mkdirp(config.stateDir).then(() =>
+    nodeExe(config.stateDir, config)
+  );
   const wallet = node.then(nodeService =>
-    walletExe(baseDir, config, nodeService)
+    walletExe(config.stateDir, config, nodeService)
   );
   return { wallet, node };
 }
@@ -423,7 +420,7 @@ async function walletExe(
       '--port',
       '' + apiPort,
       '--database',
-      path.join(baseDir, 'wallet'),
+      path.join(baseDir, 'wallets'),
     ].concat(
       config.listenAddress ? ['--listen-address', config.listenAddress] : [],
       config.syncToleranceSeconds
