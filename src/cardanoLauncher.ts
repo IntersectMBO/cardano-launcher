@@ -221,7 +221,9 @@ export class Launcher {
 
     return new Promise((resolve, reject) => {
       this.walletBackend.events.on('ready', resolve);
-      this.walletBackend.events.on('exit', reject);
+      this.walletBackend.events.on('exit', st =>
+        reject(new BackendExitedError(st))
+      );
     });
   }
 
@@ -353,6 +355,19 @@ class V2Api implements Api {
 export interface ExitStatus {
   wallet: ServiceExitStatus;
   node: ServiceExitStatus;
+}
+
+/**
+ * This instance of [[Error]] will be returned when the
+ * `Launcher.start()` promise is rejected.
+ */
+export class BackendExitedError extends Error {
+  status: ExitStatus;
+  constructor(status: ExitStatus) {
+    super(exitStatusMessage(status));
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.status = status;
+  }
 }
 
 /**
