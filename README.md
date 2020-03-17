@@ -9,7 +9,7 @@ and the Shelley
 
 Its primary user is
 [Daedalus](https://github.com/input-output-hk/daedalus); however it
-could be used by any Javascript application.
+could be used by any Javascript application. Tagged versions are published to the [npm Registry](https://www.npmjs.com/package/cardano-launcher) as `cardano-launcher`.
 
 ## Documentation
 
@@ -42,7 +42,7 @@ Bundles the package to the `dist` folder.
 
 Runs the test watcher ([Jest](https://jestjs.io/docs/en/getting-started))
 in an interactive mode.
-By default, runs tests related to files changed since the last commit.
+By default, runs tests related to files changed since the last commit. 
 
 Alternatively, to run only unit tests:
 
