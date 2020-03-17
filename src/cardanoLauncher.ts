@@ -211,28 +211,37 @@ export class Launcher {
     this.nodeService.start();
     this.walletService.start();
 
-    this.waitForApi().then(() => {
+    const stopWaiting = () =>
+      this.nodeService.getStatus() > ServiceStatus.Started ||
+      this.walletService.getStatus() > ServiceStatus.Started;
+
+    this.waitForApi(stopWaiting).then(() => {
       this.walletBackend.events.emit('ready', this.walletBackend.getApi());
     });
 
     return new Promise((resolve, reject) => {
       this.walletBackend.events.on('ready', resolve);
-      this.walletBackend.events.on('exit', reject);
+      this.walletBackend.events.on('exit', st =>
+        reject(new BackendExitedError(st))
+      );
     });
   }
 
   /**
    * Poll TCP port of wallet API server until it accepts connections.
-   * @param port - TCP port number
+   * @param stop - a callback, which will terminate the polling loop if it returns a truey value.
    * @return a promise that is completed once the wallet API server accepts connections.
    */
-  private waitForApi(): Promise<void> {
+  private waitForApi(stop: () => boolean): Promise<void> {
     this.logger.debug('waitForApi');
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       let addr: net.SocketConnectOpts;
       var client: net.Socket;
       const poll = () => {
-        if (this.apiPort) {
+        if (stop()) {
+          clearInterval(timer);
+          reject();
+        } else if (this.apiPort) {
           if (!addr) {
             addr = { port: this.apiPort, host: '127.0.0.1' };
             this.logger.info(
@@ -346,6 +355,19 @@ class V2Api implements Api {
 export interface ExitStatus {
   wallet: ServiceExitStatus;
   node: ServiceExitStatus;
+}
+
+/**
+ * This instance of [[Error]] will be returned when the
+ * `Launcher.start()` promise is rejected.
+ */
+export class BackendExitedError extends Error {
+  status: ExitStatus;
+  constructor(status: ExitStatus) {
+    super(exitStatusMessage(status));
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.status = status;
+  }
 }
 
 /**

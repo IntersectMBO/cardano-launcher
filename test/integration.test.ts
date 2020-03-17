@@ -112,6 +112,27 @@ describe('Starting cardano-wallet (and its node)', () => {
     expect(events.length).toBe(1);
   });
 
+  it('handles case where node fails to start', async () => {
+    const launcher = await setupTestLauncher(stateDir => {
+      return {
+        stateDir,
+        networkName: 'self',
+        nodeConfig: {
+          kind: 'jormungandr',
+          configurationDir: path.join('test', 'data', 'jormungandr'),
+          network: jormungandr.networks.self,
+          extraArgs: ['--yolo'], // not a jormungandr arg
+        },
+      };
+    });
+    await expect(launcher.start()).rejects.toThrow(
+      [
+        'cardano-wallet-jormungandr exited with status 0',
+        'jormungandr exited with status 1',
+      ].join('\n')
+    );
+  });
+
   // cardano-wallet-byron is still wip
   xit(
     'cardano-wallet-byron responds to requests',
