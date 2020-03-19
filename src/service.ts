@@ -162,8 +162,8 @@ export function setupService(
 
     const stdio = [
       cfg.supportsCleanShutdown ? 'pipe' : 'ignore',
-      'inherit',
-      'inherit',
+      'pipe',
+      'pipe',
     ];
     const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
     const env = cfg.extraEnv

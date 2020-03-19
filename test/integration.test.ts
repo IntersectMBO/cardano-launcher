@@ -46,9 +46,15 @@ describe('Starting cardano-wallet (and its node)', () => {
   const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
     const launcher = await setupTestLauncher(config);
     const api = await launcher.start();
+    const walletProc = launcher.walletService.getProcess();
+    const nodeProc = launcher.nodeService.getProcess();
 
-    expect(launcher.walletService.getProcess()).toHaveProperty('pid');
-    expect(launcher.nodeService.getProcess()).toHaveProperty('pid');
+    expect(walletProc).toHaveProperty('pid');
+    expect(nodeProc).toHaveProperty('pid');
+    expect(nodeProc?.stderr).not.toBe(null);
+    expect(nodeProc?.stdout).not.toBe(null);
+    expect(walletProc?.stderr).not.toBe(null);
+    expect(walletProc?.stdout).not.toBe(null);
 
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
