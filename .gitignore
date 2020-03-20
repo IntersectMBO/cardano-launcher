@@ -6,3 +6,4 @@ dist
 /docs/*.html
 /docs/*.png
 /coverage/
+/test/.tmp

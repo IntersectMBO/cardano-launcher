@@ -7,8 +7,9 @@
  */
 
 import { spawn, ChildProcess } from 'child_process';
-import { EventEmitter } from 'tsee';
+import { WriteStream } from 'fs';
 import _ from 'lodash';
+import { EventEmitter } from 'tsee';
 
 import { Logger } from './logging';
 
@@ -129,16 +130,17 @@ type ServiceEvents = EventEmitter<{
  *
  * @param cfgPromise - a promise which will return the command to run.
  * @param logger - logging object.
+ * @param childProcessLogWriteStream - WriteStream for writing the child process data events from stdout and stderr.
  * @return A handle on the [[Service]].
  */
 export function setupService(
   cfgPromise: Promise<StartService>,
-  logger: Logger = console
+  logger: Logger = console,
+  childProcessLogWriteStream?: WriteStream
 ): Service {
   const events = new EventEmitter<{
     statusChanged: (status: ServiceStatus) => void;
   }>();
-
   // What the current state is.
   let status = ServiceStatus.NotStarted;
   // Fulfilled promise of service command-line.
@@ -159,11 +161,11 @@ export function setupService(
     ).join('');
     const commandStr = `${envStr}${cfg.command} ${cfg.args.join(' ')}`;
     logger.info(`Service.start: trying to start ${commandStr}`, cfg);
-
+    const stdOuts = childProcessLogWriteStream ? 'pipe' : 'inherit';
     const stdio = [
       cfg.supportsCleanShutdown ? 'pipe' : 'ignore',
-      'pipe',
-      'pipe',
+      stdOuts,
+      stdOuts,
     ];
     const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
     const env = cfg.extraEnv
@@ -190,6 +192,14 @@ export function setupService(
       logger.error(`Service.start: child_process failed: ${err}`);
       onStopped(null, null, err);
     });
+    if(proc.stdout && proc.stderr && childProcessLogWriteStream) {
+      proc.stdout.on('data', data => {
+        childProcessLogWriteStream.write(data)
+      });
+      proc.stderr.on('data', data => {
+        childProcessLogWriteStream.write(data)
+      });
+    }
     return proc.pid;
   };
 

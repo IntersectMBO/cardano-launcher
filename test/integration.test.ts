@@ -7,6 +7,8 @@ import * as path from 'path';
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
 import { makeRequest } from './utils';
+import { createWriteStream } from 'fs';
+import { ensureDir, remove, stat, writeFile } from 'fs-extra';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
@@ -51,10 +53,6 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(walletProc).toHaveProperty('pid');
     expect(nodeProc).toHaveProperty('pid');
-    expect(nodeProc?.stderr).not.toBe(null);
-    expect(nodeProc?.stdout).not.toBe(null);
-    expect(walletProc?.stderr).not.toBe(null);
-    expect(walletProc?.stdout).not.toBe(null);
 
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
@@ -156,4 +154,44 @@ describe('Starting cardano-wallet (and its node)', () => {
       }),
     longTestTimeoutMs
   );
+
+  describe('Child process logging support', () => {
+    const tmpDir = './test/.tmp';
+    const logFile = path.join(tmpDir, 'logs');
+
+    beforeEach(async () => {
+      await ensureDir(tmpDir);
+      await remove(logFile);
+      await writeFile(logFile,'');
+    });
+
+    afterEach(async () => {
+      await remove(tmpDir)
+    });
+
+    it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () => {
+      const childProcessLogWriteStream = createWriteStream(logFile);
+      const statsBefore = await stat(logFile);
+      expect(statsBefore.mtimeMs === statsBefore.birthtimeMs);
+      const launcher = new Launcher({
+        stateDir:(
+            await tmp.dir({
+              unsafeCleanup: true,
+              prefix: 'launcher-integration-test-2',
+            })
+        ).path,
+        networkName: 'self',
+        nodeConfig: {
+          kind: 'jormungandr',
+          configurationDir: path.join('test', 'data', 'jormungandr'),
+          network: jormungandr.networks.self,
+        },
+        childProcessLogWriteStream
+      });
+      await launcher.start();
+      const statsAfter = await stat(logFile);
+      expect(statsAfter.mtimeMs > statsAfter.birthtimeMs);
+      await launcher.stop();
+    })
+  })
 });

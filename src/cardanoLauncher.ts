@@ -29,6 +29,7 @@ import { DirPath } from './common';
 import * as byron from './byron';
 import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
+import { WriteStream } from 'fs';
 
 export {
   ServiceStatus,
@@ -95,6 +96,13 @@ export interface LaunchConfig {
     | byron.ByronNodeConfig
     | shelley.ShelleyNodeConfig
     | jormungandr.JormungandrConfig;
+
+  /**
+   * Write stream for piping the child process stdout and stderr streams
+   */
+
+  childProcessLogWriteStream?: WriteStream;
+
 }
 
 /**
@@ -117,6 +125,7 @@ export interface LaunchConfig {
  *       topologyFile: "mainnet-topology.json"
  *     }
  *   }
+ *   childProcessLogWriteStream: fs.createWriteStream('./logs')
  * });
  * ```
  *
@@ -159,10 +168,15 @@ export class Launcher {
 
     const start = makeServiceCommands(config, logger);
     this.walletService = setupService(
-      start.wallet,
-      prependName(logger, 'wallet')
+        start.wallet,
+        prependName(logger, 'wallet'),
+        config.childProcessLogWriteStream
     );
-    this.nodeService = setupService(start.node, prependName(logger, 'node'));
+    this.nodeService = setupService(
+        start.node,
+        prependName(logger, 'node'),
+        config.childProcessLogWriteStream
+    );
 
     this.walletBackend = {
       getApi: () => new V2Api(this.apiPort),
