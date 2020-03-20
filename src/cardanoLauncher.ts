@@ -98,7 +98,7 @@ export interface LaunchConfig {
     | jormungandr.JormungandrConfig;
 
   /**
-   * Write stream for piping the child process stdout and stderr streams
+   *  WriteStream for writing the child process data events from stdout and stderr
    */
 
   childProcessLogWriteStream?: WriteStream;
