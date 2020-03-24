@@ -132,22 +132,24 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(events.length).toBe(1);
   });
-  
+
   describe('Child process logging support', () => {
     let logFile: FileResult;
 
     beforeEach(async () => {
-      logFile = await tmp.file()
+      logFile = await tmp.file();
     });
 
     afterEach(() => {
-      logFile.cleanup()
+      logFile.cleanup();
     });
 
     it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () => {
-      const childProcessLogWriteStream = createWriteStream(logFile.path, { fd: logFile.fd });
+      const childProcessLogWriteStream = createWriteStream(logFile.path, {
+        fd: logFile.fd,
+      });
       const launcher = new Launcher({
-        stateDir:(
+        stateDir: (
           await tmp.dir({
             unsafeCleanup: true,
             prefix: 'launcher-integration-test-2',
@@ -159,14 +161,14 @@ describe('Starting cardano-wallet (and its node)', () => {
           configurationDir: path.join('test', 'data', 'jormungandr'),
           network: jormungandr.networks.self,
         },
-        childProcessLogWriteStream
+        childProcessLogWriteStream,
       });
       await launcher.start();
       const logFileStats = await stat(logFile.path);
       expect(logFileStats.size > 0);
       await launcher.stop();
-    })
-  })
+    });
+  });
 
   // fixme: this test needs to be the last one -- or else it breaks
   // the other tests.

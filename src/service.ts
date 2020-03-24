@@ -192,12 +192,12 @@ export function setupService(
       logger.error(`Service.start: child_process failed: ${err}`);
       onStopped(null, null, err);
     });
-    if(proc.stdout && proc.stderr && childProcessLogWriteStream) {
+    if (proc.stdout && proc.stderr && childProcessLogWriteStream) {
       proc.stdout.on('data', data => {
-        childProcessLogWriteStream.write(data)
+        childProcessLogWriteStream.write(data);
       });
       proc.stderr.on('data', data => {
-        childProcessLogWriteStream.write(data)
+        childProcessLogWriteStream.write(data);
       });
     }
     return proc.pid;

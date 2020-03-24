@@ -102,7 +102,6 @@ export interface LaunchConfig {
    */
 
   childProcessLogWriteStream?: WriteStream;
-
 }
 
 /**
@@ -168,14 +167,14 @@ export class Launcher {
 
     const start = makeServiceCommands(config, logger);
     this.walletService = setupService(
-        start.wallet,
-        prependName(logger, 'wallet'),
-        config.childProcessLogWriteStream
+      start.wallet,
+      prependName(logger, 'wallet'),
+      config.childProcessLogWriteStream
     );
     this.nodeService = setupService(
-        start.node,
-        prependName(logger, 'node'),
-        config.childProcessLogWriteStream
+      start.node,
+      prependName(logger, 'node'),
+      config.childProcessLogWriteStream
     );
 
     this.walletBackend = {
