@@ -93,6 +93,22 @@ describe('Starting cardano-wallet (and its node)', () => {
       }),
     longTestTimeoutMs
   );
+  it(
+    'cardano-wallet-byron responds to requests',
+    () =>
+      launcherTest(stateDir => {
+        return {
+          stateDir,
+          networkName: 'mainnet',
+          nodeConfig: {
+            kind: 'byron',
+            configurationDir: '' + process.env.BYRON_CONFIGS,
+            network: byron.networks.mainnet,
+          },
+        };
+      }),
+    longTestTimeoutMs
+  );
 
   it('emits one and only one exit event', async () => {
     const launcher = await setupTestLauncher(stateDir => {
@@ -116,46 +132,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(events.length).toBe(1);
   });
-
-  it('handles case where node fails to start', async () => {
-    const launcher = await setupTestLauncher(stateDir => {
-      return {
-        stateDir,
-        networkName: 'self',
-        nodeConfig: {
-          kind: 'jormungandr',
-          configurationDir: path.join('test', 'data', 'jormungandr'),
-          network: jormungandr.networks.self,
-          extraArgs: ['--yolo'], // not a jormungandr arg
-        },
-      };
-    });
-    await expect(launcher.start()).rejects.toThrow(
-      [
-        'cardano-wallet-jormungandr exited with status 0',
-        'jormungandr exited with status 1',
-      ].join('\n')
-    );
-  });
-
-  // cardano-wallet-byron is still wip
-  xit(
-    'cardano-wallet-byron responds to requests',
-    () =>
-      launcherTest(stateDir => {
-        return {
-          stateDir,
-          networkName: 'mainnet',
-          nodeConfig: {
-            kind: 'byron',
-            configurationDir: '' + process.env.BYRON_CONFIGS,
-            network: byron.networks.mainnet,
-          },
-        };
-      }),
-    longTestTimeoutMs
-  );
-
+  
   describe('Child process logging support', () => {
     let logFile: FileResult;
 
@@ -190,4 +167,27 @@ describe('Starting cardano-wallet (and its node)', () => {
       await launcher.stop();
     })
   })
+
+  // fixme: this test needs to be the last one -- or else it breaks
+  // the other tests.
+  it('handles case where node fails to start', async () => {
+    const launcher = await setupTestLauncher(stateDir => {
+      return {
+        stateDir,
+        networkName: 'self',
+        nodeConfig: {
+          kind: 'jormungandr',
+          configurationDir: path.join('test', 'data', 'jormungandr'),
+          network: jormungandr.networks.self,
+          extraArgs: ['--yolo'], // not a jormungandr arg
+        },
+      };
+    });
+    await expect(launcher.start()).rejects.toThrow(
+      [
+        'cardano-wallet-jormungandr exited with status 0',
+        'jormungandr exited with status 1',
+      ].join('\n')
+    );
+  });
 });
