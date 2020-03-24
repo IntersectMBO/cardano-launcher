@@ -170,7 +170,6 @@ describe('Starting cardano-wallet (and its node)', () => {
     it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () => {
       const childProcessLogWriteStream = createWriteStream(logFile.path);
       const statsBefore = await stat(logFile.path);
-      expect(statsBefore.mtimeMs === statsBefore.birthtimeMs);
       const launcher = new Launcher({
         stateDir:(
             await tmp.dir({
@@ -188,7 +187,7 @@ describe('Starting cardano-wallet (and its node)', () => {
       });
       await launcher.start();
       const statsAfter = await stat(logFile.path);
-      expect(statsAfter.mtimeMs > statsAfter.birthtimeMs);
+      expect(statsAfter.size > statsBefore.size);
       await launcher.stop();
     })
   })
