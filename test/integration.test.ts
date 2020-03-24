@@ -7,6 +7,9 @@ import * as path from 'path';
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
 import { makeRequest } from './utils';
+import { createWriteStream } from 'fs';
+import { stat } from 'fs-extra';
+import { FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
@@ -46,9 +49,11 @@ describe('Starting cardano-wallet (and its node)', () => {
   const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
     const launcher = await setupTestLauncher(config);
     const api = await launcher.start();
+    const walletProc = launcher.walletService.getProcess();
+    const nodeProc = launcher.nodeService.getProcess();
 
-    expect(launcher.walletService.getProcess()).toHaveProperty('pid');
-    expect(launcher.nodeService.getProcess()).toHaveProperty('pid');
+    expect(walletProc).toHaveProperty('pid');
+    expect(nodeProc).toHaveProperty('pid');
 
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
@@ -126,6 +131,43 @@ describe('Starting cardano-wallet (and its node)', () => {
     await launcher.stop();
 
     expect(events.length).toBe(1);
+  });
+
+  describe('Child process logging support', () => {
+    let logFile: FileResult;
+
+    beforeEach(async () => {
+      logFile = await tmp.file();
+    });
+
+    afterEach(() => {
+      logFile.cleanup();
+    });
+
+    it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () => {
+      const childProcessLogWriteStream = createWriteStream(logFile.path, {
+        fd: logFile.fd,
+      });
+      const launcher = new Launcher({
+        stateDir: (
+          await tmp.dir({
+            unsafeCleanup: true,
+            prefix: 'launcher-integration-test-2',
+          })
+        ).path,
+        networkName: 'self',
+        nodeConfig: {
+          kind: 'jormungandr',
+          configurationDir: path.join('test', 'data', 'jormungandr'),
+          network: jormungandr.networks.self,
+        },
+        childProcessLogWriteStream,
+      });
+      await launcher.start();
+      const logFileStats = await stat(logFile.path);
+      expect(logFileStats.size > 0);
+      await launcher.stop();
+    });
   });
 
   // fixme: this test needs to be the last one -- or else it breaks
