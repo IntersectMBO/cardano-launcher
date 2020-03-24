@@ -486,8 +486,13 @@ async function walletExe(
         '' + config.nodeConfig.restPort,
       ]);
     case 'byron':
+      const networkArg =
+        config.networkName === 'mainnet'
+          ? ['--mainnet']
+          : ['--testnet', config.nodeConfig.network.genesisFile];
+
       return addArgs(
-        [`--${config.networkName}`].concat(
+        networkArg.concat(
           config.nodeConfig.socketFile
             ? ['--node-socket', config.nodeConfig.socketFile]
             : []
