@@ -113,11 +113,13 @@ function makeArgs(
   config: ByronNodeConfig,
   listenPort: number
 ): ByronNodeArgs {
-  if (!config.socketFile) {
-    config.socketFile = 'cardano-node.socket'; // relative to working directory
+  let socketFile = config.socketFile;
+  if (!socketFile) {
+    socketFile = 'cardano-node.socket'; // relative to working directory
+    config.socketFile = path.join(stateDir, socketFile);
   }
   return {
-    socketFile: config.socketFile,
+    socketFile,
     topologyFile: path.join(
       config.configurationDir,
       config.network.topologyFile
