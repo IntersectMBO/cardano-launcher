@@ -171,10 +171,10 @@ describe('Starting cardano-wallet (and its node)', () => {
       const childProcessLogWriteStream = createWriteStream(logFile.path, { fd: logFile.fd });
       const launcher = new Launcher({
         stateDir:(
-            await tmp.dir({
-              unsafeCleanup: true,
-              prefix: 'launcher-integration-test-2',
-            })
+          await tmp.dir({
+            unsafeCleanup: true,
+            prefix: 'launcher-integration-test-2',
+          })
         ).path,
         networkName: 'self',
         nodeConfig: {
@@ -185,8 +185,8 @@ describe('Starting cardano-wallet (and its node)', () => {
         childProcessLogWriteStream
       });
       await launcher.start();
-      const statsAfter = await stat(logFile.path);
-      expect(statsAfter.size > statsBefore.size);
+      const logFileStats = await stat(logFile.path);
+      expect(logFileStats.size > 0);
       await launcher.stop();
     })
   })
