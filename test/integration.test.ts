@@ -8,7 +8,8 @@ import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
 import { makeRequest } from './utils';
 import { createWriteStream } from 'fs';
-import { ensureDir, remove, stat, writeFile } from 'fs-extra';
+import { stat } from 'fs-extra';
+import { FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
@@ -156,22 +157,19 @@ describe('Starting cardano-wallet (and its node)', () => {
   );
 
   describe('Child process logging support', () => {
-    const tmpDir = './test/.tmp';
-    const logFile = path.join(tmpDir, 'logs');
+    let logFile: FileResult;
 
     beforeEach(async () => {
-      await ensureDir(tmpDir);
-      await remove(logFile);
-      await writeFile(logFile,'');
+      logFile = await tmp.file()
     });
 
-    afterEach(async () => {
-      await remove(tmpDir)
+    afterEach(() => {
+      logFile.cleanup()
     });
 
     it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () => {
-      const childProcessLogWriteStream = createWriteStream(logFile);
-      const statsBefore = await stat(logFile);
+      const childProcessLogWriteStream = createWriteStream(logFile.path);
+      const statsBefore = await stat(logFile.path);
       expect(statsBefore.mtimeMs === statsBefore.birthtimeMs);
       const launcher = new Launcher({
         stateDir:(
@@ -189,7 +187,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         childProcessLogWriteStream
       });
       await launcher.start();
-      const statsAfter = await stat(logFile);
+      const statsAfter = await stat(logFile.path);
       expect(statsAfter.mtimeMs > statsAfter.birthtimeMs);
       await launcher.stop();
     })
