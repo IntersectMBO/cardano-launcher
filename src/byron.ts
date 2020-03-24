@@ -119,7 +119,7 @@ function makeArgs(
     config.socketFile = path.join(stateDir, socketFile);
   }
   return {
-    socketFile: socketFile,
+    socketFile,
     topologyFile: path.join(
       config.configurationDir,
       config.network.topologyFile
