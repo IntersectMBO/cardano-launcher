@@ -170,18 +170,19 @@ export class Launcher {
    */
   constructor(config: LaunchConfig, logger: Logger = console) {
     logger.debug('Launcher init');
+    const { childProcessLogWriteStream, installSignalHandlers = true } = config;
     this.logger = logger;
 
     const start = makeServiceCommands(config, logger);
     this.walletService = setupService(
       start.wallet,
       prependName(logger, 'wallet'),
-      config.childProcessLogWriteStream
+      childProcessLogWriteStream
     );
     this.nodeService = setupService(
       start.node,
       prependName(logger, 'node'),
-      config.childProcessLogWriteStream
+      childProcessLogWriteStream
     );
 
     this.walletBackend = {
@@ -210,7 +211,7 @@ export class Launcher {
       }
     });
 
-    if (!!config.installSignalHandlers) this.installSignalHandlers();
+    if (installSignalHandlers) this.installSignalHandlers();
   }
 
   /**
