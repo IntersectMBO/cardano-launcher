@@ -12,13 +12,19 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 10
-      - name: Fetch deps
+      - name: Fetch cardano-wallet-jormungandr
         shell: powershell
         run: |
           $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-jormungandr-win64/latest/download/1"
           $output = "cardano-wallet-jormungandr-win64.zip"
           Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -LiteralPath $output -DestinationPath .
-          Get-ChildItem
+          Expand-Archive -Force -LiteralPath $output -DestinationPath .
+      - name: Fetch cardano-wallet-byron
+        shell: powershell
+        run: |
+          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/1"
+          $output = "cardano-wallet-byron-win64.zip"
+          Invoke-WebRequest -Uri $url -OutFile $output
+          Expand-Archive -Force -LiteralPath $output -DestinationPath .
       - run: npm install
       - run: npm test
