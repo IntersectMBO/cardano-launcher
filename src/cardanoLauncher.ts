@@ -522,7 +522,11 @@ function nodeExe(
     case 'jormungandr':
       return jormungandr.startJormungandr(baseDir, config.nodeConfig);
     case 'byron':
-      return byron.startByronNode(baseDir, config.nodeConfig);
+      return byron.startByronNode(
+        baseDir,
+        config.nodeConfig,
+        config.networkName
+      );
     case 'shelley':
       return shelley.startShelleyNode(config.nodeConfig);
   }
