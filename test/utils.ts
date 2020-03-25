@@ -1,6 +1,8 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
+import path from 'path';
+
 import { Service, ServiceStatus, Api } from '../src';
 import { StartService } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
@@ -93,4 +95,25 @@ export function makeRequest(api: Api, path: string, options?: object): object {
     },
     options
   );
+}
+
+/**
+ * Adds the current working directory to the PATH, only when running
+ * under Windows.
+ *
+ * This means that the wallet and node executables can be "installed"
+ * in the source directory.
+ *
+ * If the node backend is run in a different working directory,
+ * Windows will still be able to find the executables
+ */
+export function setupExecPath() {
+  if (process.platform === 'win32') {
+    const cwd = process.cwd();
+    const paths = (process.env.PATH || '')
+      .split(path.delimiter)
+      .filter(p => p !== cwd);
+    paths.unshift(cwd);
+    process.env.PATH = paths.join(path.delimiter);
+  }
 }
