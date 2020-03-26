@@ -41,8 +41,14 @@ export interface ByronNodeConfig {
   /** Directory containing configurations for all networks. */
   configurationDir: DirPath;
 
+  /** Path to the delegation certificate. */
+  delegationCertificate?: string;
+
   /** Network parameters */
   network: ByronNetwork;
+
+  /** Path to the signing key. */
+  signingKey?: string;
 
   /**
    * Filename for the socket to use for communicating with the
@@ -125,6 +131,7 @@ function makeArgs(
       config.network.topologyFile
     ),
     databaseDir: 'chain', // relative to working directory
+    delegationCertificate: config.delegationCertificate,
     genesis: {
       file: path.join(config.configurationDir, config.network.genesisFile),
       hash: config.network.genesisHash,
@@ -133,6 +140,7 @@ function makeArgs(
       port: listenPort,
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
+    signingKey: config.signingKey
   };
 }
 
