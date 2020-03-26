@@ -30,6 +30,7 @@ import * as byron from './byron';
 import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
 import { WriteStream } from 'fs';
+import Signals = NodeJS.Signals;
 
 export {
   ServiceStatus,
@@ -100,8 +101,14 @@ export interface LaunchConfig {
   /**
    *  WriteStream for writing the child process data events from stdout and stderr
    */
-
   childProcessLogWriteStream?: WriteStream;
+
+  /**
+   *  Control the termination signal handling. Set this to false if the default
+   *  behaviour interferes with your application shutdown behaviour.
+   *  If setting this to false, ensure stop(0) is called as part of the shutdown.
+   */
+  installSignalHandlers?: Boolean;
 }
 
 /**
@@ -163,18 +170,19 @@ export class Launcher {
    */
   constructor(config: LaunchConfig, logger: Logger = console) {
     logger.debug('Launcher init');
+    const { childProcessLogWriteStream, installSignalHandlers = true } = config;
     this.logger = logger;
 
     const start = makeServiceCommands(config, logger);
     this.walletService = setupService(
       start.wallet,
       prependName(logger, 'wallet'),
-      config.childProcessLogWriteStream
+      childProcessLogWriteStream
     );
     this.nodeService = setupService(
       start.node,
       prependName(logger, 'node'),
-      config.childProcessLogWriteStream
+      childProcessLogWriteStream
     );
 
     this.walletBackend = {
@@ -203,7 +211,7 @@ export class Launcher {
       }
     });
 
-    this.installSignalHandlers();
+    if (installSignalHandlers) this.installSignalHandlers();
   }
 
   /**
@@ -313,13 +321,13 @@ export class Launcher {
    * Stop services when this process gets killed.
    */
   private installSignalHandlers(): void {
-    const cleanup = (signal: string) => {
-      this.logger.info(`Received ${signal} - stopping services...`);
-      this.walletService.stop(0);
-      this.nodeService.stop(0);
-    };
-    ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'].forEach((signal: string) =>
-      process.on(signal as any, cleanup)
+    const signals: Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'];
+    signals.forEach((signal: Signals) =>
+      process.on(signal, () => {
+        this.logger.info(`Received ${signal} - stopping services...`);
+        this.walletService.stop(0);
+        this.nodeService.stop(0);
+      })
     );
   }
 }
