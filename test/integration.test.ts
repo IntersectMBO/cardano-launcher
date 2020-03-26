@@ -1,3 +1,6 @@
+// Copyright © 2020 IOHK
+// License: Apache-2.0
+
 import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
 
 import * as http from 'http';
