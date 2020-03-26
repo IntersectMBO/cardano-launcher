@@ -310,9 +310,9 @@ export function setupService(
     stop: async (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
       switch (status) {
         case ServiceStatus.NotStarted:
+        case ServiceStatus.Starting:
           logger.info(`Service.stop: cannot stop - never started`);
           break;
-        case ServiceStatus.Starting:
         case ServiceStatus.Started:
           doStop(timeoutSeconds);
           break;
