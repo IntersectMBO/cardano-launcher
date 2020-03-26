@@ -1,3 +1,6 @@
+// Copyright © 2020 IOHK
+// License: Apache-2.0
+
 import { setupService, ServiceStatus, ServiceExitStatus } from '../src/service';
 import {
   testService,
