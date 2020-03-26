@@ -1,3 +1,6 @@
+// Copyright © 2020 IOHK
+// License: Apache-2.0
+
 /**
  * Cheap and cheerful logging functions.
  * Same as what is already in Daedalus.

@@ -1,3 +1,6 @@
+// Copyright © 2020 IOHK
+// License: Apache-2.0
+
 import { Service, ServiceStatus, Api } from '../src';
 import { StartService } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';

@@ -1,3 +1,6 @@
+// Copyright © 2020 IOHK
+// License: Apache-2.0
+
 import * as process from 'process';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';

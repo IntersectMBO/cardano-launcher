@@ -1,3 +1,6 @@
+// Copyright © 2020 IOHK
+// License: Apache-2.0
+
 /**
  * Module for starting and managing a Cardano node and wallet backend.
  *
