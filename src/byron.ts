@@ -44,7 +44,10 @@ export interface ByronNodeConfig {
   /** Directory containing configurations for all networks. */
   configurationDir: DirPath;
 
-  /** Path to the delegation certificate. */
+  /** Path to the delegation certificate. The delegation certificate allows the delegator
+   * (the issuer of said certificate) to give his/her own block signing rights to somebody
+   * else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.
+   * */
   delegationCertificate?: string;
 
   /** Network parameters */
