@@ -45,8 +45,13 @@ describe('Starting cardano-wallet (and its node)', () => {
     launcher.walletBackend.events.on('ready', (api: Api) => {
       console.log('ready event ', api);
     });
-
     return launcher;
+  };
+
+  const cleanupTestLauncher = async (launcher: Launcher) => {
+    launcher.walletBackend.events.removeAllListeners();
+    launcher.walletService.events.removeAllListeners();
+    launcher.nodeService.events.removeAllListeners();
   };
 
   const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
@@ -136,6 +141,8 @@ describe('Starting cardano-wallet (and its node)', () => {
     await launcher.stop();
 
     expect(events.length).toBe(1);
+
+    cleanupTestLauncher(launcher);
   });
 
   describe('Child process logging support', () => {
@@ -191,5 +198,6 @@ describe('Starting cardano-wallet (and its node)', () => {
       };
     });
     await expect(launcher.start()).rejects.toThrowError();
+    cleanupTestLauncher(launcher);
   });
 });
