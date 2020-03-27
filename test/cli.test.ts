@@ -2,9 +2,9 @@
 // License: Apache-2.0
 
 import * as process from 'process';
+import os from 'os';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
-
 import { delay, expectProcessToBeGone } from './utils';
 import { spawn } from 'child_process';
 
@@ -15,6 +15,7 @@ describe('CLI tests', () => {
     ).path;
     const proc = spawn('./bin/cardano-launcher', args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+      ...(os.platform() === 'win32' ? { shell: true } : {}),
     });
     let nodePid: number | null = null;
     let walletPid: number | null = null;

@@ -42,7 +42,6 @@ jobs:
           Get-ChildItem
           echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
         continue-on-error: true
-      - run: npm install -g
       - run: npm install
       - run: npm test
         timeout-minutes: 15
