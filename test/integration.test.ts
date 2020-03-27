@@ -171,9 +171,8 @@ describe('Starting cardano-wallet (and its node)', () => {
       }));
   });
 
-  // fixme: this test needs to be the last one -- or else it breaks
-  // the other tests.
   it('handles case where node fails to start', async () => {
+    expect.assertions(1);
     const launcher = await setupTestLauncher(stateDir => {
       return {
         stateDir,
@@ -186,17 +185,19 @@ describe('Starting cardano-wallet (and its node)', () => {
         },
       };
     });
-    expect.assertions(1);
+
     await launcher
       .start()
-      .catch(e =>
+      .then(api => { console.error("promise succeeded", api); })
+      .catch(e => {
+        console.log("caught launcher exception", e);
         expect(e.message).toEqual(
           [
             'cardano-wallet-jormungandr exited with status 0',
             'jormungandr exited with status 1',
           ].join('\n')
-        )
-      );
-    cleanupTestLauncher(launcher);
+        );
+      })
+      .finally(() => cleanupTestLauncher(launcher));
   });
 });
