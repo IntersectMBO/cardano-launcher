@@ -8,12 +8,7 @@ import * as path from 'path';
 import { delay, expectProcessToBeGone } from './utils';
 import { spawn } from 'child_process';
 
-// TODO: for Windows, the cli needs to be a .cmd file. I have no idea
-// how to set that up with typescript. So skipping the tests for now.
-// https://github.com/input-output-hk/cardano-launcher/issues/12
-const describeCLITests = process.platform === 'win32' ? xdescribe : describe;
-
-describeCLITests('CLI tests', () => {
+describe('CLI tests', () => {
   const killTest = (args: string[]) => async () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })

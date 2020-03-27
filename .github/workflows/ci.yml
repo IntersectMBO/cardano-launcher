@@ -20,5 +20,5 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $output
           Expand-Archive -LiteralPath $output -DestinationPath .
           Get-ChildItem
-      - run: npm install
+      - run: npm install -g
       - run: npm test
