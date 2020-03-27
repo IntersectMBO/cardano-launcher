@@ -9,7 +9,7 @@ import * as path from 'path';
 
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
-import { makeRequest } from './utils';
+import { makeRequest, setupExecPath } from './utils';
 import { createWriteStream } from 'fs';
 import { stat } from 'fs-extra';
 import { FileResult } from 'tmp-promise';
@@ -50,6 +50,8 @@ describe('Starting cardano-wallet (and its node)', () => {
   };
 
   const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
+    setupExecPath();
+
     const launcher = await setupTestLauncher(config);
     const api = await launcher.start();
     const walletProc = launcher.walletService.getProcess();
