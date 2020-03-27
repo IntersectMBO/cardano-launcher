@@ -8,6 +8,7 @@ jobs:
     name: Run tests on Windows
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           repository: input-output-hk/cardano-node
           path: cardano-node
