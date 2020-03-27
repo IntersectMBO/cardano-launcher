@@ -29,8 +29,6 @@ describe('Starting cardano-wallet (and its node)', () => {
     ).path;
     const launcher = new Launcher(config(stateDir));
 
-    expect(launcher).toBeTruthy();
-
     launcher.walletService.events.on(
       'statusChanged',
       (status: ServiceStatus) => {
@@ -188,7 +186,17 @@ describe('Starting cardano-wallet (and its node)', () => {
         },
       };
     });
-    await expect(launcher.start()).rejects.toThrowError();
+    expect.assertions(1);
+    await launcher
+      .start()
+      .catch(e =>
+        expect(e.message).toEqual(
+          [
+            'cardano-wallet-jormungandr exited with status 0',
+            'jormungandr exited with status 1',
+          ].join('\n')
+        )
+      );
     cleanupTestLauncher(launcher);
   });
 });
