@@ -188,9 +188,11 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     await launcher
       .start()
-      .then(api => { console.error("promise succeeded", api); })
+      .then(api => {
+        console.error('promise succeeded', api);
+      })
       .catch(e => {
-        console.log("caught launcher exception", e);
+        console.log('caught launcher exception', e);
         expect(e.message).toEqual(
           [
             'cardano-wallet-jormungandr exited with status 0',
