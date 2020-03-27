@@ -143,33 +143,31 @@ describe('Starting cardano-wallet (and its node)', () => {
     cleanupTestLauncher(launcher);
   });
 
-  describe('Child process logging support', () => {
-    it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
-      withFile(async (logFile: FileResult) => {
-        const childProcessLogWriteStream = createWriteStream(logFile.path, {
-          fd: logFile.fd,
-        });
-        const launcher = new Launcher({
-          stateDir: (
-            await tmp.dir({
-              unsafeCleanup: true,
-              prefix: 'launcher-integration-test-2',
-            })
-          ).path,
-          networkName: 'self',
-          nodeConfig: {
-            kind: 'jormungandr',
-            configurationDir: path.join('test', 'data', 'jormungandr'),
-            network: jormungandr.networks.self,
-          },
-          childProcessLogWriteStream,
-        });
-        await launcher.start();
-        const logFileStats = await stat(logFile.path);
-        expect(logFileStats.size > 0);
-        await launcher.stop();
-      }));
-  });
+  it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
+    withFile(async (logFile: FileResult) => {
+      const childProcessLogWriteStream = createWriteStream(logFile.path, {
+        fd: logFile.fd,
+      });
+      const launcher = new Launcher({
+        stateDir: (
+          await tmp.dir({
+            unsafeCleanup: true,
+            prefix: 'launcher-integration-test-2',
+          })
+        ).path,
+        networkName: 'self',
+        nodeConfig: {
+          kind: 'jormungandr',
+          configurationDir: path.join('test', 'data', 'jormungandr'),
+          network: jormungandr.networks.self,
+        },
+        childProcessLogWriteStream,
+      });
+      await launcher.start();
+      const logFileStats = await stat(logFile.path);
+      expect(logFileStats.size > 0);
+      await launcher.stop();
+    }));
 
   it('handles case where node fails to start', async () => {
     expect.assertions(1);
