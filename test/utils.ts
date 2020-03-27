@@ -2,10 +2,13 @@
 // License: Apache-2.0
 
 import path from 'path';
+import os from 'os';
 
 import { Service, ServiceStatus, Api } from '../src';
 import { StartService } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
+
+const platform = os.platform();
 
 /*******************************************************************************
  * Utils
@@ -20,6 +23,12 @@ export function testService(
   return new Promise(resolve =>
     resolve({ command, args, supportsCleanShutdown })
   );
+}
+
+/** If on win32 platform, shim the given node binary */
+export function ensureBinShim (programPath: string) {
+  if (platform !== 'win32') return;
+  return require('cmd-shim')(programPath, programPath);
 }
 
 /**

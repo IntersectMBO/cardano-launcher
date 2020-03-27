@@ -1,21 +1,36 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
+import { spawn } from 'child_process';
 import * as process from 'process';
 import os from 'os';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
-import { delay, expectProcessToBeGone } from './utils';
-import { spawn } from 'child_process';
+import { delay,
+  // ensureBinShim,
+  expectProcessToBeGone } from './utils';
+
+const programPath = require('../package.json').bin['cardano-launcher'];
+const platform = os.platform();
+console.log('@!@',programPath);
 
 describe('CLI tests', () => {
+
+  // beforeAll(async () => {
+  //   try {
+  //     await ensureBinShim(programPath);
+  //   } catch (error) {
+  //     console.error(error.message)
+  //   }
+  // });
+
   const killTest = (args: string[]) => async () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    const proc = spawn('./bin/cardano-launcher', args.concat([stateDir]), {
+    const proc = spawn(programPath, args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-      ...(os.platform() === 'win32' ? { shell: true } : {}),
+      ...(platform === 'win32' ? { shell: true } : {}),
     });
     let nodePid: number | null = null;
     let walletPid: number | null = null;
