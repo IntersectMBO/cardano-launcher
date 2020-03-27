@@ -6,14 +6,25 @@ import os from 'os';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
 import { delay, expectProcessToBeGone } from './utils';
-import { spawn } from 'child_process';
+import {exec, spawn} from 'child_process';
+
+const cardanoLauncherPath = path.resolve('bin');
+console.log('@!@',cardanoLauncherPath);
+exec(`dir ${cardanoLauncherPath}`, (error, stdout, stderr) => {
+  if (error) {
+    console.error(`exec error: ${error}`);
+    return;
+  }
+  console.log(`stdout: ${stdout}`);
+  console.error(`stderr: ${stderr}`);
+});
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    const proc = spawn(path.resolve(__dirname, 'bin', 'cardano-launcher'), args.concat([stateDir]), {
+    const proc = spawn(cardanoLauncherPath, args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
       ...(os.platform() === 'win32' ? { shell: true } : {}),
     });

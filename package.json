@@ -31,7 +31,7 @@
   "repository": "github:input-output-hk/cardano-launcher",
   "module": "dist/cardano-launcher.esm.js",
   "bin": {
-    "cardano-launcher": "bin/cardano-launcher"
+    "cardano-launcher": "./bin/cardano-launcher"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
