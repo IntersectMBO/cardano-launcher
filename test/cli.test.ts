@@ -13,7 +13,7 @@ describe('CLI tests', () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    const proc = spawn('./bin/cardano-launcher', args.concat([stateDir]), {
+    const proc = spawn(path.resolve(__dirname, 'bin', 'cardano-launcher'), args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
       ...(os.platform() === 'win32' ? { shell: true } : {}),
     });
