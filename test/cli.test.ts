@@ -2,7 +2,6 @@
 // License: Apache-2.0
 
 import * as process from 'process';
-import os from 'os';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
 import { delay, expectProcessToBeGone } from './utils';
@@ -24,9 +23,11 @@ describe('CLI tests', () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    const proc = spawn(cardanoLauncherPath, args.concat([stateDir]), {
+    args.unshift(path.join(cardanoLauncherPath, 'cardano-launcher'));
+    args.push(stateDir);
+    const proc = spawn("node", args, {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-      ...(os.platform() === 'win32' ? { shell: true } : {}),
+      shell: true
     });
     let nodePid: number | null = null;
     let walletPid: number | null = null;
@@ -38,6 +39,9 @@ describe('CLI tests', () => {
       if (message.wallet) {
         walletPid = message.wallet;
       }
+    });
+    proc.on('error', (err: Error) => {
+      console.error("spawn error: " + err.message, err);
     });
     await delay(1000);
     expect(nodePid).not.toBeNull();
@@ -60,7 +64,7 @@ describe('CLI tests', () => {
     killTest(jormungandr) as any
   );
   it(
-    'when the parent process is killed, cardano-node gets stopped',
+    'when the parent process is killed, cardano-node byron gets stopped',
     killTest(byron)
   );
 });

@@ -2,7 +2,10 @@
 
 // Copyright © 2020 IOHK
 // License: Apache-2.0
+
 const path = require('path');
 
-// fixme: figure out how to put cli in separate module
-require(path.resolve('..', 'dist/index.js')).cli(process.argv);
+// fixme: figure out how to put cli in separate module #49
+const index = require(path.resolve('dist', 'index'));
+
+index.cli(process.argv);
