@@ -5,5 +5,6 @@
 
 const path = require('path');
 
+// Todo: Unbundle test CLI from library
 // https://github.com/input-output-hk/cardano-launcher/issues/49
-require(path.resolve('dist', 'index')).cli(process.argv);
+require(path.resolve(__dirname,'..','dist', 'index')).cli(process.argv);
