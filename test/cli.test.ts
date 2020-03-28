@@ -8,10 +8,6 @@ import * as tmp from 'tmp-promise';
 import * as path from 'path';
 import { delay, expectProcessToBeGone } from './utils';
 
-const programPath = require(path.resolve(__dirname, '..', 'package.json')).bin[
-  'cardano-launcher'
-];
-
 describe('CLI tests', () => {
 
   const killTest = (args: string[]) => async () => {
@@ -19,7 +15,7 @@ describe('CLI tests', () => {
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
     args.push(stateDir);
-    const proc = spawn(programPath, args.concat([stateDir]), {
+    const proc = spawn('cardano-launcher', args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
       ...(os.platform() === 'win32' ? { shell: true } : {}),
     });
