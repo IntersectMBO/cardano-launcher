@@ -6,20 +6,13 @@ import os from 'os';
 import * as process from 'process';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
-import { delay, ensureBinShim, expectProcessToBeGone } from './utils';
+import { delay, expectProcessToBeGone } from './utils';
 
 const programPath = require(path.resolve(__dirname, '..', 'package.json')).bin[
   'cardano-launcher'
 ];
 
 describe('CLI tests', () => {
-  beforeAll(async () => {
-    try {
-      await ensureBinShim(programPath);
-    } catch (error) {
-      console.error(error.message);
-    }
-  });
 
   const killTest = (args: string[]) => async () => {
     const stateDir = (

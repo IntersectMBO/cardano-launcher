@@ -34,13 +34,11 @@
     "cardano-launcher": "./bin/cardano-launcher"
   },
   "devDependencies": {
-    "@types/cmd-shim": "^2.0.0",
     "@types/fs-extra": "^8.1.0",
     "@types/jest": "^24.9.0",
     "@types/lodash": "^4.14.149",
     "@types/mkdirp": "^1.0.0",
     "@types/node": "^13.1.8",
-    "cmd-shim": "^4.0.1",
     "fs-extra": "^9.0.0",
     "husky": "^4.0.10",
     "tmp-promise": "^2.0.2",
