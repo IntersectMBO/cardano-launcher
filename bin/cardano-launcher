@@ -3,5 +3,7 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
+const path = require('path');
+
 // https://github.com/input-output-hk/cardano-launcher/issues/49
-require('../dist/index').cli(process.argv);
+require(path.resolve('dist', 'index')).cli(process.argv);

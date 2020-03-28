@@ -26,7 +26,7 @@ export function testService(
 }
 
 /** If on win32 platform, shim the given node binary */
-export function ensureBinShim (programPath: string) {
+export function ensureBinShim(programPath: string) {
   if (platform !== 'win32') return;
   return require('cmd-shim')(programPath, programPath);
 }
