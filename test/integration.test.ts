@@ -16,7 +16,7 @@ import { withFile, FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
-const dataRoot = path.join(process.cwd(), 'test/data/byron/cardano-node');
+// const dataRoot = path.join(process.cwd(), 'test/data/byron/cardano-node');
 
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
@@ -113,8 +113,6 @@ describe('Starting cardano-wallet (and its node)', () => {
             kind: 'byron',
             configurationDir: '' + process.env.BYRON_CONFIGS,
             network: byron.networks.mainnet,
-            delegationCertificate: path.join(dataRoot, 'node.cert'),
-            signingKey: path.join( dataRoot, 'node.key')
           },
         };
       }),
