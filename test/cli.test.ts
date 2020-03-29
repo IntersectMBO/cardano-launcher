@@ -14,7 +14,6 @@ describe('CLI tests', () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    args.push(stateDir);
     const proc = spawn('cardano-launcher', args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
       ...(os.platform() === 'win32' ? { shell: true } : {}),
