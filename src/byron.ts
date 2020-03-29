@@ -123,12 +123,17 @@ export interface ByronNodeArgs {
 function makeArgs(
   stateDir: DirPath,
   config: ByronNodeConfig,
+  networkName: string,
   listenPort: number
 ): ByronNodeArgs {
   let socketFile = config.socketFile;
   if (!socketFile) {
-    socketFile = 'cardano-node.socket'; // relative to working directory
-    config.socketFile = path.join(stateDir, socketFile);
+    if (process.platform === 'win32') {
+      config.socketFile = socketFile = `\\\\.\\pipe\\cardano-node-${networkName}`;
+    } else {
+      socketFile = 'cardano-node.socket'; // relative to working directory
+      config.socketFile = path.join(stateDir, socketFile);
+    }
   }
   return {
     socketFile,
@@ -159,10 +164,11 @@ function makeArgs(
  */
 export async function startByronNode(
   stateDir: DirPath,
-  config: ByronNodeConfig
+  config: ByronNodeConfig,
+  networkName: string
 ): Promise<StartService> {
   const listenPort = await getPort();
-  const args = makeArgs(stateDir, config, listenPort);
+  const args = makeArgs(stateDir, config, networkName, listenPort);
   return {
     command: 'cardano-node',
     args: [

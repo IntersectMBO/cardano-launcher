@@ -172,9 +172,9 @@ export function setupService(
     ];
     const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
     const env = cfg.extraEnv
-      ? { env: Object.assign({}, process.env, cfg.extraEnv) }
-      : {};
-    const options = Object.assign({ stdio }, cwd, env);
+      ? Object.assign({}, process.env, cfg.extraEnv)
+      : process.env;
+    const options = Object.assign({ stdio }, cwd, { env });
     try {
       proc = spawn(cfg.command, cfg.args, options);
     } catch (err) {
@@ -310,9 +310,9 @@ export function setupService(
     stop: async (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
       switch (status) {
         case ServiceStatus.NotStarted:
+        case ServiceStatus.Starting:
           logger.info(`Service.stop: cannot stop - never started`);
           break;
-        case ServiceStatus.Starting:
         case ServiceStatus.Started:
           doStop(timeoutSeconds);
           break;
