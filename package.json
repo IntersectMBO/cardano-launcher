@@ -10,7 +10,7 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test integration unit",
-    "test:cli": "npm link && tsdx test cli && npm unlink",
+    "test:cli": "tsdx test cli",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "typedoc": "typedoc src"

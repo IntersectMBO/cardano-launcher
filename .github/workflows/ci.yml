@@ -46,5 +46,6 @@ jobs:
 #      - run: npm test
         with:
           node-version: 10
+      - run: npm i
       - run: npm run test:cli
         timeout-minutes: 15
