@@ -170,7 +170,6 @@ describe('Starting cardano-wallet (and its node)', () => {
     }));
 
   it('handles case where node fails to start', async () => {
-    expect.assertions(1);
     const launcher = await setupTestLauncher(stateDir => {
       return {
         stateDir,
@@ -198,6 +197,9 @@ describe('Starting cardano-wallet (and its node)', () => {
           ].join('\n')
         );
       })
-      .finally(() => cleanupTestLauncher(launcher));
+      .finally(() => {
+        cleanupTestLauncher(launcher);
+        expect.assertions(1);
+      });
   });
 });
