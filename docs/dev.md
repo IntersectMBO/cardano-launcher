@@ -13,15 +13,26 @@ To update https://input-output-hk.github.io/cardano-launcher/, run the
 Use the `niv` tool. To get it, run `nix-shell`. Then:
 
     niv update cardano-wallet
-    niv update cardano-node
 
 This will use the branches configuration in
 [`nix/sources.json`](../nix/sources.json). Niv also provides options
 for choosing another branch or git rev.
 
+The `cardano-node` version is set by `cardano-wallet`.
+
 ## cardano-node configurations for tests
 
 Before running tests, ensure that you have the `BYRON_CONFIGS`
 environment pointing to the `configuration` subdirectory of the
-`cardano-node` repo. If running in a `nix-shell`, this is set
+`cardano-node` repo.
+
+If running in a `nix-shell`, the `BYRON_CONFIGS` variable is set
 automatically.
+
+If running under Windows Powershell, do:
+
+    $Env:BYRON_CONFIGS = "E:\cardano-node\configuration"
+    
+## How to set up windows for testing
+
+See the [Windows](https://github.com/input-output-hk/adrestia/wiki/Windows) page on the wiki.
