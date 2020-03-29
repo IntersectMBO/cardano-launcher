@@ -151,7 +151,7 @@ function makeArgs(
       port: listenPort,
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
-    signingKey: config.signingKey
+    signingKey: config.signingKey,
   };
 }
 

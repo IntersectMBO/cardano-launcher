@@ -12,11 +12,11 @@ import * as byron from '../src/byron';
 import { makeRequest, setupExecPath } from './utils';
 import { createWriteStream } from 'fs';
 import { stat } from 'fs-extra';
-import { FileResult } from 'tmp-promise';
+import { withFile, FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
-const dataRoot = path.join(process.cwd(), 'test/data/byron/cardano-node');
+// const dataRoot = path.join(process.cwd(), 'test/data/byron/cardano-node');
 
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
@@ -29,8 +29,6 @@ describe('Starting cardano-wallet (and its node)', () => {
       })
     ).path;
     const launcher = new Launcher(config(stateDir));
-
-    expect(launcher).toBeTruthy();
 
     launcher.walletService.events.on(
       'statusChanged',
@@ -46,8 +44,13 @@ describe('Starting cardano-wallet (and its node)', () => {
     launcher.walletBackend.events.on('ready', (api: Api) => {
       console.log('ready event ', api);
     });
-
     return launcher;
+  };
+
+  const cleanupTestLauncher = async (launcher: Launcher) => {
+    launcher.walletBackend.events.removeAllListeners();
+    launcher.walletService.events.removeAllListeners();
+    launcher.nodeService.events.removeAllListeners();
   };
 
   const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
@@ -110,8 +113,6 @@ describe('Starting cardano-wallet (and its node)', () => {
             kind: 'byron',
             configurationDir: '' + process.env.BYRON_CONFIGS,
             network: byron.networks.mainnet,
-            delegationCertificate: path.join(dataRoot, 'node.cert'),
-            signingKey: path.join( dataRoot, 'node.key')
           },
         };
       }),
@@ -139,20 +140,12 @@ describe('Starting cardano-wallet (and its node)', () => {
     await launcher.stop();
 
     expect(events.length).toBe(1);
+
+    cleanupTestLauncher(launcher);
   });
 
-  describe('Child process logging support', () => {
-    let logFile: FileResult;
-
-    beforeEach(async () => {
-      logFile = await tmp.file();
-    });
-
-    afterEach(() => {
-      logFile.cleanup();
-    });
-
-    it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () => {
+  it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
+    withFile(async (logFile: FileResult) => {
       const childProcessLogWriteStream = createWriteStream(logFile.path, {
         fd: logFile.fd,
       });
@@ -175,11 +168,8 @@ describe('Starting cardano-wallet (and its node)', () => {
       const logFileStats = await stat(logFile.path);
       expect(logFileStats.size > 0);
       await launcher.stop();
-    });
-  });
+    }));
 
-  // fixme: this test needs to be the last one -- or else it breaks
-  // the other tests.
   it('handles case where node fails to start', async () => {
     const launcher = await setupTestLauncher(stateDir => {
       return {
@@ -193,11 +183,24 @@ describe('Starting cardano-wallet (and its node)', () => {
         },
       };
     });
-    await expect(launcher.start()).rejects.toThrow(
-      [
-        'cardano-wallet-jormungandr exited with status 0',
-        'jormungandr exited with status 1',
-      ].join('\n')
-    );
+
+    await launcher
+      .start()
+      .then(api => {
+        console.error('promise succeeded', api);
+      })
+      .catch(e => {
+        console.log('caught launcher exception', e);
+        expect(e.message).toEqual(
+          [
+            'cardano-wallet-jormungandr exited with status 0',
+            'jormungandr exited with status 1',
+          ].join('\n')
+        );
+      })
+      .finally(() => {
+        cleanupTestLauncher(launcher);
+        expect.assertions(1);
+      });
   });
 });
