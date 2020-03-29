@@ -6,7 +6,7 @@ import * as tmp from 'tmp-promise';
 import * as path from 'path';
 
 import { delay, expectProcessToBeGone } from './utils';
-import { spawn } from 'child_process';
+import { fork } from 'child_process';
 
 // TODO: for Windows, the cli needs to be a .cmd file. I have no idea
 // how to set that up with typescript. So skipping the tests for now.
@@ -18,7 +18,7 @@ describeCLITests('CLI tests', () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    const proc = spawn('./bin/cardano-launcher', args.concat([stateDir]), {
+    const proc = fork(path.resolve(__dirname, '..','dist', 'cli.js'), args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
     });
     let nodePid: number | null = null;
