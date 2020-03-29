@@ -45,7 +45,7 @@ describe('CLI tests', () => {
   const jormungandr = [
     'jormungandr',
     'self',
-    path.join('test', 'data', 'jormungandr'),
+    path.resolve(__dirname, 'data', 'jormungandr')
   ];
   const byron = ['byron', 'mainnet', '' + process.env.BYRON_CONFIGS];
 
