@@ -2,18 +2,22 @@
 // License: Apache-2.0
 
 import { spawn } from 'child_process';
+import * as os from 'os';
 import * as process from 'process';
-import * as tmp from 'tmp-promise';
+// import * as tmp from 'tmp-promise';
 import * as path from 'path';
 import { delay, expectProcessToBeGone } from './utils';
+
+const platform = os.platform();
 
 describe('CLI tests', () => {
 
   const killTest = (args: string[]) => async () => {
-    const stateDir = (
-      await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
-    ).path;
-    const proc = spawn('cardano-launcher', args.concat([stateDir]), {
+    console.log(args)
+    // const stateDir = (
+    //   await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
+    // ).path;
+    const proc = spawn(platform === 'win32' ? 'cardano-launcher.cmd' : 'cardano-launcher', {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc']
     });
     let nodePid: number | null = null;
