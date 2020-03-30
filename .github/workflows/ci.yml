@@ -43,5 +43,9 @@ jobs:
           echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
         continue-on-error: true
       - run: npm install
-      - run: npm test
+      - run: npm test unit
+        continue-on-error: true
+      - run: npm test integration
+        continue-on-error: true
+      - run: npm test cli
         timeout-minutes: 15
