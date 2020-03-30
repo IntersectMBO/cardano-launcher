@@ -93,14 +93,10 @@ by the `nix-shell`.
 
  * [`dev.md`](./docs/dev.md) - Development information.
 
-## Testing it out
-
-After building, there is a very basic CLI that you can use to test.
-
-Jormungandr self-node:
-
-    ./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
-
-Byron mainnet:
-
-    ./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
+## Run
+```
+node ./dist/cli.js jormungandr self test/data/jormungandr ./state-launcher
+```
+```
+node ./dist/cli.js  byron mainnet $BYRON_CONFIGS ./state-launcher
+```
