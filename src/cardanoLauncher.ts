@@ -39,6 +39,7 @@ import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
 import { WriteStream } from 'fs';
 import Signals = NodeJS.Signals;
+import { ServerTlsConfiguration } from './tls';
 
 export {
   ServiceStatus,
@@ -55,6 +56,7 @@ interface RequestParams {
   port: number;
   path: string;
   hostname: string;
+  protocol: string;
 }
 
 /**
@@ -75,17 +77,17 @@ export interface Api {
 }
 
 class V2Api implements Api {
-  /** URL of the API, including a trailling slash. */
+  /** URL of the API, including a trailing slash. */
   readonly baseUrl: string;
   /** URL components which can be used with the HTTP client library of
    * your choice. */
   readonly requestParams: RequestParams;
 
-  constructor(port: number) {
+  constructor(port: number, protocol = 'http:') {
     const hostname = '127.0.0.1';
     const path = '/v2/';
-    this.baseUrl = `http://${hostname}:${port}${path}`;
-    this.requestParams = { port, path, hostname };
+    this.baseUrl = `${protocol}//${hostname}:${port}${path}`;
+    this.requestParams = { port, path, hostname, protocol };
   }
 }
 
@@ -195,6 +197,12 @@ export interface LaunchConfig {
    *  If setting this to false, ensure stop(0) is called as part of the shutdown.
    */
   installSignalHandlers?: boolean;
+
+  /**
+   * Paths to server TLS credentials for establishing a HTTPS connection using TLS
+   * If not set, the connection will be served insecurely over HTTP.
+   */
+  tlsConfiguration?: ServerTlsConfiguration;
 }
 
 /**
@@ -270,7 +278,11 @@ export class Launcher {
     );
 
     this.walletBackend = {
-      getApi: (): V2Api => new V2Api(this.apiPort),
+      getApi: (): V2Api =>
+        new V2Api(
+          this.apiPort,
+          config.tlsConfiguration !== undefined ? 'https:' : 'http:'
+        ),
       events: new EventEmitter<{
         ready: (api: Api) => void;
         exit: (status: ExitStatus) => void;
@@ -448,6 +460,16 @@ export class Launcher {
         path.join(baseDir, 'wallets'),
       ].concat(
         config.listenAddress ? ['--listen-address', config.listenAddress] : [],
+        config.tlsConfiguration
+          ? [
+              '--tls-ca-cert',
+              config.tlsConfiguration.caCert,
+              '--tls-sv-cert',
+              config.tlsConfiguration.svCert,
+              '--tls-sv-key',
+              config.tlsConfiguration.svKey,
+            ]
+          : [],
         config.syncToleranceSeconds
           ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
           : []

@@ -9,6 +9,8 @@ import _ from 'lodash';
 import { Service, ServiceStatus, Api } from '../src';
 import { StartService, ShutdownMethod } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
+import { ServerOptions } from 'http'
+import { ServerOptions as HttpsServerOptions } from 'https'
 
 /*******************************************************************************
  * Utils
@@ -84,7 +86,7 @@ export function delay(ms: number): Promise<void> {
  * @param options - extra options to be added to the request.
  * @return an options object suitable for `http.request`
  */
-export function makeRequest(api: Api, path: string, options?: object): object {
+export function makeRequest(api: Api, path: string, options?: ServerOptions | HttpsServerOptions): object {
   return Object.assign(
     {},
     api.requestParams,
