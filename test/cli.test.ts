@@ -42,7 +42,11 @@ describe('CLI tests', () => {
     'self',
     path.resolve(__dirname, 'data', 'jormungandr'),
   ];
-  const byron = ['byron', 'mainnet', '' + process.env.BYRON_CONFIGS];
+  const byron = [
+    'byron',
+    'mainnet',
+    process.env.BYRON_CONFIGS as string
+  ];
 
   it(
     'when the parent process is killed, child jormungandr gets stopped',
