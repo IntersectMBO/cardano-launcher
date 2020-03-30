@@ -141,7 +141,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(events.length).toBe(1);
 
-    cleanupTestLauncher(launcher);
+    await cleanupTestLauncher(launcher);
   });
 
   it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
