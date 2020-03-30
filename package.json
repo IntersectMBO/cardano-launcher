@@ -1,5 +1,5 @@
 {
-  "version": "0.202001014.0",
+  "version": "0.20200331.1",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",

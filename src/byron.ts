@@ -18,8 +18,6 @@ export const networks: { [propName: string]: ByronNetwork } = {
   mainnet: {
     configFile: 'configuration-mainnet.yaml',
     genesisFile: 'mainnet-genesis.json',
-    genesisHash:
-      '5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb',
     topologyFile: 'mainnet-topology.json',
   },
 };
@@ -30,7 +28,6 @@ export const networks: { [propName: string]: ByronNetwork } = {
 export interface ByronNetwork {
   configFile: FilePath;
   genesisFile: FilePath;
-  genesisHash: string;
   topologyFile: FilePath;
 }
 
@@ -88,14 +85,6 @@ export interface ByronNodeArgs {
   /** Path to the signing key. */
   signingKey?: string;
 
-  /** The genesis block for this network's chain. */
-  genesis: {
-    /** The filename of the genesis block. */
-    file: FilePath;
-    /** The hash of the genesis block. */
-    hash: string;
-  };
-
   /** Configures the address to bind for P2P communication. */
   listen: {
     /** The TCP port for node P2P. */
@@ -143,10 +132,6 @@ function makeArgs(
     ),
     databaseDir: 'chain', // relative to working directory
     delegationCertificate: config.delegationCertificate,
-    genesis: {
-      file: path.join(config.configurationDir, config.network.genesisFile),
-      hash: config.network.genesisHash,
-    },
     listen: {
       port: listenPort,
     },
@@ -179,10 +164,6 @@ export async function startByronNode(
       args.topologyFile,
       '--database-path',
       args.databaseDir,
-      '--genesis-file',
-      args.genesis.file,
-      '--genesis-hash',
-      args.genesis.hash,
       '--port',
       '' + args.listen.port,
       '--config',
