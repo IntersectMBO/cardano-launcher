@@ -16,6 +16,7 @@ import { withFile, FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
+
 // const dataRoot = path.resolve(__dirname, 'data', 'byron', 'cardano-node');
 
 describe('Starting cardano-wallet (and its node)', () => {
