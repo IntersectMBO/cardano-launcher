@@ -34,6 +34,7 @@ import * as shelley from './shelley';
 import * as jormungandr from './jormungandr';
 import { WriteStream } from 'fs';
 import Signals = NodeJS.Signals;
+import { ServerTlsConfiguration } from './tls';
 
 export {
   ServiceStatus,
@@ -112,6 +113,12 @@ export interface LaunchConfig {
    *  If setting this to false, ensure stop(0) is called as part of the shutdown.
    */
   installSignalHandlers?: Boolean;
+
+  /**
+   * Paths to Server TLS certificates for establishing a HTTPS connection using TLS
+   * If not set, the connection will be served insecurely over HTTP.
+   */
+  tlsConfiguration?: ServerTlsConfiguration
 }
 
 /**
@@ -475,6 +482,11 @@ async function walletExe(
       path.join(baseDir, 'wallets'),
     ].concat(
       config.listenAddress ? ['--listen-address', config.listenAddress] : [],
+      config.tlsConfiguration ? [
+        '--tls-ca-cert', config.tlsConfiguration.caCert,
+        '--tls-sv-cert', config.tlsConfiguration.svCert,
+        '--tls-sv-key', config.tlsConfiguration.svKey
+      ] : [],
       config.syncToleranceSeconds
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
         : []
