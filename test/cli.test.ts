@@ -1,9 +1,9 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-// import * as process from 'process';
+import process from 'process';
 import * as tmp from 'tmp-promise';
-import * as path from 'path';
+import path from 'path';
 
 import { delay, expectProcessToBeGone, setupExecPath } from './utils';
 import { fork } from 'child_process';
@@ -42,14 +42,14 @@ describe('CLI tests', () => {
     'self',
     path.resolve(__dirname, 'data', 'jormungandr'),
   ];
-  // const byron = ['byron', 'mainnet', '' + process.env.BYRON_CONFIGS];
+  const byron = ['byron', 'mainnet', '' + process.env.BYRON_CONFIGS];
 
   it(
     'when the parent process is killed, child jormungandr gets stopped',
     killTest(jormungandr) as any
   );
-  // it(
-  //   'when the parent process is killed, cardano-node gets stopped',
-  //   killTest(byron)
-  // );
+  it(
+    'when the parent process is killed, cardano-node gets stopped',
+    killTest(byron)
+  );
 });
