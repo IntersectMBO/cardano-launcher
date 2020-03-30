@@ -31,16 +31,16 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $output
           Expand-Archive -Force -LiteralPath $output -DestinationPath .
           Get-ChildItem
-      - name: Fetch cardano-wallet-byron config
-        shell: powershell
-        run: |
-          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\cardano-node\configuration"
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/2"
-          $output = "cardano-wallet-byron-configuration.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath byron_configs
-          Get-ChildItem
-          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
+#      - name: Fetch cardano-wallet-byron config
+#        shell: powershell
+#        run: |
+#          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\cardano-node\configuration"
+#          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/2"
+#          $output = "cardano-wallet-byron-configuration.zip"
+#          Invoke-WebRequest -Uri $url -OutFile $output
+#          Expand-Archive -Force -LiteralPath $output -DestinationPath byron_configs
+#          Get-ChildItem
+#          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
         continue-on-error: true
       - run: npm install
       - run: npm test unit
