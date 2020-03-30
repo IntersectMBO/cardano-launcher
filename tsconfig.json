@@ -18,5 +18,9 @@
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "preserveConstEnums": true
+  },
+  "typedocOptions": {
+    "excludeExternals": true,
+    "out": "site"
   }
 }
