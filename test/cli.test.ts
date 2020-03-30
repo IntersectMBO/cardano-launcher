@@ -5,11 +5,12 @@ import * as process from 'process';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
 
-import { delay, expectProcessToBeGone } from './utils';
+import { delay, expectProcessToBeGone, setupExecPath } from './utils';
 import { fork } from 'child_process';
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async () => {
+    setupExecPath();
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
