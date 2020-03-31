@@ -8,10 +8,6 @@ jobs:
     name: Run tests on Windows
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
-        with:
-          repository: input-output-hk/cardano-node
-          path: cardano-node
       - name: Setup node
         uses: actions/setup-node@v1
         with:
@@ -41,7 +37,8 @@ jobs:
           Expand-Archive -Force -LiteralPath $output -DestinationPath byron_configs
           Get-ChildItem
           echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
-        continue-on-error: true
       - run: npm install
-      - run: npm test
+      - run: npm test unit
+      - run: npm test integration
+      - run: npm test cli
         timeout-minutes: 15

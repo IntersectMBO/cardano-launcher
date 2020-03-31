@@ -16,7 +16,8 @@ import { withFile, FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
-// const dataRoot = path.join(process.cwd(), 'test/data/byron/cardano-node');
+
+// const dataRoot = path.resolve(__dirname, 'data', 'byron', 'cardano-node');
 
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
@@ -95,7 +96,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           networkName: 'self',
           nodeConfig: {
             kind: 'jormungandr',
-            configurationDir: path.join('test', 'data', 'jormungandr'),
+            configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
             network: jormungandr.networks.self,
           },
         };
@@ -112,7 +113,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           nodeConfig: {
             kind: 'byron',
             configurationDir: '' + process.env.BYRON_CONFIGS,
-            network: byron.networks.mainnet,
+            network: byron.networks.mainnet
           },
         };
       }),
@@ -126,7 +127,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         networkName: 'self',
         nodeConfig: {
           kind: 'jormungandr',
-          configurationDir: path.join('test', 'data', 'jormungandr'),
+          configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
           network: jormungandr.networks.self,
         },
       };
@@ -141,7 +142,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(events.length).toBe(1);
 
-    cleanupTestLauncher(launcher);
+    await cleanupTestLauncher(launcher);
   });
 
   it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
@@ -159,7 +160,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         networkName: 'self',
         nodeConfig: {
           kind: 'jormungandr',
-          configurationDir: path.join('test', 'data', 'jormungandr'),
+          configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
           network: jormungandr.networks.self,
         },
         childProcessLogWriteStream,
@@ -177,7 +178,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         networkName: 'self',
         nodeConfig: {
           kind: 'jormungandr',
-          configurationDir: path.join('test', 'data', 'jormungandr'),
+          configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
           network: jormungandr.networks.self,
           extraArgs: ['--yolo'], // not a jormungandr arg
         },
