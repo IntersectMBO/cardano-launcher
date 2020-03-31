@@ -17,9 +17,6 @@ import { FilePath, DirPath } from './common';
 export const networks: { [propName: string]: ByronNetwork } = {
   mainnet: {
     configFile: 'configuration-mainnet.yaml',
-    genesisFile: 'mainnet-genesis.json',
-    genesisHash:
-      '5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb',
     topologyFile: 'mainnet-topology.json',
   },
 };
@@ -28,10 +25,21 @@ export const networks: { [propName: string]: ByronNetwork } = {
  * Definition of a `cardano-node` (Byron) network.
  */
 export interface ByronNetwork {
+  /**
+   * The YAML configuration file for cardano-node.
+   */
   configFile: FilePath;
-  genesisFile: FilePath;
-  genesisHash: string;
+  /**
+   * Network topology data to pass to cardano-node.
+   */
   topologyFile: FilePath;
+  /**
+   * Path to the genesis file in JSON format.
+   * This is required for testnet but not mainnet.
+   * It is used to configure the parameters of cardano-wallet.
+   * It should match the genesis file configured in the cardano-node YAML file.
+   */
+  genesisFile?: FilePath;
 }
 
 /**
@@ -88,14 +96,6 @@ export interface ByronNodeArgs {
   /** Path to the signing key. */
   signingKey?: string;
 
-  /** The genesis block for this network's chain. */
-  genesis: {
-    /** The filename of the genesis block. */
-    file: FilePath;
-    /** The hash of the genesis block. */
-    hash: string;
-  };
-
   /** Configures the address to bind for P2P communication. */
   listen: {
     /** The TCP port for node P2P. */
@@ -143,10 +143,6 @@ function makeArgs(
     ),
     databaseDir: 'chain', // relative to working directory
     delegationCertificate: config.delegationCertificate,
-    genesis: {
-      file: path.join(config.configurationDir, config.network.genesisFile),
-      hash: config.network.genesisHash,
-    },
     listen: {
       port: listenPort,
     },
