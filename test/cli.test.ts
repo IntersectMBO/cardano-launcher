@@ -1,7 +1,6 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-import process from 'process';
 import * as tmp from 'tmp-promise';
 import path from 'path';
 
@@ -10,7 +9,6 @@ import { fork } from 'child_process';
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async () => {
-    setupExecPath();
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
