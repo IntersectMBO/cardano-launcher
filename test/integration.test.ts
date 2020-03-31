@@ -187,23 +187,12 @@ describe('Starting cardano-wallet (and its node)', () => {
       };
     });
 
-    await launcher
-      .start()
-      .then(api => {
-        console.error('promise succeeded', api);
-      })
-      .catch(e => {
-        console.log('caught launcher exception', e);
-        expect(e.message).toEqual(
-          [
-            'cardano-wallet-jormungandr exited with status 0',
-            'jormungandr exited with status 1',
-          ].join('\n')
-        );
-      })
-      .finally(() => {
-        cleanupTestLauncher(launcher);
-        expect.assertions(1);
-      });
+    await expect(launcher.start().finally(() => cleanupTestLauncher(launcher)))
+      .rejects.toThrow(
+        [
+          'cardano-wallet-jormungandr exited with status 0',
+          'jormungandr exited with status 1',
+        ].join('\n')
+      );
   });
 });
