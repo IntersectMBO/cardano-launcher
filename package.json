@@ -19,6 +19,9 @@
   "name": "cardano-launcher",
   "author": "IOHK",
   "repository": "github:input-output-hk/cardano-launcher",
+  "bin": {
+    "cardano-launcher": "bin/cardano-launcher"
+  },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
     "@types/jest": "^24.9.0",
