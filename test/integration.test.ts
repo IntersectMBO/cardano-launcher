@@ -9,15 +9,13 @@ import * as path from 'path';
 
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
-import { makeRequest, setupExecPath } from './utils';
+import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
 import { createWriteStream } from 'fs';
 import { stat } from 'fs-extra';
 import { withFile, FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
-
-// const dataRoot = path.resolve(__dirname, 'data', 'byron', 'cardano-node');
 
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
@@ -106,16 +104,18 @@ describe('Starting cardano-wallet (and its node)', () => {
   it(
     'cardano-wallet-byron responds to requests',
     () =>
-      launcherTest(stateDir => {
-        return {
-          stateDir,
-          networkName: 'mainnet',
-          nodeConfig: {
-            kind: 'byron',
-            configurationDir: '' + process.env.BYRON_CONFIGS,
-            network: byron.networks.mainnet
-          },
-        };
+      withByronConfigDir(configurationDir => {
+        return launcherTest(stateDir => {
+          return {
+            stateDir,
+            networkName: 'mainnet',
+            nodeConfig: {
+              kind: 'byron',
+              configurationDir,
+              network: byron.networks.mainnet,
+            },
+          };
+        });
       }),
     longTestTimeoutMs
   );
