@@ -9,8 +9,7 @@
         "sha256": "060xvlyxhlxaxi99hl5m3h94hdlkh66kabbyic380qic0a1x6iv8",
         "type": "tarball",
         "url": "https://github.com/input-output-hk/cardano-wallet/archive/46f8a88c8cc08520b2e0d7f7fe1cd4b62bfebd99.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "version": "2020.3.16"
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "iohk-nix": {
         "branch": "master",
