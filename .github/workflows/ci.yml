@@ -30,7 +30,6 @@ jobs:
       - name: Fetch cardano-wallet-byron config
         shell: powershell
         run: |
-          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\cardano-node\configuration"
           $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/2"
           $output = "cardano-wallet-byron-configuration.zip"
           Invoke-WebRequest -Uri $url -OutFile $output
