@@ -4,11 +4,12 @@
 import * as tmp from 'tmp-promise';
 import path from 'path';
 
-import { delay, expectProcessToBeGone, withByronConfigDir } from './utils';
+import { delay, expectProcessToBeGone, setupExecPath, withByronConfigDir } from './utils';
 import { fork } from 'child_process';
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async () => {
+    setupExecPath();
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
