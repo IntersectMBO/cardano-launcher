@@ -47,7 +47,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     return launcher;
   };
 
-  const cleanupTestLauncher = async (launcher: Launcher) => {
+  const cleanupTestLauncher = (launcher: Launcher) => {
     launcher.walletBackend.events.removeAllListeners();
     launcher.walletService.events.removeAllListeners();
     launcher.nodeService.events.removeAllListeners();
