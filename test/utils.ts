@@ -118,6 +118,7 @@ export function setupExecPath() {
       .filter(p => p !== cwd);
     paths.unshift(cwd);
     process.env.PATH = paths.join(path.delimiter);
+    console.info("PATH=" + process.env.PATH);
   }
 }
 

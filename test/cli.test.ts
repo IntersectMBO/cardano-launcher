@@ -15,6 +15,7 @@ describe('CLI tests', () => {
     ).path;
     const proc = fork(path.resolve(__dirname, '..','dist', 'cli.js'), args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+      env: process.env,
     });
     let nodePid: number | null = null;
     let walletPid: number | null = null;
