@@ -30,26 +30,17 @@ for example code.
 
 ## Local Development
 
-### `npm start`
+### `npm run start -- BACKEND NETWORK CONFIG-DIR STATE-DIR`
 
-Runs the project in development/watch mode.
+Run the CLI during development, reloading on changes.
 
 ### `npm run build`
 
-Bundles the package to the `dist` folder.
+TS -> JS in `dist`
 
-### `npm test`
+### `npm test` `npm test -- --watch unit`
 
-Runs the test watcher ([Jest](https://jestjs.io/docs/en/getting-started))
-in an interactive mode.
-By default, runs tests related to files changed since the last commit. 
-
-Alternatively, to run only unit tests:
-
-    npx tsdx test unit
-
-See the [Jest command-line reference](https://jestjs.io/docs/en/cli)
-for all the options.
+See [Jest CLI Options](https://jestjs.io/docs/en/cli.html) 
 
 ### `npm run typedoc`
 
@@ -93,14 +84,13 @@ by the `nix-shell`.
 
  * [`dev.md`](./docs/dev.md) - Development information.
 
-## Testing it out
+## Demo CLI
+```shell script
+npm run build
 
-After building, there is a very basic CLI that you can use to test.
+# cardano-node mainnet
+./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
 
-Jormungandr self-node:
-
-    ./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
-
-Byron mainnet:
-
-    ./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
+# Jormungandr self-node
+./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
+```
