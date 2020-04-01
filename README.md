@@ -30,26 +30,27 @@ for example code.
 
 ## Local Development
 
-### `npm start`
+### `npm run build` `npm run build -- --watch`
 
-Runs the project in development/watch mode.
+TS -> JS in `dist`
 
-### `npm run build`
+### `npm test` `npm test -- --watch unit`
 
-Bundles the package to the `dist` folder.
+Runs all tests.
 
-### `npm test`
+To run only `unit` tests matching `idempotent` (for example):
 
-Runs the test watcher ([Jest](https://jestjs.io/docs/en/getting-started))
-in an interactive mode.
-By default, runs tests related to files changed since the last commit. 
+    npm test unit -- -t idempotent
 
-Alternatively, to run only unit tests:
+Run the test watcher ([Jest](https://jestjs.io/docs/en/getting-started)) and prompt for usage:
 
-    npx tsdx test unit
+    npm test -- --watch
 
-See the [Jest command-line reference](https://jestjs.io/docs/en/cli)
-for all the options.
+See the [Jest command-line reference](https://jestjs.io/docs/en/cli) for all the options.
+
+### `npm run lint` `npm run lint -- --fix`
+
+[JavaScript Standard Style](https://standardjs.com/)
 
 ### `npm run typedoc`
 
@@ -93,14 +94,13 @@ by the `nix-shell`.
 
  * [`dev.md`](./docs/dev.md) - Development information.
 
-## Testing it out
+## Demo CLI
+```shell script
+npm run build
 
-After building, there is a very basic CLI that you can use to test.
+# cardano-node mainnet
+./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
 
-Jormungandr self-node:
-
-    ./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
-
-Byron mainnet:
-
-    ./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
+# Jormungandr self-node
+./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
+```
