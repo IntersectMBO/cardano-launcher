@@ -40,7 +40,17 @@ TS -> JS in `dist`
 
 ### `npm test` `npm test -- --watch unit`
 
-See [Jest CLI Options](https://jestjs.io/docs/en/cli.html) 
+Runs all tests.
+
+To run only `unit` tests matching `idempotent` (for example):
+
+    npm test unit -- -t idempotent
+
+Run the test watcher ([Jest](https://jestjs.io/docs/en/getting-started)) and prompt for usage:
+
+    npm test -- --watch
+
+See the [Jest command-line reference](https://jestjs.io/docs/en/cli) for all the options.
 
 ### `npm run typedoc`
 
