@@ -48,6 +48,10 @@ Run the test watcher ([Jest](https://jestjs.io/docs/en/getting-started)) and pro
 
 See the [Jest command-line reference](https://jestjs.io/docs/en/cli) for all the options.
 
+### `npm run lint` `npm run lint -- --fix`
+
+[JavaScript Standard Style](https://standardjs.com/)
+
 ### `npm run typedoc`
 
 Generates API documentation to the `site` folder.
