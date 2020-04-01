@@ -30,11 +30,7 @@ for example code.
 
 ## Local Development
 
-### `npm run start -- BACKEND NETWORK CONFIG-DIR STATE-DIR`
-
-Run the CLI during development, reloading on changes.
-
-### `npm run build`
+### `npm run build` `npm run build -- --watch`
 
 TS -> JS in `dist`
 
