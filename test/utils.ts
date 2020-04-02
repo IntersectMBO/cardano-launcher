@@ -1,7 +1,10 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-import path from 'path';
+import { withDir, DirectoryResult } from 'tmp-promise';
+import * as fs from 'fs';
+import * as path from 'path';
+import _ from 'lodash';
 
 import { Service, ServiceStatus, Api } from '../src';
 import { StartService } from '../src/service';
@@ -115,5 +118,56 @@ export function setupExecPath() {
       .filter(p => p !== cwd);
     paths.unshift(cwd);
     process.env.PATH = paths.join(path.delimiter);
+    console.info("PATH=" + process.env.PATH);
   }
+}
+
+/**
+ * Set up a temporary directory containing configuration files for
+ * Byron mainnet.
+ *
+ * This is needed because files in the cardano-node configuration file
+ * are resolved relative to the current working directory, rather than
+ * relative to the path of the config file.
+ */
+export async function withByronConfigDir(
+  cb: (configDir: string) => Promise<void>
+) {
+  const base = process.env.BYRON_CONFIGS;
+  if (!base) {
+    const msg =
+      'BYRON_CONFIGS environment variable is not set. The tests will not work.';
+    console.error(msg);
+    throw new Error(msg);
+  }
+
+  return await withDir(
+    async (o: DirectoryResult) => {
+      const configs = _.mapValues(
+        {
+          configuration: 'configuration-mainnet.yaml',
+          genesis: 'mainnet-genesis.json',
+          topology: 'mainnet-topology.json',
+        },
+        f => {
+          return { src: path.join(base, f), dst: path.join(o.path, f) };
+        }
+      );
+
+      await fs.promises.copyFile(configs.genesis.src, configs.genesis.dst);
+      await fs.promises.copyFile(configs.topology.src, configs.topology.dst);
+
+      const config = await fs.promises.readFile(
+        configs.configuration.src,
+        'utf-8'
+      );
+      const configFixed = config
+        .replace(/configuration\//g, base + path.sep)
+        .replace(/^.*SocketPath.*$/gm, '');
+      await fs.promises.writeFile(configs.configuration.dst, configFixed);
+
+      return await cb(o.path);
+    },
+    { unsafeCleanup: true }
+  );
 }

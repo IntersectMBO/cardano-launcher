@@ -9,15 +9,13 @@ import * as path from 'path';
 
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
-import { makeRequest, setupExecPath } from './utils';
+import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
 import { createWriteStream } from 'fs';
 import { stat } from 'fs-extra';
 import { withFile, FileResult } from 'tmp-promise';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
-
-// const dataRoot = path.resolve(__dirname, 'data', 'byron', 'cardano-node');
 
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
@@ -85,6 +83,8 @@ describe('Starting cardano-wallet (and its node)', () => {
     await launcher.stop(5);
 
     console.log('stopped');
+
+    cleanupTestLauncher(launcher);
   };
 
   it(
@@ -106,16 +106,18 @@ describe('Starting cardano-wallet (and its node)', () => {
   it(
     'cardano-wallet-byron responds to requests',
     () =>
-      launcherTest(stateDir => {
-        return {
-          stateDir,
-          networkName: 'mainnet',
-          nodeConfig: {
-            kind: 'byron',
-            configurationDir: '' + process.env.BYRON_CONFIGS,
-            network: byron.networks.mainnet
-          },
-        };
+      withByronConfigDir(configurationDir => {
+        return launcherTest(stateDir => {
+          return {
+            stateDir,
+            networkName: 'mainnet',
+            nodeConfig: {
+              kind: 'byron',
+              configurationDir,
+              network: byron.networks.mainnet,
+            },
+          };
+        });
       }),
     longTestTimeoutMs
   );
@@ -142,7 +144,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     expect(events.length).toBe(1);
 
-    await cleanupTestLauncher(launcher);
+    cleanupTestLauncher(launcher);
   });
 
   it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
@@ -185,23 +187,12 @@ describe('Starting cardano-wallet (and its node)', () => {
       };
     });
 
-    await launcher
-      .start()
-      .then(api => {
-        console.error('promise succeeded', api);
-      })
-      .catch(e => {
-        console.log('caught launcher exception', e);
-        expect(e.message).toEqual(
-          [
-            'cardano-wallet-jormungandr exited with status 0',
-            'jormungandr exited with status 1',
-          ].join('\n')
-        );
-      })
-      .finally(() => {
-        cleanupTestLauncher(launcher);
-        expect.assertions(1);
-      });
+    await expect(launcher.start().finally(() => cleanupTestLauncher(launcher)))
+      .rejects.toThrow(
+        [
+          'cardano-wallet-jormungandr exited with status 0',
+          'jormungandr exited with status 1',
+        ].join('\n')
+      );
   });
 });

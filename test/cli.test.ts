@@ -1,11 +1,10 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-import process from 'process';
 import * as tmp from 'tmp-promise';
 import path from 'path';
 
-import { delay, expectProcessToBeGone, setupExecPath } from './utils';
+import { delay, expectProcessToBeGone, setupExecPath, withByronConfigDir } from './utils';
 import { fork } from 'child_process';
 
 describe('CLI tests', () => {
@@ -16,6 +15,7 @@ describe('CLI tests', () => {
     ).path;
     const proc = fork(path.resolve(__dirname, '..','dist', 'cli.js'), args.concat([stateDir]), {
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+      env: process.env,
     });
     let nodePid: number | null = null;
     let walletPid: number | null = null;
@@ -37,23 +37,11 @@ describe('CLI tests', () => {
     expectProcessToBeGone(walletPid as any, 9);
   };
 
-  const jormungandr = [
-    'jormungandr',
-    'self',
-    path.resolve(__dirname, 'data', 'jormungandr'),
-  ];
-  const byron = [
-    'byron',
-    'mainnet',
-    process.env.BYRON_CONFIGS as string
-  ];
-
   it(
     'when the parent process is killed, child jormungandr gets stopped',
-    killTest(jormungandr) as any
+    killTest(['jormungandr', 'self', path.resolve(__dirname, 'data', 'jormungandr')])
   );
-  it(
-    'when the parent process is killed, cardano-node gets stopped',
-    killTest(byron)
-  );
+
+  it('when the parent process is killed, cardano-node gets stopped', () =>
+    withByronConfigDir(configs => killTest(['byron', 'mainnet', configs])()));
 });
