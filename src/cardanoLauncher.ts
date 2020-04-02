@@ -258,7 +258,7 @@ export class Launcher {
   private async waitForApi (stop: () => boolean): Promise<void> {
     this.logger.debug('waitForApi')
     return await new Promise((resolve, reject) => {
-      // let client: net.Socket
+      let client: net.Socket | undefined
       const poll = (): void => {
         if (stop()) {
           clearInterval(timer)
@@ -268,10 +268,10 @@ export class Launcher {
           this.logger.info(
             `Waiting for tcp port ${addr.host as string}:${addr.port} to accept connections...`
           )
-          // if (client !== undefined) {
-          //   client.destroy()
-          // }
-          const client = new net.Socket()
+          if (client !== undefined) {
+            client.destroy()
+          }
+          client = new net.Socket()
           client.connect(addr, () => {
             this.logger.info('... port is ready.')
             clearInterval(timer)
