@@ -15,7 +15,7 @@ import { Logger, LogFunc } from '../src/logging'
  ******************************************************************************/
 
 /** Construct a promise to a service command. */
-export function testService (
+export async function testService (
   command: string,
   args: string[],
   supportsCleanShutdown = true
@@ -32,7 +32,7 @@ export const expectProcessToBeGone = (
   pid: number,
   signal: number = 0
 ): void => {
-  expect(() => process.kill(pid, signal)).toThrow()
+  return expect(() => process.kill(pid, signal)).toThrow()
 }
 
 /**
@@ -60,7 +60,7 @@ export function mockLogger (echo: boolean = false): MockLogger {
   const mockLog = (severity: 'debug' | 'info' | 'error'): LogFunc => {
     return (msg: string, param?: object) => {
       if (echo) {
-        if (param) {
+        if (param !== null) {
           console[severity](msg, param)
         } else {
           console[severity](msg)
@@ -78,7 +78,7 @@ export function mockLogger (echo: boolean = false): MockLogger {
   }
 }
 
-export function delay (ms: number) {
+export async function delay (ms: number): Promise<void> {
   return await new Promise(resolve => setTimeout(resolve, ms))
 }
 
@@ -110,7 +110,7 @@ export function makeRequest (api: Api, path: string, options?: object): object {
  * If the node backend is run in a different working directory,
  * Windows will still be able to find the executables
  */
-export function setupExecPath () {
+export function setupExecPath (): void {
   if (process.platform === 'win32') {
     const cwd = process.cwd()
     const paths = (process.env.PATH ?? '')
@@ -132,9 +132,9 @@ export function setupExecPath () {
  */
 export async function withByronConfigDir (
   cb: (configDir: string) => Promise<void>
-) {
+): Promise<void> {
   const base = process.env.BYRON_CONFIGS
-  if (!base) {
+  if (base === undefined) {
     const msg =
       'BYRON_CONFIGS environment variable is not set. The tests will not work.'
     console.error(msg)
@@ -162,7 +162,7 @@ export async function withByronConfigDir (
         'utf-8'
       )
       const configFixed = config
-        .replace(/configuration\//g, base + path.sep)
+        .replace(/configuration\//g, `${base}${path.sep}`)
         .replace(/^.*SocketPath.*$/gm, '')
       await fs.promises.writeFile(configs.configuration.dst, configFixed)
 

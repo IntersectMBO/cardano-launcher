@@ -20,7 +20,7 @@ const longTestTimeoutMs = 15000
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
     config: (stateDir: string) => LaunchConfig
-  ) => {
+  ): Promise<Launcher> => {
     const stateDir = (
       await tmp.dir({
         unsafeCleanup: true,
@@ -46,13 +46,13 @@ describe('Starting cardano-wallet (and its node)', () => {
     return launcher
   }
 
-  const cleanupTestLauncher = (launcher: Launcher) => {
+  const cleanupTestLauncher = (launcher: Launcher): void => {
     launcher.walletBackend.events.removeAllListeners()
     launcher.walletService.events.removeAllListeners()
     launcher.nodeService.events.removeAllListeners()
   }
 
-  const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
+  const launcherTest = async (config: (stateDir: string) => LaunchConfig): Promise<void> => {
     setupExecPath()
 
     const launcher = await setupTestLauncher(config)
@@ -70,7 +70,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         res.on('data', d => resolve(JSON.parse(d)))
       })
       req.on('error', (e: any) => {
-        console.error(`problem with request: ${e.message}`)
+        console.error(`problem with request: ${e.message as string}`)
         reject(e)
       })
       req.end()
@@ -89,8 +89,8 @@ describe('Starting cardano-wallet (and its node)', () => {
 
   it(
     'cardano-wallet-jormungandr responds to requests',
-    () =>
-      launcherTest(stateDir => {
+    async () =>
+      await launcherTest(stateDir => {
         return {
           stateDir,
           networkName: 'self',
@@ -105,9 +105,9 @@ describe('Starting cardano-wallet (and its node)', () => {
   )
   it(
     'cardano-wallet-byron responds to requests',
-    () =>
-      withByronConfigDir(configurationDir => {
-        return await launcherTest(stateDir => {
+    async () =>
+      await withByronConfigDir(async (configurationDir) =>
+        await launcherTest(stateDir => {
           return {
             stateDir,
             networkName: 'mainnet',
@@ -118,7 +118,7 @@ describe('Starting cardano-wallet (and its node)', () => {
             }
           }
         })
-      }),
+      ),
     longTestTimeoutMs
   )
 
@@ -147,8 +147,8 @@ describe('Starting cardano-wallet (and its node)', () => {
     cleanupTestLauncher(launcher)
   })
 
-  it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
-    withFile(async (logFile: FileResult) => {
+  it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', async () =>
+    await withFile(async (logFile: FileResult) => {
       const childProcessLogWriteStream = createWriteStream(logFile.path, {
         fd: logFile.fd
       })

@@ -14,9 +14,9 @@ echo "--- Test"
 
 npm run test -- --collect-coverage
 
-#echo "--- Lint"
+echo "--- Lint"
 
-#npm run lint
+npm run lint
 
 echo "--- Rebuild docs"
 

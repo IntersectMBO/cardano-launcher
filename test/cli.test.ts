@@ -14,27 +14,21 @@ describe('CLI tests', () => {
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path
     const proc = fork(path.resolve(__dirname, '..', 'dist', 'cli.js'), args.concat([stateDir]), {
-      stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-      env: process.env
+      stdio: ['inherit', 'inherit', 'inherit', 'ipc']
     })
-    let nodePid: number | null = null
-    let walletPid: number | null = null
-    proc.on('message', (message: any) => {
+    proc.on('message', (message: { nodePid: number, walletPid: number }) => {
       console.log('received message', message)
-      if (message.node) {
-        nodePid = message.node
-      }
-      if (message.wallet) {
-        walletPid = message.wallet
+      if (message.nodePid !== undefined && message.walletPid !== undefined) {
+        console.log(message)
+        expect(message.nodePid).not.toBeNull()
+        expect(message.walletPid).not.toBeNull()
+        proc.kill()
+        delay(1000).then(() => {
+          expectProcessToBeGone(message.nodePid, 9)
+          expectProcessToBeGone(message.walletPid, 9)
+        }).catch(error => console.error(error.message))
       }
     })
-    await delay(1000)
-    expect(nodePid).not.toBeNull()
-    expect(walletPid).not.toBeNull()
-    proc.kill()
-    await delay(1000)
-    expectProcessToBeGone(nodePid as any, 9)
-    expectProcessToBeGone(walletPid as any, 9)
   }
 
   it(
@@ -42,6 +36,6 @@ describe('CLI tests', () => {
     killTest(['jormungandr', 'self', path.resolve(__dirname, 'data', 'jormungandr')])
   )
 
-  it('when the parent process is killed, cardano-node gets stopped', () =>
-    withByronConfigDir(configs => killTest(['byron', 'mainnet', configs])()))
+  it('when the parent process is killed, cardano-node gets stopped', async () =>
+    await withByronConfigDir(async (configs) => await killTest(['byron', 'mainnet', configs])()))
 })

@@ -87,12 +87,11 @@ export async function cli (argv: NodeJS.Process['argv']): Promise<void> {
   try {
     await launcher.start()
     const nodePid = await launcher.nodeService.start()
+    const walletPid = await launcher.walletService.start()
     // inform tests of subprocess pids
-    sendMaybe({ node: nodePid })
-    const walletPid = launcher.walletService.start()
-    sendMaybe({ wallet: walletPid })
+    sendMaybe({ nodePid, walletPid })
   } catch (error) {
-    sendMaybe(error.message)
+    console.error(error.message)
   }
 }
 

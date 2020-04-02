@@ -23,7 +23,7 @@ describe('setupService', () => {
     service.events.on('statusChanged', status => events.push(status))
     await service.start()
     expect(service.getProcess()).toHaveProperty('pid')
-    return await new Promise(done => {
+    return await new Promise(resolve => {
       service.events.on('statusChanged', status => {
         if (status === ServiceStatus.Stopped) {
           expect(events).toEqual([
@@ -32,7 +32,7 @@ describe('setupService', () => {
             ServiceStatus.Stopped
           ])
         }
-        done()
+        resolve()
       })
     })
   })
@@ -66,18 +66,19 @@ describe('setupService', () => {
 
   it(
     'command was killed',
-    () => {
+    async () => {
       const service = setupService(testService('sleep', ['10'], false))
       const events: ServiceStatus[] = []
       service.events.on('statusChanged', status => events.push(status))
       const pidP = service.start()
-      return await new Promise(done => {
+      return await new Promise(resolve => {
         setTimeout(
-          () =>
+          () => {
             pidP.then(pid => {
-              console.log('Killing the process ' + pid)
+              console.log(`Killing the process ${pid}`)
               process.kill(pid)
-            }),
+            }).catch(error => console.error(error.message))
+          },
           1000
         )
         service.events.on('statusChanged', status => {
@@ -95,8 +96,8 @@ describe('setupService', () => {
                 expect(status.signal).toBe('SIGTERM')
               }
               expect(status.exe).toBe('sleep')
-              done()
-            })
+              resolve()
+            }).catch(error => console.error(error.message))
           }
         })
       })
@@ -168,8 +169,8 @@ describe('setupService', () => {
             ServiceStatus.Stopped
           ])
           done()
-        })
-      })
+        }).catch(error => console.error(error.message))
+      }).catch(error => console.error(error.message))
     }, 1000)
   })
 
@@ -179,8 +180,8 @@ describe('setupService', () => {
     const events = collectEvents(service)
     await service.start()
     const result = await service.waitForExit()
-    expect(result.err ? result.err.toString() : null).toBe(
-      'Error: spawn xyzzy ENOENT'
+    expect(result.err !== null ? result.err.message.toString() : null).toBe(
+      'spawn xyzzy ENOENT'
     )
     expect(result.code).toBeNull()
     expect(result.signal).toBeNull()
