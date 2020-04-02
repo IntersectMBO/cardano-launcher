@@ -1,11 +1,10 @@
 {
-  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "standard-with-typescript"
+  ],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "extends": [
-    "standard"
-  ],
   "plugins": [
     "@typescript-eslint",
     "jest"
@@ -19,12 +18,12 @@
     "afterEach": "readonly"
   },
   "rules": {
-    "no-unused-vars": 0,
     "linebreak-style": [
       2,
       "unix"
     ],
-    "no-unused-expressions": 0
+    "no-unused-expressions": 0,
+    "no-unused-vars": 0
   },
   "env": {
     "jest": true

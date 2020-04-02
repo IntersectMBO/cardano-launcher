@@ -29,6 +29,7 @@ for example code.
 
 
 ## Local Development
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
 
 ### `npm run build` `npm run build -- --watch`
 
@@ -50,7 +51,8 @@ See the [Jest command-line reference](https://jestjs.io/docs/en/cli) for all the
 
 ### `npm run lint` `npm run lint -- --fix`
 
-[JavaScript Standard Style](https://standardjs.com/)
+[eslint-config-standard-with-typescriopt](https://github.com/standard/eslint-config-standard-with-typescript) provides the code style rules.
+See the [eslintrc](./.eslintrc.json) for details.
 
 ### `npm run typedoc`
 

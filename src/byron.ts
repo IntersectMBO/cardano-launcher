@@ -7,19 +7,19 @@
  * @packageDocumentation
  */
 
-import path from 'path';
-import getPort from 'get-port';
+import path from 'path'
+import getPort from 'get-port'
 
-import { StartService } from './service';
-import { FilePath, DirPath } from './common';
+import { StartService } from './service'
+import { DirPath, FilePath } from './common'
 
 /** Predefined networks. */
 export const networks: { [propName: string]: ByronNetwork } = {
   mainnet: {
     configFile: 'configuration-mainnet.yaml',
-    topologyFile: 'mainnet-topology.json',
-  },
-};
+    topologyFile: 'mainnet-topology.json'
+  }
+}
 
 /**
  * Definition of a `cardano-node` (Byron) network.
@@ -28,18 +28,18 @@ export interface ByronNetwork {
   /**
    * The YAML configuration file for cardano-node.
    */
-  configFile: FilePath;
+  configFile: FilePath
   /**
    * Network topology data to pass to cardano-node.
    */
-  topologyFile: FilePath;
+  topologyFile: FilePath
   /**
    * Path to the genesis file in JSON format.
    * This is required for testnet but not mainnet.
    * It is used to configure the parameters of cardano-wallet.
    * It should match the genesis file configured in the cardano-node YAML file.
    */
-  genesisFile?: FilePath;
+  genesisFile?: FilePath
 }
 
 /**
@@ -47,28 +47,28 @@ export interface ByronNetwork {
  * cardano-node (Byron).
  */
 export interface ByronNodeConfig {
-  kind: 'byron';
+  kind: 'byron'
 
   /** Directory containing configurations for all networks. */
-  configurationDir: DirPath;
+  configurationDir: DirPath
 
   /** Path to the delegation certificate. The delegation certificate allows the delegator
    * (the issuer of said certificate) to give his/her own block signing rights to somebody
    * else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.
    * */
-  delegationCertificate?: string;
+  delegationCertificate?: string
 
   /** Network parameters */
-  network: ByronNetwork;
+  network: ByronNetwork
 
   /** Path to the signing key. */
-  signingKey?: string;
+  signingKey?: string
 
   /**
    * Filename for the socket to use for communicating with the
    * node. Optional -- will be set automatically if not provided.
    */
-  socketFile?: FilePath;
+  socketFile?: FilePath
 }
 
 /**
@@ -79,60 +79,60 @@ export interface ByronNodeArgs {
    * Filename for the socket file to use for communicating with the
    * node.
    */
-  socketFile: FilePath;
+  socketFile: FilePath
 
   /**
    * The path to a file describing the topology.
    * Topology is ...
    */
-  topologyFile: FilePath;
+  topologyFile: FilePath
 
   /** Directory where the state is stored. */
-  databaseDir: DirPath;
+  databaseDir: DirPath
 
   /** Path to the delegation certificate. */
-  delegationCertificate?: string;
+  delegationCertificate?: string
 
   /** Path to the signing key. */
-  signingKey?: string;
+  signingKey?: string
 
   /** Configures the address to bind for P2P communication. */
   listen: {
     /** The TCP port for node P2P. */
-    port: number;
+    port: number
     /** Optionally limit node P2P to one ipv6 or ipv4 address. */
-    address?: string;
-  };
+    address?: string
+  }
 
   /** Configuration file for the cardano-node. */
-  configFile: FilePath;
+  configFile: FilePath
 
   /** Validate all on-disk database files. */
-  validateDb?: boolean;
+  validateDb?: boolean
 
   /**
    * Extra arguments to add to the `cardano-node` command line.
    */
-  extra?: string[];
+  extra?: string[]
 }
 
 /**
  * Convert a [[ByronNodeConfig]] into command-line arguments
  * ([[ByronNodeArgs]]) for `cardano-node`.
  */
-function makeArgs(
+function makeArgs (
   stateDir: DirPath,
   config: ByronNodeConfig,
   networkName: string,
   listenPort: number
 ): ByronNodeArgs {
-  let socketFile = config.socketFile;
+  let socketFile = config.socketFile
   if (!socketFile) {
     if (process.platform === 'win32') {
-      config.socketFile = socketFile = `\\\\.\\pipe\\cardano-node-${networkName}`;
+      config.socketFile = socketFile = `\\\\.\\pipe\\cardano-node-${networkName}`
     } else {
-      socketFile = 'cardano-node.socket'; // relative to working directory
-      config.socketFile = path.join(stateDir, socketFile);
+      socketFile = 'cardano-node.socket' // relative to working directory
+      config.socketFile = path.join(stateDir, socketFile)
     }
   }
   return {
@@ -144,11 +144,11 @@ function makeArgs(
     databaseDir: 'chain', // relative to working directory
     delegationCertificate: config.delegationCertificate,
     listen: {
-      port: listenPort,
+      port: listenPort
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
-    signingKey: config.signingKey,
-  };
+    signingKey: config.signingKey
+  }
 }
 
 /**
@@ -158,13 +158,13 @@ function makeArgs(
  * @param config - parameters for starting the node.
  * @return the command-line for starting this node.
  */
-export async function startByronNode(
+export async function startByronNode (
   stateDir: DirPath,
   config: ByronNodeConfig,
   networkName: string
 ): Promise<StartService> {
-  const listenPort = await getPort();
-  const args = makeArgs(stateDir, config, networkName, listenPort);
+  const listenPort = await getPort()
+  const args = makeArgs(stateDir, config, networkName, listenPort)
   return {
     command: 'cardano-node',
     args: [
@@ -178,19 +178,19 @@ export async function startByronNode(
       '--port',
       '' + args.listen.port,
       '--config',
-      args.configFile,
+      args.configFile
     ]
       .concat(args.listen.address ? ['--host-addr', args.listen.address] : [])
-      .concat(args.validateDb || false ? ['--validate-db'] : [])
+      .concat(args.validateDb ?? false ? ['--validate-db'] : [])
       .concat(args.signingKey ? ['--signing-key', args.signingKey] : [])
       .concat(
         args.delegationCertificate
           ? ['--delegation-certificate', args.delegationCertificate]
           : []
       )
-      .concat(args.extra || []),
+      .concat(args.extra ?? []),
     supportsCleanShutdown: false,
     // set working directory to stateDir -- config file may have relative paths for logs.
-    cwd: stateDir,
-  };
+    cwd: stateDir
+  }
 }

@@ -7,11 +7,11 @@
  * @packageDocumentation
  */
 
-import path from 'path';
-import _ from 'lodash';
-import getPort from 'get-port';
-import { StartService } from './service';
-import { FilePath, DirPath } from './common';
+import path from 'path'
+import _ from 'lodash'
+import getPort from 'get-port'
+import { StartService } from './service'
+import { DirPath, FilePath } from './common'
 
 /**
  * Pre-defined networks for `jormungandr`. The "self" config is a
@@ -27,55 +27,55 @@ export const networks: { [propName: string]: JormungandrNetwork } = {
   itn_rewards_v1: {
     configFile: 'itn_rewards_v1-config.yaml',
     genesisBlock: {
-      hash: '8e4d2a343f3dcf9330ad9035b3e8d168e6728904262f2c434a4f8f934ec7b676',
-    },
+      hash: '8e4d2a343f3dcf9330ad9035b3e8d168e6728904262f2c434a4f8f934ec7b676'
+    }
   },
   self: {
     configFile: 'config.yaml',
     genesisBlock: {
       file: 'block0.bin',
-      hash: 'f8c0622ea4b768421fea136a6e5a4e3b4c328fc5f16fad75817e40c8a2a56a56',
+      hash: 'f8c0622ea4b768421fea136a6e5a4e3b4c328fc5f16fad75817e40c8a2a56a56'
     },
-    secretFile: ['secret.yaml'],
-  },
-};
+    secretFile: ['secret.yaml']
+  }
+}
 
 /**
  * Definition of a Jörmungandr network.
  */
 export interface JormungandrNetwork {
-  configFile: FilePath;
-  genesisBlock: GenesisBlockHash | GenesisBlockFile;
-  secretFile?: FilePath[];
+  configFile: FilePath
+  genesisBlock: GenesisBlockHash | GenesisBlockFile
+  secretFile?: FilePath[]
 }
 
 /**
  * Configuration parameters for starting the node.
  */
 export interface JormungandrConfig {
-  kind: 'jormungandr';
+  kind: 'jormungandr'
 
   /** Directory containing configurations for all networks. */
-  configurationDir: DirPath;
+  configurationDir: DirPath
 
   /** Network parameters */
-  network: JormungandrNetwork;
+  network: JormungandrNetwork
 
   /** Optionally select a port for the node REST API. Otherwise, any unused port is chosen. */
-  restPort?: number;
+  restPort?: number
 
   /**
    * Extra arguments to add to the `jormungandr` command line.
    */
-  extraArgs?: string[];
+  extraArgs?: string[]
 }
 
 export interface GenesisBlockHash {
-  hash: string;
+  hash: string
 }
 
 export interface GenesisBlockFile extends GenesisBlockHash {
-  file: string;
+  file: string
 }
 
 /**
@@ -83,44 +83,44 @@ export interface GenesisBlockFile extends GenesisBlockHash {
  */
 export interface JormungandrArgs {
   /** Configuration file for the cardano-node. */
-  configFile: FilePath;
+  configFile: FilePath
 
   /** Directory where the state is stored. */
-  storageDir: DirPath;
+  storageDir: DirPath
 
   genesisBlock: {
     /** The file of the genesis block for this network's chain. */
-    file?: FilePath;
+    file?: FilePath
     /** The hash of the genesis block for this network's chain. */
-    hash?: string;
-  };
+    hash?: string
+  }
 
   /** BFT leaders secrets file(s). */
-  secretFile?: FilePath[];
+  secretFile?: FilePath[]
 
   /** Configures the address to bind for the REST API. */
-  restListen?: string;
+  restListen?: string
 
   /**
    * Extra arguments to add to the `jormungandr` command line.
    */
-  extra?: string[];
+  extra?: string[]
 }
-export async function startJormungandr(
+export async function startJormungandr (
   stateDir: DirPath,
   config: JormungandrConfig
 ): Promise<StartService> {
   if (!config.restPort) {
-    config.restPort = await getPort();
+    config.restPort = await getPort()
   }
-  const args = makeArgs(stateDir, config);
+  const args = makeArgs(stateDir, config)
   return {
     command: 'jormungandr',
     args: [
       '--config',
       args.configFile,
       '--storage',
-      args.storageDir,
+      args.storageDir
       // note: To support log file rotation from jormungandr, capture
       // its logs in json format and echo them into your frontend
       // logging framework (which presumably supports log rotation).
@@ -133,22 +133,22 @@ export async function startJormungandr(
         args.genesisBlock.file
           ? ['--genesis-block', args.genesisBlock.file]
           : args.genesisBlock.hash
-          ? ['--genesis-block-hash', args.genesisBlock.hash]
-          : []
+            ? ['--genesis-block-hash', args.genesisBlock.hash]
+            : []
       )
-      .concat(_.flatMap(args.secretFile || [], secret => ['--secret', secret]))
-      .concat(args.extra || []),
-    supportsCleanShutdown: false,
-  };
+      .concat(_.flatMap(args.secretFile ?? [], secret => ['--secret', secret]))
+      .concat(args.extra ?? []),
+    supportsCleanShutdown: false
+  }
 }
 
-function makeArgs(
+function makeArgs (
   stateDir: DirPath,
   config: JormungandrConfig
 ): JormungandrArgs {
   return {
     configFile: path.join(config.configurationDir, config.network.configFile),
-    restListen: `127.0.0.1:${config.restPort || 0}`,
+    restListen: `127.0.0.1:${config.restPort ?? 0}`,
     genesisBlock: {
       file:
         'file' in config.network.genesisBlock
@@ -157,12 +157,12 @@ function makeArgs(
       hash:
         'hash' in config.network.genesisBlock
           ? config.network.genesisBlock.hash
-          : undefined,
+          : undefined
     },
     storageDir: path.join(stateDir, 'chain'),
-    secretFile: _.map(config.network.secretFile || [], secret =>
+    secretFile: _.map(config.network.secretFile ?? [], secret =>
       path.join(config.configurationDir, secret)
     ),
-    extra: config.extraArgs,
-  };
+    extra: config.extraArgs
+  }
 }
