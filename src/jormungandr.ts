@@ -110,7 +110,7 @@ export async function startJormungandr (
   stateDir: DirPath,
   config: JormungandrConfig
 ): Promise<StartService> {
-  if (!config.restPort) {
+  if (config.restPort === undefined) {
     config.restPort = await getPort()
   }
   const args = makeArgs(stateDir, config)
@@ -128,11 +128,11 @@ export async function startJormungandr (
       // interleaved with the frontend logs.
       // "--log-format", "json",
     ]
-      .concat(args.restListen ? ['--rest-listen', args.restListen] : [])
+      .concat(args.restListen !== undefined ? ['--rest-listen', args.restListen] : [])
       .concat(
-        args.genesisBlock.file
+        args.genesisBlock.file !== undefined
           ? ['--genesis-block', args.genesisBlock.file]
-          : args.genesisBlock.hash
+          : args.genesisBlock.hash !== undefined
             ? ['--genesis-block-hash', args.genesisBlock.hash]
             : []
       )

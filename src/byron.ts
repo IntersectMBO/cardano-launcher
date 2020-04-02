@@ -127,7 +127,7 @@ function makeArgs (
   listenPort: number
 ): ByronNodeArgs {
   let socketFile = config.socketFile
-  if (!socketFile) {
+  if (socketFile === undefined) {
     if (process.platform === 'win32') {
       config.socketFile = socketFile = `\\\\.\\pipe\\cardano-node-${networkName}`
     } else {
@@ -156,6 +156,7 @@ function makeArgs (
  *
  * @param stateDir - directory for node storage, specific to the node type and network.
  * @param config - parameters for starting the node.
+ * @param networkName - network identifier
  * @return the command-line for starting this node.
  */
 export async function startByronNode (
@@ -176,15 +177,15 @@ export async function startByronNode (
       '--database-path',
       args.databaseDir,
       '--port',
-      '' + args.listen.port,
+      `${args.listen.port}`,
       '--config',
       args.configFile
     ]
-      .concat(args.listen.address ? ['--host-addr', args.listen.address] : [])
+      .concat(args.listen.address !== undefined ? ['--host-addr', args.listen.address] : [])
       .concat(args.validateDb ?? false ? ['--validate-db'] : [])
-      .concat(args.signingKey ? ['--signing-key', args.signingKey] : [])
+      .concat(args.signingKey !== undefined ? ['--signing-key', args.signingKey] : [])
       .concat(
-        args.delegationCertificate
+        args.delegationCertificate !== undefined
           ? ['--delegation-certificate', args.delegationCertificate]
           : []
       )

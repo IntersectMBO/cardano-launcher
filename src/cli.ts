@@ -31,7 +31,7 @@ import * as jormungandr from './jormungandr'
  *
  * Is just a very basic interface for testing things.
  */
-export function cli (argv: NodeJS.Process['argv']) {
+export async function cli (argv: NodeJS.Process['argv']): Promise<void> {
   const waitForExit = setInterval(function () {
   }, 3600000)
   const args = argv
@@ -78,18 +78,22 @@ export function cli (argv: NodeJS.Process['argv']) {
 
   const launcher = new Launcher({ stateDir, nodeConfig, networkName }, console)
 
-  launcher.start()
-
-  // inform tests of subprocess pids
-  launcher.nodeService.start().then(pid => sendMaybe({ node: pid }))
-  launcher.walletService.start().then(pid => sendMaybe({ wallet: pid }))
-
   launcher.walletBackend.events.on('exit', (status: ExitStatus) => {
     console.log(serviceExitStatusMessage(status.wallet))
     console.log(serviceExitStatusMessage(status.node))
     clearInterval(waitForExit)
     process.exit(combineStatus([status.wallet, status.node]))
   })
+  try {
+    await launcher.start()
+    const nodePid = await launcher.nodeService.start()
+    // inform tests of subprocess pids
+    sendMaybe({ node: nodePid })
+    const walletPid = launcher.walletService.start()
+    sendMaybe({ wallet: walletPid })
+  } catch (error) {
+    sendMaybe(error.message)
+  }
 }
 
 function combineStatus (statuses: ServiceExitStatus[]): number {
@@ -108,7 +112,7 @@ function combineStatus (statuses: ServiceExitStatus[]): number {
   return code === null ? (signal === null ? 0 : 127) : code
 }
 
-function usage () {
+function usage (): void {
   console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR')
   console.log('  BACKEND    - either jormungandr or byron')
   console.log(
@@ -121,10 +125,11 @@ function usage () {
   process.exit(1)
 }
 
-function sendMaybe (message: object) {
-  if (process.send) {
+function sendMaybe (message: object): void {
+  if (process.send !== undefined) {
     process.send(message)
   }
 }
 
 cli(process.argv)
+  .catch(process.exit(1))

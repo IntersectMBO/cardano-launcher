@@ -35,9 +35,9 @@ export function prependName (logger: Logger, name: string): Logger {
     severity: 'debug' | 'info' | 'error',
     msg: string,
     param?: any
-  ) => {
+  ): void => {
     const prefixed = `${name}: ${msg}`
-    if (param) {
+    if (param !== undefined) {
       logger[severity](prefixed, param)
     } else {
       logger[severity](prefixed)

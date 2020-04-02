@@ -195,23 +195,23 @@ export class Launcher {
 
     start.wallet.then((startService: WalletStartService) => {
       this.apiPort = startService.apiPort
-    })
+    }).catch(error => console.error((error.message)))
 
     this.walletService.events.on('statusChanged', status => {
       if (status === ServiceStatus.Stopped) {
         this.logger.debug('wallet exited')
-        this.stop()
+        this.stop().catch(error => console.error((error.message)))
       }
     })
 
     this.nodeService.events.on('statusChanged', status => {
       if (status === ServiceStatus.Stopped) {
         this.logger.debug('node exited')
-        this.stop()
+        this.stop().catch(error => console.error((error.message)))
       }
     })
 
-    if (installSignalHandlers) this.installSignalHandlers()
+    if (installSignalHandlers === true) this.installSignalHandlers()
   }
 
   /**
@@ -228,17 +228,19 @@ export class Launcher {
    * @return a promise that will be fulfilled when the wallet API
    * server is ready to accept requests.
    */
-  start (): Promise<Api> {
-    this.nodeService.start()
-    this.walletService.start()
+  async start (): Promise<Api> {
+    await this.nodeService.start()
+    await this.walletService.start()
 
-    const stopWaiting = () =>
+    const stopWaiting = (): boolean =>
       this.nodeService.getStatus() > ServiceStatus.Started ||
       this.walletService.getStatus() > ServiceStatus.Started
 
-    this.waitForApi(stopWaiting).then(() => {
-      this.walletBackend.events.emit('ready', this.walletBackend.getApi())
-    })
+    this.waitForApi(stopWaiting)
+      .then(() => {
+        this.walletBackend.events.emit('ready', this.walletBackend.getApi())
+      })
+      .catch(error => console.error((error.message)))
 
     return await new Promise((resolve, reject) => {
       this.walletBackend.events.on('ready', resolve)
@@ -253,34 +255,30 @@ export class Launcher {
    * @param stop - a callback, which will terminate the polling loop if it returns a truey value.
    * @return a promise that is completed once the wallet API server accepts connections.
    */
-  private waitForApi (stop: () => boolean): Promise<void> {
+  private async waitForApi (stop: () => boolean): Promise<void> {
     this.logger.debug('waitForApi')
     return await new Promise((resolve, reject) => {
-      let addr: net.SocketConnectOpts
-      var client: net.Socket
-      const poll = () => {
+      // let client: net.Socket
+      const poll = (): void => {
         if (stop()) {
           clearInterval(timer)
           reject(new Error('Polling stopped'))
-        } else if (this.apiPort) {
-          if (!addr) {
-            addr = { port: this.apiPort, host: '127.0.0.1' }
-            this.logger.info(
-              `Waiting for tcp port ${addr.host}:${addr.port} to accept connections...`
-            )
-          }
-
-          if (client) {
-            client.destroy()
-          }
-          client = new net.Socket()
+        } else if (this.apiPort !== 0) {
+          const addr: net.SocketConnectOpts = { port: this.apiPort, host: '127.0.0.1' }
+          this.logger.info(
+            `Waiting for tcp port ${addr.host as string}:${addr.port} to accept connections...`
+          )
+          // if (client !== undefined) {
+          //   client.destroy()
+          // }
+          const client = new net.Socket()
           client.connect(addr, () => {
             this.logger.info('... port is ready.')
             clearInterval(timer)
             resolve()
           })
           client.on('error', err => {
-            this.logger.debug(`waitForApi: not ready yet: ${err}`)
+            this.logger.debug(`waitForApi: not ready yet: ${err.message}`)
           })
         }
       }
@@ -299,7 +297,7 @@ export class Launcher {
    * @event exit - `walletBackend.events` will emit this when the
    *   wallet and node have both exited.
    */
-  stop (
+  async stop (
     timeoutSeconds = 60
   ): Promise<{ wallet: ServiceExitStatus, node: ServiceExitStatus }> {
     this.logger.debug('Launcher.stop: stopping wallet and node')
@@ -325,8 +323,8 @@ export class Launcher {
     signals.forEach((signal: NodeJS.Signals) =>
       process.on(signal, () => {
         this.logger.info(`Received ${signal} - stopping services...`)
-        this.walletService.stop(0)
-        this.nodeService.stop(0)
+        this.walletService.stop(0).catch(error => console.error((error.message)))
+        this.nodeService.stop(0).catch(error => console.error((error.message)))
       })
     )
   }
@@ -446,19 +444,18 @@ function makeServiceCommands (
   logger.info(
     `Creating state directory ${config.stateDir} (if it doesn't already exist)`
   )
-  const node = mkdirp(config.stateDir).then(() =>
-    nodeExe(config.stateDir, config)
+  const node = mkdirp(config.stateDir).then(async () =>
+    await nodeExe(config.stateDir, config)
   )
-  const wallet = node.then(nodeService =>
-    walletExe(config.stateDir, config, nodeService)
+  const wallet = node.then(async () =>
+    await walletExe(config.stateDir, config)
   )
   return { wallet, node }
 }
 
 async function walletExe (
   baseDir: DirPath,
-  config: LaunchConfig,
-  node: StartService
+  config: LaunchConfig
 ): Promise<WalletStartService> {
   const apiPort = config.apiPort ?? (await getPort())
   const base: WalletStartService = {
@@ -467,16 +464,16 @@ async function walletExe (
       'serve',
       '--shutdown-handler',
       '--port',
-      '' + apiPort,
+      `${apiPort}`,
       '--database',
       path.join(baseDir, 'wallets')
     ].concat(
-      config.listenAddress ? ['--listen-address', config.listenAddress] : [],
-      config.syncToleranceSeconds
+      config.listenAddress !== undefined ? ['--listen-address', config.listenAddress] : [],
+      config.syncToleranceSeconds !== undefined
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
         : []
     ),
-    extraEnv: config.stakePoolRegistryUrl
+    extraEnv: config.stakePoolRegistryUrl !== undefined
       ? { CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl }
       : undefined,
     supportsCleanShutdown: true,
@@ -487,16 +484,15 @@ async function walletExe (
 
   switch (config.nodeConfig.kind) {
     case 'jormungandr':
-      return addArgs([
-        '--genesis-block-hash',
-        config.nodeConfig.network.genesisBlock.hash,
-        '--node-port',
-        '' + config.nodeConfig.restPort
-      ])
+      return addArgs(
+        (config.nodeConfig.restPort !== undefined
+          ? ['--node-port', `${config.nodeConfig.restPort}`]
+          : []).concat(['--genesis-block-hash', config.nodeConfig.network.genesisBlock.hash])
+      )
     case 'byron':
       if (
         config.networkName !== 'mainnet' &&
-        !config.nodeConfig.network.genesisFile
+        config.nodeConfig.network.genesisFile === undefined
       ) {
         throw new Error('ByronNetwork.genesisFile must be configured')
       }
@@ -504,8 +500,8 @@ async function walletExe (
       return addArgs(
         (config.networkName === 'mainnet'
           ? ['--mainnet']
-          : ['--testnet', '' + config.nodeConfig.network.genesisFile]).concat(
-          config.nodeConfig.socketFile
+          : ['--testnet', `${config.nodeConfig.network.genesisFile as string}`]).concat(
+          config.nodeConfig.socketFile !== undefined
             ? ['--node-socket', config.nodeConfig.socketFile]
             : []
         )
@@ -515,7 +511,7 @@ async function walletExe (
   }
 }
 
-function nodeExe (
+async function nodeExe (
   baseDir: DirPath,
   config: LaunchConfig
 ): Promise<StartService> {

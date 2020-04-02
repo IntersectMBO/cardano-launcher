@@ -35,11 +35,12 @@ export interface ServiceExitStatus {
 export function serviceExitStatusMessage (res: ServiceExitStatus): string {
   const reason =
     typeof res.code === 'number'
-      ? `status ${res.code}`
-      : res.signal
+      ? `status ${res.code.toString()}`
+      : res.signal !== null
         ? `signal ${res.signal}`
-        : `error ${res.err}`
-
+        : res.err !== null
+          ? `error ${res.err?.message}`
+          : 'Unknown condition'
   return `${res.exe} exited with ${reason}`
 }
 
@@ -157,28 +158,28 @@ export function setupService (
   let killTimer: NodeJS.Timeout | null = null
   let startPromise: Promise<Pid>
 
-  const doStart = async () => {
+  const doStart = (): Pid => {
     const envStr = _.map(
       cfg.extraEnv,
       (value, name) => `${name}=${value} `
     ).join('')
     const commandStr = `${envStr}${cfg.command} ${cfg.args.join(' ')}`
     logger.info(`Service.start: trying to start ${commandStr}`, cfg)
-    const stdOuts = childProcessLogWriteStream ? 'pipe' : 'inherit'
+    const stdOuts = childProcessLogWriteStream !== undefined ? 'pipe' : 'inherit'
     const stdio = [
       cfg.supportsCleanShutdown ? 'pipe' : 'ignore',
       stdOuts,
       stdOuts
     ]
-    const cwd = cfg.cwd ? { cwd: cfg.cwd } : {}
-    const env = cfg.extraEnv
+    const cwd = cfg.cwd !== undefined ? { cwd: cfg.cwd } : {}
+    const env = cfg.extraEnv !== undefined
       ? Object.assign({}, process.env, cfg.extraEnv)
       : process.env
     const options = Object.assign({ stdio }, cwd, { env })
     try {
       proc = spawn(cfg.command, cfg.args, options)
     } catch (err) {
-      logger.error(`Service.start: child_process.spawn() failed: ${err}`)
+      logger.error(`Service.start: child_process.spawn() failed: ${err.message as string}`)
       logger.error(
         `Service.start: child_process.spawn(${cfg.command}, ${cfg.args.join(
           ' '
@@ -192,10 +193,10 @@ export function setupService (
       onStopped(code, signal)
     })
     proc.on('error', err => {
-      logger.error(`Service.start: child_process failed: ${err}`)
+      logger.error(`Service.start: child_process failed: ${err.message}`)
       onStopped(null, null, err)
     })
-    if (proc.stdout && proc.stderr && childProcessLogWriteStream) {
+    if (proc.stdout !== null && proc.stderr !== null && childProcessLogWriteStream !== undefined) {
       proc.stdout.on('data', data => {
         childProcessLogWriteStream.write(data)
       })
@@ -206,34 +207,34 @@ export function setupService (
     return proc.pid
   }
 
-  const doStop = (timeoutSeconds: number) => {
+  const doStop = (timeoutSeconds: number): void => {
     logger.info(`Service.stop: trying to stop ${cfg.command}`, cfg)
     setStatus(ServiceStatus.Stopping)
-    if (proc) {
-      if (cfg.supportsCleanShutdown && proc.stdin) {
+    if (proc !== null) {
+      if (cfg.supportsCleanShutdown && proc.stdin !== null) {
         proc.stdin.end()
       } else {
         proc.kill('SIGTERM')
       }
     }
     killTimer = setTimeout(() => {
-      if (proc) {
+      if (proc !== null) {
         logger.info(
           `Service.stop: timed out after ${timeoutSeconds} seconds. Killing process ${proc.pid}.`
         )
         proc.kill('SIGKILL')
       }
-    }, timeoutSeconds * 1000)
+    }, timeoutSeconds * 1000) as NodeJS.Timer
   }
 
   const onStopped = (
     code: number | null = null,
     signal: string | null = null,
     err: Error | null = null
-  ) => {
+  ): void => {
     exitStatus = { exe: cfg.command, code, signal, err }
     logger.debug('Service onStopped', exitStatus)
-    if (killTimer) {
+    if (killTimer !== null) {
       clearTimeout(killTimer)
       killTimer = null
     }
@@ -241,19 +242,20 @@ export function setupService (
     setStatus(ServiceStatus.Stopped)
   }
 
-  const waitForStop = (): Promise<ServiceExitStatus> =>
-    new Promise(resolve => {
+  const waitForStop = async (): Promise<ServiceExitStatus> =>
+    // Todo: Simplify this. Currently satisfies the lint rules, but seems overly complex
+    await new Promise(resolve => {
       logger.debug('Service.stop: waiting for ServiceStatus.Stopped')
       events.on('statusChanged', status => {
-        if (status === ServiceStatus.Stopped && exitStatus) {
+        if (status === ServiceStatus.Stopped && exitStatus !== null) {
           resolve(exitStatus)
         }
       })
     })
 
-  const waitForExit = (): Promise<ServiceExitStatus> => {
+  const waitForExit = async (): Promise<ServiceExitStatus> => {
     const defaultExitStatus = {
-      exe: cfg ? cfg.command : '',
+      exe: cfg.command,
       code: null,
       signal: null,
       err: null
@@ -290,7 +292,7 @@ export function setupService (
           setStatus(ServiceStatus.Starting)
           startPromise = cfgPromise.then(theCfg => {
             cfg = theCfg
-            return await doStart()
+            return doStart()
           })
           return await startPromise
         case ServiceStatus.Starting:
@@ -298,7 +300,7 @@ export function setupService (
           return await startPromise
         case ServiceStatus.Started:
           logger.info('Service.start: already started')
-          return proc ? proc.pid : -1
+          return proc !== null ? proc.pid : -1
         case ServiceStatus.Stopping:
           logger.info('Service.start: cannot start - already stopping')
           return -1
@@ -317,7 +319,7 @@ export function setupService (
           doStop(timeoutSeconds)
           break
         case ServiceStatus.Stopping:
-          if (timeoutSeconds === 0 && proc) {
+          if (timeoutSeconds === 0 && proc !== null) {
             logger.info(
               `Service.stop: was already stopping, but will now kill process ${proc.pid} immediately`
             )
