@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-echo "--- Install node_modules"
+echo "--- Install"
 
 npm install
 
@@ -12,11 +12,11 @@ npm run build
 
 echo "--- Test"
 
-npx tsdx test --collect-coverage 
+npm run test -- --collect-coverage
 
-echo "--- Lint"
+#echo "--- Lint"
 
-npx tsdx lint src test
+#npm run lint
 
 echo "--- Rebuild docs"
 
