@@ -30,13 +30,21 @@ for example code.
 
 ## Local Development
 
-### `npm run build` `npm run build -- --watch`
+### Build the code
 
-TS -> JS in `dist`
+Transpile TypeScript to Javascript in the `dist` directory, checking for errors:
 
-### `npm test` `npm test -- --watch unit`
+    npm run build
 
-Runs all tests.
+Do the compile as above, but automatically rebuild when a file changes
+
+    npm run build -- --watch
+
+### Run the tests
+
+Runs all tests:
+
+    npm test
 
 To run only `unit` tests matching `idempotent` (for example):
 
@@ -48,18 +56,33 @@ Run the test watcher ([Jest](https://jestjs.io/docs/en/getting-started)) and pro
 
 See the [Jest command-line reference](https://jestjs.io/docs/en/cli) for all the options.
 
-### `npm run lint` `npm run lint -- --fix`
+Note that the `cli` tests require the code to already have been built
+with `npm run build`.
+
+### Linting and formatting the code
+
+To check linter rules defined in `.eslintrc.json`:
+
+    npm run lint
+
+To automatically fix lint and formatting errors, where possible:
+
+    npm run lint -- --fix
 
 [JavaScript Standard Style](https://standardjs.com/)
 
-### `npm run typedoc`
+### Generate API Documentation
 
 Generates API documentation to the `site` folder.
 
-### `nix-shell`
+    npm run typedoc
 
-Runs a bash shell with project development dependencies (e.g. `npm`,
-`cardano-wallet`) in the `PATH`.
+### Development environment
+
+This runs a bash shell with project development dependencies
+(e.g. `npm`, `cardano-wallet`) in the `PATH`.
+
+    nix-shell
 
 See [nix.md](https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md)
 for information on how to set up Nix.
@@ -99,7 +122,12 @@ by the `nix-shell`.
  * [`dev.md`](./docs/dev.md) - Development information.
 
 ## Demo CLI
+
+This is a very basic executable that lets you test the compiled
+library code from your shell.
+
 ```shell script
+# Build the javascript first.
 npm run build
 
 # cardano-node mainnet
