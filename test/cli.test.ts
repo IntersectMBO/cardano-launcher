@@ -1,6 +1,17 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
+/**
+ * Integration tests which involve running the cardano-launcher code
+ * in another process via `src/cli.ts`.
+ *
+ * These tests require that the code has already been built, so that
+ * `dist/cli.js` exists.
+ *
+ * @packageDocumentation
+ */
+
+
 import * as tmp from 'tmp-promise';
 import path from 'path';
 
