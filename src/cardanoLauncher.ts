@@ -230,18 +230,18 @@ export class Launcher {
    * server is ready to accept requests.
    */
   start(): Promise<Api> {
-    this.nodeService.start();
-    this.walletService.start();
-
     const stopWaiting = () =>
       this.nodeService.getStatus() > ServiceStatus.Started ||
       this.walletService.getStatus() > ServiceStatus.Started;
 
-    this.waitForApi(stopWaiting).then(() => {
-      this.walletBackend.events.emit('ready', this.walletBackend.getApi());
-    });
-
     return new Promise((resolve, reject) => {
+      this.nodeService.start();
+      this.walletService.start();
+
+      this.waitForApi(stopWaiting, () => {
+        this.walletBackend.events.emit('ready', this.walletBackend.getApi());
+      });
+
       this.walletBackend.events.on('ready', resolve);
       this.walletBackend.events.on('exit', st =>
         reject(new BackendExitedError(st))
@@ -251,42 +251,44 @@ export class Launcher {
 
   /**
    * Poll TCP port of wallet API server until it accepts connections.
-   * @param stop - a callback, which will terminate the polling loop if it returns a truey value.
-   * @return a promise that is completed once the wallet API server accepts connections.
+   *
+   * @param stop - a callback, which will terminate the polling loop
+   *   if it returns a truey value.
+   *
+   * @param ready - a callback which is called once the wallet API
+   *   server accepts connections.
    */
-  private waitForApi(stop: () => boolean): Promise<void> {
+  private waitForApi(stop: () => boolean, ready: () => void): void {
     this.logger.debug('waitForApi');
-    return new Promise((resolve, reject) => {
-      let addr: net.SocketConnectOpts;
-      var client: net.Socket;
-      const poll = () => {
-        if (stop()) {
-          clearInterval(timer);
-          reject();
-        } else if (this.apiPort) {
-          if (!addr) {
-            addr = { port: this.apiPort, host: '127.0.0.1' };
-            this.logger.info(
-              `Waiting for tcp port ${addr.host}:${addr.port} to accept connections...`
-            );
-          }
 
-          if (client) {
-            client.destroy();
-          }
-          client = new net.Socket();
-          client.connect(addr, () => {
-            this.logger.info(`... port is ready.`);
-            clearInterval(timer);
-            resolve();
-          });
-          client.on('error', err => {
-            this.logger.debug(`waitForApi: not ready yet: ${err}`);
-          });
+    let addr: net.SocketConnectOpts;
+    var client: net.Socket;
+    const poll = () => {
+      if (stop()) {
+        clearInterval(timer);
+      } else if (this.apiPort) {
+        if (!addr) {
+          addr = { port: this.apiPort, host: '127.0.0.1' };
+          this.logger.info(
+            `Waiting for tcp port ${addr.host}:${addr.port} to accept connections...`
+          );
         }
-      };
-      const timer = setInterval(poll, 250);
-    });
+
+        if (client) {
+          client.destroy();
+        }
+        client = new net.Socket();
+        client.connect(addr, () => {
+          this.logger.info(`... port is ready.`);
+          clearInterval(timer);
+          ready();
+        });
+        client.on('error', err => {
+          this.logger.debug(`waitForApi: not ready yet: ${err}`);
+        });
+      }
+    };
+    const timer = setInterval(poll, 250);
   }
 
   /**
