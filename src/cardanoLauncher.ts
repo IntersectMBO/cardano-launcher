@@ -27,7 +27,7 @@ import {
   setupService,
   serviceExitStatusMessage,
 } from './service';
-import { DirPath } from './common';
+import { DirPath, catchFloatingPromise, ignorePromiseRejection } from './common';
 
 import * as byron from './byron';
 import * as shelley from './shelley';
@@ -194,21 +194,23 @@ export class Launcher {
       }>(),
     };
 
-    start.wallet.then((startService: WalletStartService) => {
-      this.apiPort = startService.apiPort;
-    });
+    start.wallet
+      .then((startService: WalletStartService) => {
+        this.apiPort = startService.apiPort;
+      })
+      .catch(catchFloatingPromise);
 
     this.walletService.events.on('statusChanged', status => {
       if (status === ServiceStatus.Stopped) {
         this.logger.debug('wallet exited');
-        this.stop();
+        this.stop().catch(catchFloatingPromise);
       }
     });
 
     this.nodeService.events.on('statusChanged', status => {
       if (status === ServiceStatus.Stopped) {
         this.logger.debug('node exited');
-        this.stop();
+        this.stop().catch(catchFloatingPromise);
       }
     });
 
@@ -235,8 +237,8 @@ export class Launcher {
       this.walletService.getStatus() > ServiceStatus.Started;
 
     return new Promise((resolve, reject) => {
-      this.nodeService.start();
-      this.walletService.start();
+      this.nodeService.start().catch(ignorePromiseRejection);
+      this.walletService.start().catch(ignorePromiseRejection);
 
       this.waitForApi(stopWaiting, () => {
         this.walletBackend.events.emit('ready', this.walletBackend.getApi());
@@ -328,8 +330,8 @@ export class Launcher {
     signals.forEach((signal: Signals) =>
       process.on(signal, () => {
         this.logger.info(`Received ${signal} - stopping services...`);
-        this.walletService.stop(0);
-        this.nodeService.stop(0);
+        this.walletService.stop(0).catch(catchFloatingPromise);
+        this.nodeService.stop(0).catch(catchFloatingPromise);
       })
     );
   }
