@@ -24,7 +24,8 @@
       2,
       "unix"
     ],
-    "no-unused-expressions": 0
+    "no-unused-expressions": 0,
+    "@typescript-eslint/no-floating-promises": "warn"
   },
   "env": {
     "jest": true
