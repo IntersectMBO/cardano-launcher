@@ -27,7 +27,11 @@ import {
   setupService,
   serviceExitStatusMessage,
 } from './service';
-import { DirPath, passthroughErrorLogger, ignorePromiseRejection } from './common';
+import {
+  DirPath,
+  passthroughErrorLogger,
+  ignorePromiseRejection,
+} from './common';
 
 import * as byron from './byron';
 import * as shelley from './shelley';

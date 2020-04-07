@@ -15,16 +15,10 @@ import _ from 'lodash';
 import process from 'process';
 import Process = NodeJS.Process;
 
-import {
-  Launcher,
-  ExitStatus
-} from './cardanoLauncher';
+import { Launcher, ExitStatus } from './cardanoLauncher';
 
 import { ignorePromiseRejection } from './common';
-import {
-  ServiceExitStatus,
-  serviceExitStatusMessage,
-} from './service';
+import { ServiceExitStatus, serviceExitStatusMessage } from './service';
 import * as byron from './byron';
 import * as jormungandr from './jormungandr';
 
@@ -34,8 +28,7 @@ import * as jormungandr from './jormungandr';
  * Is just a very basic interface for testing things.
  */
 export function cli(argv: Process['argv']) {
-  const waitForExit = setInterval(function () {
-  }, 3600000);
+  const waitForExit = setInterval(function () {}, 3600000);
   const args = argv;
 
   args.shift(); // /usr/bin/node
@@ -78,13 +71,19 @@ export function cli(argv: Process['argv']) {
     usage();
   }
 
-  const launcher = new Launcher({stateDir, nodeConfig, networkName}, console);
+  const launcher = new Launcher({ stateDir, nodeConfig, networkName }, console);
 
   launcher.start().catch(ignorePromiseRejection);
 
   // inform tests of subprocess pids
-  launcher.nodeService.start().then(pid => sendMaybe({node: pid})).catch(ignorePromiseRejection);
-  launcher.walletService.start().then(pid => sendMaybe({wallet: pid})).catch(ignorePromiseRejection);
+  launcher.nodeService
+    .start()
+    .then(pid => sendMaybe({ node: pid }))
+    .catch(ignorePromiseRejection);
+  launcher.walletService
+    .start()
+    .then(pid => sendMaybe({ wallet: pid }))
+    .catch(ignorePromiseRejection);
 
   launcher.walletBackend.events.on('exit', (status: ExitStatus) => {
     console.log(serviceExitStatusMessage(status.wallet));

@@ -11,11 +11,15 @@
  * @packageDocumentation
  */
 
-
 import * as tmp from 'tmp-promise';
 import path from 'path';
 
-import { delay, expectProcessToBeGone, setupExecPath, withByronConfigDir } from './utils';
+import {
+  delay,
+  expectProcessToBeGone,
+  setupExecPath,
+  withByronConfigDir,
+} from './utils';
 import { fork } from 'child_process';
 
 describe('CLI tests', () => {
@@ -24,10 +28,14 @@ describe('CLI tests', () => {
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
-    const proc = fork(path.resolve(__dirname, '..','dist', 'cli.js'), args.concat([stateDir]), {
-      stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-      env: process.env,
-    });
+    const proc = fork(
+      path.resolve(__dirname, '..', 'dist', 'cli.js'),
+      args.concat([stateDir]),
+      {
+        stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+        env: process.env,
+      }
+    );
     let nodePid: number | null = null;
     let walletPid: number | null = null;
     proc.on('message', (message: any) => {
@@ -50,7 +58,11 @@ describe('CLI tests', () => {
 
   it(
     'when the parent process is killed, child jormungandr gets stopped',
-    killTest(['jormungandr', 'self', path.resolve(__dirname, 'data', 'jormungandr')])
+    killTest([
+      'jormungandr',
+      'self',
+      path.resolve(__dirname, 'data', 'jormungandr'),
+    ])
   );
 
   it('when the parent process is killed, cardano-node gets stopped', () =>
