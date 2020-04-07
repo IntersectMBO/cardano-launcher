@@ -13,12 +13,14 @@ export type FilePath = string;
 export type DirPath = string;
 
 /**
- * Use this with `.catch()` on promises where the error is already
- * handled elsewhere, but where you would like to debug log the
- * condition.
+ * Use this with `.catch()` on promises where the error condition is
+ * already handled elsewhere (e.g. by an event or another promise).
+ *
+ * It will debug log the `Error` and a stack trace of the "floating
+ * promise".
  */
-export function catchFloatingPromise(err: Error) {
-  console.debug("Caught an unhandled promise " + (new Error()).stack);
+export function passthroughErrorLogger(err: Error) {
+  console.debug("Caught an unhandled promise rejection. The promise location is:\n" + (new Error()).stack + "\n\nThe error follows:");
   console.debug(err);
 }
 
