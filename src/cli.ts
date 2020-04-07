@@ -20,6 +20,7 @@ import {
   ExitStatus
 } from './cardanoLauncher';
 
+import { ignorePromiseRejection } from './common';
 import {
   ServiceExitStatus,
   serviceExitStatusMessage,
@@ -79,11 +80,11 @@ export function cli(argv: Process['argv']) {
 
   const launcher = new Launcher({stateDir, nodeConfig, networkName}, console);
 
-  launcher.start();
+  launcher.start().catch(ignorePromiseRejection);
 
   // inform tests of subprocess pids
-  launcher.nodeService.start().then(pid => sendMaybe({node: pid}));
-  launcher.walletService.start().then(pid => sendMaybe({wallet: pid}));
+  launcher.nodeService.start().then(pid => sendMaybe({node: pid})).catch(ignorePromiseRejection);
+  launcher.walletService.start().then(pid => sendMaybe({wallet: pid})).catch(ignorePromiseRejection);
 
   launcher.walletBackend.events.on('exit', (status: ExitStatus) => {
     console.log(serviceExitStatusMessage(status.wallet));
