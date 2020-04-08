@@ -7,7 +7,7 @@ import * as path from 'path';
 import _ from 'lodash';
 
 import { Service, ServiceStatus, Api } from '../src';
-import { StartService } from '../src/service';
+import { StartService, ShutdownMethod } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
 
 /*******************************************************************************
@@ -18,11 +18,9 @@ import { Logger, LogFunc } from '../src/logging';
 export function testService(
   command: string,
   args: string[],
-  supportsCleanShutdown = true
+  shutdownMethod = ShutdownMethod.CloseStdin
 ): Promise<StartService> {
-  return new Promise(resolve =>
-    resolve({ command, args, supportsCleanShutdown })
-  );
+  return new Promise(resolve => resolve({ command, args, shutdownMethod }));
 }
 
 /**

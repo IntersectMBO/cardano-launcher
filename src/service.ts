@@ -11,6 +11,7 @@
 
 import { spawn, ChildProcess } from 'child_process';
 import { WriteStream } from 'fs';
+import { Writable } from 'stream';
 import _ from 'lodash';
 import { EventEmitter } from 'tsee';
 
@@ -126,6 +127,24 @@ type ServiceEvents = EventEmitter<{
 }>;
 
 /**
+ * How to stop a service.
+ */
+export enum ShutdownMethod {
+  /** Terminate the process with a signal (not clean on Windows) */
+  Signal,
+  /** Terminate the process by closing its stdin. */
+  CloseStdin,
+  /** Terminate the process by closing an inherited file descriptor. */
+  CloseFD,
+}
+
+/**
+ * The file number that [[Service]] will use for child process
+ * notification when [[ShutdownMethod.CloseFD]] is in use.
+ */
+export const cleanShutdownFD = 3;
+
+/**
  * Initialise a [[Service]] which can control the lifetime of a
  * backend process.
  *
@@ -151,6 +170,8 @@ export function setupService(
   let cfg: StartService;
   // NodeJS child process object, or null if not running.
   let proc: ChildProcess | null = null;
+  // Pipe file descriptor for clean shutdown, or null if not yet running.
+  let shutdownFD: number | null;
   // How the child process exited, or null if it hasn't yet exited.
   let exitStatus: ServiceExitStatus | null;
   // For cancelling the kill timeout.
@@ -189,10 +210,10 @@ export function setupService(
     logger.info(`Service.start: trying to start ${commandStr}`, cfg);
     const stdOuts = childProcessLogWriteStream ? 'pipe' : 'inherit';
     const stdio = [
-      cfg.supportsCleanShutdown ? 'pipe' : 'ignore',
+      cfg.shutdownMethod === ShutdownMethod.CloseStdin ? 'pipe' : 'ignore',
       stdOuts,
       stdOuts,
-    ];
+    ].concat(cfg.shutdownMethod === ShutdownMethod.CloseFD ? ['pipe'] : []);
     const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
     const env = cfg.extraEnv
       ? Object.assign({}, process.env, cfg.extraEnv)
@@ -209,6 +230,13 @@ export function setupService(
         options
       );
       throw err;
+    }
+    if (cfg.shutdownMethod === ShutdownMethod.CloseStdin) {
+      // corresponds to first element of `stdio` above
+      shutdownFD = 0;
+    } else if (cfg.shutdownMethod === ShutdownMethod.CloseFD) {
+      // corresponds to last element of `stdio` above
+      shutdownFD = cleanShutdownFD;
     }
     setStatus(ServiceStatus.Started);
     proc.on('exit', (code, signal) => {
@@ -233,10 +261,11 @@ export function setupService(
     logger.info(`Service.stop: trying to stop ${cfg.command}`, cfg);
     setStatus(ServiceStatus.Stopping);
     if (proc) {
-      if (cfg.supportsCleanShutdown && proc.stdin) {
-        proc.stdin.end();
-      } else {
+      if (cfg.shutdownMethod === ShutdownMethod.Signal) {
         proc.kill('SIGTERM');
+      } else if (shutdownFD !== null && proc.stdio[shutdownFD]) {
+        const stream = proc.stdio[shutdownFD] as Writable;
+        stream.end();
       }
     }
     killTimer = setTimeout(() => {
@@ -355,5 +384,5 @@ export interface StartService {
    * Whether this service supports the clean shutdown method documented in
    * `docs/windows-clean-shutdown.md`.
    */
-  supportsCleanShutdown: boolean;
+  shutdownMethod: ShutdownMethod;
 }

@@ -10,7 +10,7 @@
 import path from 'path';
 import getPort from 'get-port';
 
-import { StartService } from './service';
+import { StartService, ShutdownMethod, cleanShutdownFD } from './service';
 import { FilePath, DirPath } from './common';
 
 /** Predefined networks. */
@@ -171,6 +171,8 @@ export async function startByronNode(
       'run',
       '--socket-path',
       args.socketFile,
+      '--shutdown-ipc',
+      '' + cleanShutdownFD,
       '--topology',
       args.topologyFile,
       '--database-path',
@@ -189,7 +191,7 @@ export async function startByronNode(
           : []
       )
       .concat(args.extra || []),
-    supportsCleanShutdown: false,
+    shutdownMethod: ShutdownMethod.CloseFD,
     // set working directory to stateDir -- config file may have relative paths for logs.
     cwd: stateDir,
   };

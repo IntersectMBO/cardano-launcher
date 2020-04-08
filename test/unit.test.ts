@@ -1,7 +1,12 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-import { setupService, ServiceStatus, ServiceExitStatus } from '../src/service';
+import {
+  setupService,
+  ServiceStatus,
+  ServiceExitStatus,
+  ShutdownMethod,
+} from '../src/service';
 import {
   testService,
   collectEvents,
@@ -67,7 +72,9 @@ describe('setupService', () => {
   it(
     'command was killed',
     () => {
-      const service = setupService(testService('sleep', ['10'], false));
+      const service = setupService(
+        testService('sleep', ['10'], ShutdownMethod.Signal)
+      );
       const events: ServiceStatus[] = [];
       service.events.on('statusChanged', status => events.push(status));
       const pidP = service.start();
