@@ -124,6 +124,9 @@ export function setupExecPath(): void {
  * This is needed because files in the cardano-node configuration file
  * are resolved relative to the current working directory, rather than
  * relative to the path of the config file.
+ *
+ * The temporary directory is deleted after the callback completes,
+ * unless the environment variable `NO_CLEANUP` is set.
  */
 export async function withByronConfigDir<T>(
   cb: (configDir: string) => Promise<T>
@@ -163,6 +166,10 @@ export async function withByronConfigDir<T>(
 
       return await cb(o.path);
     },
-    { unsafeCleanup: true }
+    {
+      unsafeCleanup: true,
+      keep: !!process.env.NO_CLEANUP,
+      prefix: 'launcher-test-config-',
+    }
   );
 }
