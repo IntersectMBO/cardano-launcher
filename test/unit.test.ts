@@ -71,7 +71,7 @@ describe('setupService', () => {
       const events: ServiceStatus[] = [];
       service.events.on('statusChanged', status => events.push(status));
       const pidP = service.start();
-      return new Promise(done => {
+      return new Promise((done, reject) => {
         setTimeout(
           () =>
             pidP.then(pid => {
@@ -87,16 +87,19 @@ describe('setupService', () => {
               ServiceStatus.Started,
               ServiceStatus.Stopped,
             ]);
-            service.stop().then((status: ServiceExitStatus) => {
-              if (process.platform === 'win32') {
-                expect(status.code).toBe(1);
-              } else {
-                expect(status.code).toBeNull();
-                expect(status.signal).toBe('SIGTERM');
-              }
-              expect(status.exe).toBe('sleep');
-              done();
-            });
+            service
+              .stop()
+              .then((status: ServiceExitStatus) => {
+                if (process.platform === 'win32') {
+                  expect(status.code).toBe(1);
+                } else {
+                  expect(status.code).toBeNull();
+                  expect(status.signal).toBe('SIGTERM');
+                }
+                expect(status.exe).toBe('sleep');
+                done();
+              })
+              .catch(reject);
           }
         });
       });
@@ -150,26 +153,31 @@ describe('setupService', () => {
     let pidP = service.start();
     setTimeout(() => {
       // should have exited after 1 second
-      pidP.then(pid => {
-        expectProcessToBeGone(pid);
-        // stop what's already stopped
-        service.stop(2).then(result => {
-          // check collected status
-          expect(result).toEqual({
-            exe: 'echo',
-            code: 0,
-            signal: null,
-            err: null,
-          });
-          // sequence of events doesn't include Stopping
-          expect(events).toEqual([
-            ServiceStatus.Starting,
-            ServiceStatus.Started,
-            ServiceStatus.Stopped,
-          ]);
-          done();
-        });
-      });
+      pidP
+        .then(pid => {
+          expectProcessToBeGone(pid);
+          // stop what's already stopped
+          service
+            .stop(2)
+            .then(result => {
+              // check collected status
+              expect(result).toEqual({
+                exe: 'echo',
+                code: 0,
+                signal: null,
+                err: null,
+              });
+              // sequence of events doesn't include Stopping
+              expect(events).toEqual([
+                ServiceStatus.Starting,
+                ServiceStatus.Started,
+                ServiceStatus.Stopped,
+              ]);
+              done();
+            })
+            .catch(e => done.fail(e));
+        })
+        .catch(e => done.fail(e));
     }, 1000);
   });
 

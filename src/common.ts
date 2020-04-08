@@ -20,7 +20,11 @@ export type DirPath = string;
  * promise".
  */
 export function passthroughErrorLogger(err: Error) {
-  console.debug("Caught an unhandled promise rejection. The promise location is:\n" + (new Error()).stack + "\n\nThe error follows:");
+  console.debug(
+    'Caught an unhandled promise rejection. The promise location is:\n' +
+      new Error().stack +
+      '\n\nThe error follows:'
+  );
   console.debug(err);
 }
 
@@ -29,5 +33,4 @@ export function passthroughErrorLogger(err: Error) {
  * handled elsewhere. This handler does nothing except prevent an
  * eslint warning from appearing.
  */
-export function ignorePromiseRejection(_: Error) {
-}
+export function ignorePromiseRejection(_: Error) {}

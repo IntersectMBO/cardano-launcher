@@ -187,12 +187,13 @@ describe('Starting cardano-wallet (and its node)', () => {
       };
     });
 
-    await expect(launcher.start().finally(() => cleanupTestLauncher(launcher)))
-      .rejects.toThrow(
-        [
-          'cardano-wallet-jormungandr exited with status 0',
-          'jormungandr exited with status 1',
-        ].join('\n')
-      );
+    await expect(
+      launcher.start().finally(() => cleanupTestLauncher(launcher))
+    ).rejects.toThrow(
+      [
+        'cardano-wallet-jormungandr exited with status 0',
+        'jormungandr exited with status 1',
+      ].join('\n')
+    );
   });
 });
