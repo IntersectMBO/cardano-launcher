@@ -20,7 +20,7 @@ const longTestTimeoutMs = 15000;
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
     config: (stateDir: string) => LaunchConfig
-  ) => {
+  ): Promise<Launcher> => {
     const stateDir = (
       await tmp.dir({
         unsafeCleanup: true,
@@ -46,13 +46,15 @@ describe('Starting cardano-wallet (and its node)', () => {
     return launcher;
   };
 
-  const cleanupTestLauncher = (launcher: Launcher) => {
+  const cleanupTestLauncher = (launcher: Launcher): void => {
     launcher.walletBackend.events.removeAllListeners();
     launcher.walletService.events.removeAllListeners();
     launcher.nodeService.events.removeAllListeners();
   };
 
-  const launcherTest = async (config: (stateDir: string) => LaunchConfig) => {
+  const launcherTest = async (
+    config: (stateDir: string) => LaunchConfig
+  ): Promise<void> => {
     setupExecPath();
 
     const launcher = await setupTestLauncher(config);
@@ -63,13 +65,14 @@ describe('Starting cardano-wallet (and its node)', () => {
     expect(walletProc).toHaveProperty('pid');
     expect(nodeProc).toHaveProperty('pid');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
       const req = http.request(makeRequest(api, 'network/information'), res => {
         res.setEncoding('utf8');
         res.on('data', d => resolve(JSON.parse(d)));
       });
-      req.on('error', (e: any) => {
+      req.on('error', (e: Error) => {
         console.error(`problem with request: ${e.message}`);
         reject(e);
       });
@@ -87,6 +90,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     cleanupTestLauncher(launcher);
   };
 
+  // eslint-disable-next-line jest/expect-expect
   it(
     'cardano-wallet-jormungandr responds to requests',
     () =>
@@ -103,6 +107,8 @@ describe('Starting cardano-wallet (and its node)', () => {
       }),
     longTestTimeoutMs
   );
+
+  // eslint-disable-next-line jest/expect-expect
   it(
     'cardano-wallet-byron responds to requests',
     () =>
@@ -142,7 +148,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     await Promise.all([launcher.stop(), launcher.stop(), launcher.stop()]);
     await launcher.stop();
 
-    expect(events.length).toBe(1);
+    expect(events).toHaveLength(1);
 
     cleanupTestLauncher(launcher);
   });
@@ -169,7 +175,7 @@ describe('Starting cardano-wallet (and its node)', () => {
       });
       await launcher.start();
       const logFileStats = await stat(logFile.path);
-      expect(logFileStats.size > 0);
+      expect(logFileStats.size).toBeGreaterThan(0);
       await launcher.stop();
     }));
 

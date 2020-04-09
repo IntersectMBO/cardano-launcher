@@ -1,6 +1,8 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
+/* eslint-disable */
+
 /**
  * Configuration for `cardano-node` (Shelley).
  *

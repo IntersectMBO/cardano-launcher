@@ -24,6 +24,7 @@ import { FilePath, DirPath } from './common';
  *
  */
 export const networks: { [propName: string]: JormungandrNetwork } = {
+  // eslint-disable-next-line @typescript-eslint/camelcase
   itn_rewards_v1: {
     configFile: 'itn_rewards_v1-config.yaml',
     genesisBlock: {
@@ -106,6 +107,32 @@ export interface JormungandrArgs {
    */
   extra?: string[];
 }
+
+function makeArgs(
+  stateDir: DirPath,
+  config: JormungandrConfig
+): JormungandrArgs {
+  return {
+    configFile: path.join(config.configurationDir, config.network.configFile),
+    restListen: `127.0.0.1:${config.restPort || 0}`,
+    genesisBlock: {
+      file:
+        'file' in config.network.genesisBlock
+          ? path.join(config.configurationDir, config.network.genesisBlock.file)
+          : undefined,
+      hash:
+        'hash' in config.network.genesisBlock
+          ? config.network.genesisBlock.hash
+          : undefined,
+    },
+    storageDir: path.join(stateDir, 'chain'),
+    secretFile: _.map(config.network.secretFile || [], secret =>
+      path.join(config.configurationDir, secret)
+    ),
+    extra: config.extraArgs,
+  };
+}
+
 export async function startJormungandr(
   stateDir: DirPath,
   config: JormungandrConfig
@@ -139,30 +166,5 @@ export async function startJormungandr(
       .concat(_.flatMap(args.secretFile || [], secret => ['--secret', secret]))
       .concat(args.extra || []),
     supportsCleanShutdown: false,
-  };
-}
-
-function makeArgs(
-  stateDir: DirPath,
-  config: JormungandrConfig
-): JormungandrArgs {
-  return {
-    configFile: path.join(config.configurationDir, config.network.configFile),
-    restListen: `127.0.0.1:${config.restPort || 0}`,
-    genesisBlock: {
-      file:
-        'file' in config.network.genesisBlock
-          ? path.join(config.configurationDir, config.network.genesisBlock.file)
-          : undefined,
-      hash:
-        'hash' in config.network.genesisBlock
-          ? config.network.genesisBlock.hash
-          : undefined,
-    },
-    storageDir: path.join(stateDir, 'chain'),
-    secretFile: _.map(config.network.secretFile || [], secret =>
-      path.join(config.configurationDir, secret)
-    ),
-    extra: config.extraArgs,
   };
 }

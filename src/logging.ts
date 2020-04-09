@@ -1,6 +1,8 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Cheap and cheerful logging functions.
  * Same as what is already in Daedalus.
@@ -37,7 +39,7 @@ export function prependName(logger: Logger, name: string): Logger {
     severity: 'debug' | 'info' | 'error',
     msg: string,
     param?: any
-  ) => {
+  ): void => {
     const prefixed = `${name}: ${msg}`;
     if (param) {
       logger[severity](prefixed, param);
@@ -46,8 +48,8 @@ export function prependName(logger: Logger, name: string): Logger {
     }
   };
   return {
-    debug: (msg: string, param?: any) => prefix('debug', msg, param),
-    info: (msg: string, param?: any) => prefix('info', msg, param),
-    error: (msg: string, param?: any) => prefix('error', msg, param),
+    debug: (msg: string, param?: any): void => prefix('debug', msg, param),
+    info: (msg: string, param?: any): void => prefix('info', msg, param),
+    error: (msg: string, param?: any): void => prefix('error', msg, param),
   };
 }

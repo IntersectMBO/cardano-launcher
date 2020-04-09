@@ -19,7 +19,7 @@ export type DirPath = string;
  * It will debug log the `Error` and a stack trace of the "floating
  * promise".
  */
-export function passthroughErrorLogger(err: Error) {
+export function passthroughErrorLogger(err: Error): void {
   console.debug(
     'Caught an unhandled promise rejection. The promise location is:\n' +
       new Error().stack +
@@ -33,4 +33,4 @@ export function passthroughErrorLogger(err: Error) {
  * handled elsewhere. This handler does nothing except prevent an
  * eslint warning from appearing.
  */
-export function ignorePromiseRejection(_: Error) {}
+export function ignorePromiseRejection(_: Error): void {} // eslint-disable-line

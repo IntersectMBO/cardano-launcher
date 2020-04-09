@@ -18,8 +18,8 @@ const longTestTimeoutMs = 15000;
 
 describe('setupService', () => {
   it('starting simple command', async () => {
-    let service = setupService(testService('echo', ['test echo']));
-    let events: ServiceStatus[] = [];
+    const service = setupService(testService('echo', ['test echo']));
+    const events: ServiceStatus[] = [];
     service.events.on('statusChanged', status => events.push(status));
     await service.start();
     expect(service.getProcess()).toHaveProperty('pid');
@@ -38,11 +38,11 @@ describe('setupService', () => {
   });
 
   it('stopping a command', async () => {
-    let service = setupService(testService('cat', []));
-    let events: ServiceStatus[] = [];
+    const service = setupService(testService('cat', []));
+    const events: ServiceStatus[] = [];
     service.events.on('statusChanged', status => events.push(status));
-    let pid = await service.start();
-    let result = await service.stop(2);
+    const pid = await service.start();
+    const result = await service.stop(2);
     // process should not exist
     expect(() => process.kill(pid, 0)).toThrow();
     // end of file for cat
@@ -50,9 +50,9 @@ describe('setupService', () => {
   });
 
   it('stopping a command (timeout)', async () => {
-    let service = setupService(testService('sleep', ['4']));
-    let pid = await service.start();
-    let result = await service.stop(2);
+    const service = setupService(testService('sleep', ['4']));
+    const pid = await service.start();
+    const result = await service.stop(2);
     // process should not exist
     expect(() => process.kill(pid, 0)).toThrow();
     // exited with signal
@@ -108,10 +108,10 @@ describe('setupService', () => {
   );
 
   it('start is idempotent', async () => {
-    let service = setupService(testService('cat', []));
-    let events = collectEvents(service);
-    let pid1 = await service.start();
-    let pid2 = await service.start();
+    const service = setupService(testService('cat', []));
+    const events = collectEvents(service);
+    const pid1 = await service.start();
+    const pid2 = await service.start();
     await service.stop(2);
     // should have only started once
     expect(pid1).toBe(pid2);
@@ -127,11 +127,11 @@ describe('setupService', () => {
   });
 
   it('stop is idempotent', async () => {
-    let service = setupService(testService('cat', []));
-    let events = collectEvents(service);
-    let pid = await service.start();
-    let result1 = await service.stop(2);
-    let result2 = await service.stop(2);
+    const service = setupService(testService('cat', []));
+    const events = collectEvents(service);
+    const pid = await service.start();
+    const result1 = await service.stop(2);
+    const result2 = await service.stop(2);
     // same result
     expect(result1).toEqual(result2);
     // process should not exist
@@ -147,46 +147,48 @@ describe('setupService', () => {
     ]);
   });
 
-  it('stopping an already stopped command', done => {
-    let service = setupService(testService('echo', ['hello from tests']));
-    let events = collectEvents(service);
-    let pidP = service.start();
-    setTimeout(() => {
-      // should have exited after 1 second
-      pidP
-        .then(pid => {
-          expectProcessToBeGone(pid);
-          // stop what's already stopped
-          service
-            .stop(2)
-            .then(result => {
-              // check collected status
-              expect(result).toEqual({
-                exe: 'echo',
-                code: 0,
-                signal: null,
-                err: null,
-              });
-              // sequence of events doesn't include Stopping
-              expect(events).toEqual([
-                ServiceStatus.Starting,
-                ServiceStatus.Started,
-                ServiceStatus.Stopped,
-              ]);
-              done();
-            })
-            .catch(e => done.fail(e));
-        })
-        .catch(e => done.fail(e));
-    }, 1000);
+  it('stopping an already stopped command', () => {
+    return new Promise(done => {
+      const service = setupService(testService('echo', ['hello from tests']));
+      const events = collectEvents(service);
+      const pidP = service.start();
+      setTimeout(() => {
+        // should have exited after 1 second
+        pidP
+          .then(pid => {
+            expectProcessToBeGone(pid);
+            // stop what's already stopped
+            service
+              .stop(2)
+              .then(result => {
+                // check collected status
+                expect(result).toEqual({
+                  exe: 'echo',
+                  code: 0,
+                  signal: null,
+                  err: null,
+                });
+                // sequence of events doesn't include Stopping
+                expect(events).toEqual([
+                  ServiceStatus.Starting,
+                  ServiceStatus.Started,
+                  ServiceStatus.Stopped,
+                ]);
+                done();
+              })
+              .catch(e => done.fail(e));
+          })
+          .catch(e => done.fail(e));
+      }, 1000);
+    });
   });
 
   it('starting a bogus command', async () => {
-    let logger = mockLogger(true);
-    let service = setupService(testService('xyzzy', []), logger);
-    let events = collectEvents(service);
+    const logger = mockLogger(true);
+    const service = setupService(testService('xyzzy', []), logger);
+    const events = collectEvents(service);
     await service.start();
-    let result = await service.waitForExit();
+    const result = await service.waitForExit();
     expect(result.err ? result.err.toString() : null).toBe(
       'Error: spawn xyzzy ENOENT'
     );
@@ -197,6 +199,8 @@ describe('setupService', () => {
       ServiceStatus.Started,
       ServiceStatus.Stopped,
     ]);
-    expect(logger.getLogs().filter(l => l.severity === 'error').length).toBe(1);
+    expect(logger.getLogs().filter(l => l.severity === 'error')).toHaveLength(
+      1
+    );
   });
 });

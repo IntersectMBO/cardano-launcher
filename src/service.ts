@@ -157,7 +157,30 @@ export function setupService(
   let killTimer: NodeJS.Timeout | null = null;
   let startPromise: Promise<Pid>;
 
-  const doStart = async () => {
+  const setStatus = (newStatus: ServiceStatus): void => {
+    logger.debug(
+      `setStatus ${ServiceStatus[status]} -> ${ServiceStatus[newStatus]}`
+    );
+    status = newStatus;
+    events.emit('statusChanged', status);
+  };
+
+  const onStopped = (
+    code: number | null = null,
+    signal: string | null = null,
+    err: Error | null = null
+  ): void => {
+    exitStatus = { exe: cfg.command, code, signal, err };
+    logger.debug(`Service onStopped`, exitStatus);
+    if (killTimer) {
+      clearTimeout(killTimer);
+      killTimer = null;
+    }
+    proc = null;
+    setStatus(ServiceStatus.Stopped);
+  };
+
+  const doStart = async (): Promise<Pid> => {
     const envStr = _.map(
       cfg.extraEnv,
       (value, name) => `${name}=${value} `
@@ -206,7 +229,7 @@ export function setupService(
     return proc.pid;
   };
 
-  const doStop = (timeoutSeconds: number) => {
+  const doStop = (timeoutSeconds: number): void => {
     logger.info(`Service.stop: trying to stop ${cfg.command}`, cfg);
     setStatus(ServiceStatus.Stopping);
     if (proc) {
@@ -224,21 +247,6 @@ export function setupService(
         proc.kill('SIGKILL');
       }
     }, timeoutSeconds * 1000);
-  };
-
-  const onStopped = (
-    code: number | null = null,
-    signal: string | null = null,
-    err: Error | null = null
-  ) => {
-    exitStatus = { exe: cfg.command, code, signal, err };
-    logger.debug(`Service onStopped`, exitStatus);
-    if (killTimer) {
-      clearTimeout(killTimer);
-      killTimer = null;
-    }
-    proc = null;
-    setStatus(ServiceStatus.Stopped);
   };
 
   const waitForStop = (): Promise<ServiceExitStatus> =>
@@ -275,16 +283,8 @@ export function setupService(
     }
   };
 
-  const setStatus = (newStatus: ServiceStatus): void => {
-    logger.debug(
-      `setStatus ${ServiceStatus[status]} -> ${ServiceStatus[newStatus]}`
-    );
-    status = newStatus;
-    events.emit('statusChanged', status);
-  };
-
   return {
-    start: async () => {
+    start: async (): Promise<Pid> => {
       switch (status) {
         case ServiceStatus.NotStarted:
           setStatus(ServiceStatus.Starting);
@@ -307,7 +307,7 @@ export function setupService(
           return -1;
       }
     },
-    stop: async (timeoutSeconds: number = 60): Promise<ServiceExitStatus> => {
+    stop: async (timeoutSeconds = 60): Promise<ServiceExitStatus> => {
       switch (status) {
         case ServiceStatus.NotStarted:
         case ServiceStatus.Starting:
@@ -333,8 +333,8 @@ export function setupService(
       return waitForExit();
     },
     waitForExit,
-    getStatus: () => status,
-    getProcess: () => proc,
+    getStatus: (): ServiceStatus => status,
+    getProcess: (): ChildProcess | null => proc,
     events,
   };
 }

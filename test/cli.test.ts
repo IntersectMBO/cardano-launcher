@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+/* eslint-disable jest/expect-expect */
+
 import * as tmp from 'tmp-promise';
 import path from 'path';
 
@@ -22,8 +24,13 @@ import {
 } from './utils';
 import { fork } from 'child_process';
 
+type Message = {
+  node?: number;
+  wallet?: number;
+};
+
 describe('CLI tests', () => {
-  const killTest = (args: string[]) => async () => {
+  const killTest = (args: string[]) => async (): Promise<void> => {
     setupExecPath();
     const stateDir = (
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
@@ -38,7 +45,7 @@ describe('CLI tests', () => {
     );
     let nodePid: number | null = null;
     let walletPid: number | null = null;
-    proc.on('message', (message: any) => {
+    proc.on('message', (message: Message) => {
       console.log('received message', message);
       if (message.node) {
         nodePid = message.node;
@@ -52,8 +59,8 @@ describe('CLI tests', () => {
     expect(walletPid).not.toBeNull();
     proc.kill();
     await delay(1000);
-    expectProcessToBeGone(nodePid as any, 9);
-    expectProcessToBeGone(walletPid as any, 9);
+    expectProcessToBeGone(nodePid as number, 9);
+    expectProcessToBeGone(walletPid as number, 9);
   };
 
   it(
