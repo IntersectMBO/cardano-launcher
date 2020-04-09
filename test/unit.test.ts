@@ -148,7 +148,7 @@ describe('setupService', () => {
   });
 
   it('stopping an already stopped command', () => {
-    return new Promise(done => {
+    return new Promise((resolve, reject) => {
       const service = setupService(testService('echo', ['hello from tests']));
       const events = collectEvents(service);
       const pidP = service.start();
@@ -174,11 +174,11 @@ describe('setupService', () => {
                   ServiceStatus.Started,
                   ServiceStatus.Stopped,
                 ]);
-                done();
+                resolve();
               })
-              .catch(e => done.fail(e));
+              .catch(reject);
           })
-          .catch(e => done.fail(e));
+          .catch(reject);
       }, 1000);
     });
   });

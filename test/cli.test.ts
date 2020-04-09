@@ -59,8 +59,12 @@ describe('CLI tests', () => {
     expect(walletPid).not.toBeNull();
     proc.kill();
     await delay(1000);
-    expectProcessToBeGone(nodePid as number, 9);
-    expectProcessToBeGone(walletPid as number, 9);
+    if (nodePid) {
+      expectProcessToBeGone(nodePid, 9);
+    }
+    if (walletPid) {
+      expectProcessToBeGone(walletPid, 9);
+    }
   };
 
   it(

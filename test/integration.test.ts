@@ -6,13 +6,14 @@ import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
 import * as http from 'http';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
-
-import * as jormungandr from '../src/jormungandr';
-import * as byron from '../src/byron';
-import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
 import { createWriteStream } from 'fs';
 import { stat } from 'fs-extra';
 import { withFile, FileResult } from 'tmp-promise';
+
+import * as jormungandr from '../src/jormungandr';
+import * as byron from '../src/byron';
+import { ExitStatus } from '../src/cardanoLauncher';
+import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
@@ -141,7 +142,7 @@ describe('Starting cardano-wallet (and its node)', () => {
       };
     });
 
-    const events = [];
+    const events: ExitStatus[] = [];
     launcher.walletBackend.events.on('exit', st => events.push(st));
 
     await launcher.start();

@@ -428,15 +428,14 @@ export class Launcher {
       Launcher.nodeExe(config.stateDir, config)
     );
     const wallet = node.then(nodeService =>
-      Launcher.walletExe(config.stateDir, config, nodeService)
+      Launcher.walletExe(config.stateDir, config)
     );
     return { wallet, node };
   }
 
   private static async walletExe(
     baseDir: DirPath,
-    config: LaunchConfig,
-    _: StartService
+    config: LaunchConfig
   ): Promise<WalletStartService> {
     const apiPort = config.apiPort || (await getPort());
     const base: WalletStartService = {
