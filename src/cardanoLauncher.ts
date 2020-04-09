@@ -46,6 +46,84 @@ export {
   Service,
 } from './service';
 
+/*******************************************************************************
+ * Api
+ ******************************************************************************/
+
+interface RequestParams {
+  port: number;
+  path: string;
+  hostname: string;
+}
+
+/**
+ * Connection parameters for the `cardano-wallet` API.
+ * These should be used to build the HTTP requests.
+ */
+export interface Api {
+  /**
+   * API base URL, including trailling slash.
+   */
+  baseUrl: string;
+
+  /**
+   * URL components which can be used with the HTTP client library of
+   * your choice.
+   */
+  requestParams: RequestParams;
+}
+
+class V2Api implements Api {
+  /** URL of the API, including a trailling slash. */
+  readonly baseUrl: string;
+  /** URL components which can be used with the HTTP client library of
+   * your choice. */
+  readonly requestParams: RequestParams;
+
+  constructor(port: number) {
+    const hostname = '127.0.0.1';
+    const path = '/v2/';
+    this.baseUrl = `http://${hostname}:${port}${path}`;
+    this.requestParams = { port, path, hostname };
+  }
+}
+
+/*******************************************************************************
+ * Exit status types
+ ******************************************************************************/
+
+/**
+ * The result after the launched wallet backend has finished.
+ */
+export interface ExitStatus {
+  wallet: ServiceExitStatus;
+  node: ServiceExitStatus;
+}
+
+/**
+ * Format an [[ExitStatus]] as a multiline human-readable string.
+ */
+export function exitStatusMessage(status: ExitStatus): string {
+  return _.map(status, serviceExitStatusMessage).join('\n');
+}
+
+/**
+ * This instance of [[Error]] will be returned when the
+ * `Launcher.start()` promise is rejected.
+ */
+export class BackendExitedError extends Error {
+  status: ExitStatus;
+  constructor(status: ExitStatus) {
+    super(exitStatusMessage(status));
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.status = status;
+  }
+}
+
+/*******************************************************************************
+ * Launching
+ ******************************************************************************/
+
 /**
  * Configuration parameters for starting the wallet backend and node.
  */
@@ -115,7 +193,7 @@ export interface LaunchConfig {
    *  behaviour interferes with your application shutdown behaviour.
    *  If setting this to false, ensure stop(0) is called as part of the shutdown.
    */
-  installSignalHandlers?: Boolean;
+  installSignalHandlers?: boolean;
 }
 
 /**
@@ -178,7 +256,7 @@ export class Launcher {
     const { childProcessLogWriteStream, installSignalHandlers = true } = config;
     this.logger = logger;
 
-    const start = makeServiceCommands(config, logger);
+    const start = Launcher.makeServiceCommands(config, logger);
     this.walletService = setupService(
       start.wallet,
       prependName(logger, 'wallet'),
@@ -191,7 +269,7 @@ export class Launcher {
     );
 
     this.walletBackend = {
-      getApi: () => new V2Api(this.apiPort),
+      getApi: (): V2Api => new V2Api(this.apiPort),
       events: new EventEmitter<{
         ready: (api: Api) => void;
         exit: (status: ExitStatus) => void;
@@ -236,7 +314,7 @@ export class Launcher {
    * server is ready to accept requests.
    */
   start(): Promise<Api> {
-    const stopWaiting = () =>
+    const stopWaiting = (): boolean =>
       this.nodeService.getStatus() > ServiceStatus.Started ||
       this.walletService.getStatus() > ServiceStatus.Started;
 
@@ -268,8 +346,8 @@ export class Launcher {
     this.logger.debug('waitForApi');
 
     let addr: net.SocketConnectOpts;
-    var client: net.Socket;
-    const poll = () => {
+    let client: net.Socket;
+    const timer = setInterval(() => {
       if (stop()) {
         clearInterval(timer);
       } else if (this.apiPort) {
@@ -293,8 +371,7 @@ export class Launcher {
           this.logger.debug(`waitForApi: not ready yet: ${err}`);
         });
       }
-    };
-    const timer = setInterval(poll, 250);
+    }, 250);
   }
 
   /**
@@ -339,72 +416,103 @@ export class Launcher {
       })
     );
   }
-}
 
-interface RequestParams {
-  port: number;
-  path: string;
-  hostname: string;
-}
-
-/**
- * Connection parameters for the `cardano-wallet` API.
- * These should be used to build the HTTP requests.
- */
-export interface Api {
-  /**
-   * API base URL, including trailling slash.
-   */
-  baseUrl: string;
-
-  /**
-   * URL components which can be used with the HTTP client library of
-   * your choice.
-   */
-  requestParams: RequestParams;
-}
-
-class V2Api implements Api {
-  /** URL of the API, including a trailling slash. */
-  readonly baseUrl: string;
-  /** URL components which can be used with the HTTP client library of
-   * your choice. */
-  readonly requestParams: RequestParams;
-
-  constructor(port: number) {
-    let hostname = '127.0.0.1';
-    let path = '/v2/';
-    this.baseUrl = `http://${hostname}:${port}${path}`;
-    this.requestParams = { port, path, hostname };
+  private static makeServiceCommands(
+    config: LaunchConfig,
+    logger: Logger
+  ): { wallet: Promise<WalletStartService>; node: Promise<StartService> } {
+    logger.info(
+      `Creating state directory ${config.stateDir} (if it doesn't already exist)`
+    );
+    const node = mkdirp(config.stateDir).then(() =>
+      Launcher.nodeExe(config.stateDir, config)
+    );
+    const wallet = node.then(nodeService =>
+      Launcher.walletExe(config.stateDir, config)
+    );
+    return { wallet, node };
   }
-}
 
-/**
- * The result after the launched wallet backend has finished.
- */
-export interface ExitStatus {
-  wallet: ServiceExitStatus;
-  node: ServiceExitStatus;
-}
+  private static async walletExe(
+    baseDir: DirPath,
+    config: LaunchConfig
+  ): Promise<WalletStartService> {
+    const apiPort = config.apiPort || (await getPort());
+    const base: WalletStartService = {
+      command: `cardano-wallet-${config.nodeConfig.kind}`,
+      args: [
+        'serve',
+        '--shutdown-handler',
+        '--port',
+        '' + apiPort,
+        '--database',
+        path.join(baseDir, 'wallets'),
+      ].concat(
+        config.listenAddress ? ['--listen-address', config.listenAddress] : [],
+        config.syncToleranceSeconds
+          ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
+          : []
+      ),
+      extraEnv: config.stakePoolRegistryUrl
+        ? {
+            CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl,
+          }
+        : undefined,
+      supportsCleanShutdown: true,
+      apiPort,
+    };
+    const addArgs = (args: string[]): WalletStartService =>
+      _.assign(base, { args: base.args.concat(args) });
 
-/**
- * This instance of [[Error]] will be returned when the
- * `Launcher.start()` promise is rejected.
- */
-export class BackendExitedError extends Error {
-  status: ExitStatus;
-  constructor(status: ExitStatus) {
-    super(exitStatusMessage(status));
-    Object.setPrototypeOf(this, new.target.prototype);
-    this.status = status;
+    switch (config.nodeConfig.kind) {
+      case 'jormungandr':
+        return addArgs([
+          '--genesis-block-hash',
+          config.nodeConfig.network.genesisBlock.hash,
+          '--node-port',
+          '' + config.nodeConfig.restPort,
+        ]);
+      case 'byron':
+        if (
+          config.networkName !== 'mainnet' &&
+          !config.nodeConfig.network.genesisFile
+        ) {
+          throw new Error('ByronNetwork.genesisFile must be configured');
+        }
+        const networkArg =
+          config.networkName === 'mainnet'
+            ? ['--mainnet']
+            : ['--testnet', '' + config.nodeConfig.network.genesisFile];
+
+        return addArgs(
+          networkArg.concat(
+            config.nodeConfig.socketFile
+              ? ['--node-socket', config.nodeConfig.socketFile]
+              : []
+          )
+        );
+      case 'shelley':
+        return base;
+    }
   }
-}
 
-/**
- * Format an [[ExitStatus]] as a multiline human-readable string.
- */
-export function exitStatusMessage(status: ExitStatus): string {
-  return _.map(status, serviceExitStatusMessage).join('\n');
+  private static nodeExe(
+    baseDir: DirPath,
+    config: LaunchConfig
+  ): Promise<StartService> {
+    switch (config.nodeConfig.kind) {
+      case 'jormungandr':
+        return jormungandr.startJormungandr(baseDir, config.nodeConfig);
+      case 'byron':
+        return byron.startByronNode(
+          baseDir,
+          config.nodeConfig,
+          config.networkName
+        );
+      case 'shelley':
+        return shelley.startShelleyNode(config.nodeConfig);
+    }
+  }
 }
 
 /**
@@ -446,100 +554,4 @@ type WalletBackendEvents = EventEmitter<{
 
 interface WalletStartService extends StartService {
   apiPort: number;
-}
-
-function makeServiceCommands(
-  config: LaunchConfig,
-  logger: Logger
-): { wallet: Promise<WalletStartService>; node: Promise<StartService> } {
-  logger.info(
-    `Creating state directory ${config.stateDir} (if it doesn't already exist)`
-  );
-  const node = mkdirp(config.stateDir).then(() =>
-    nodeExe(config.stateDir, config)
-  );
-  const wallet = node.then(nodeService =>
-    walletExe(config.stateDir, config, nodeService)
-  );
-  return { wallet, node };
-}
-
-async function walletExe(
-  baseDir: DirPath,
-  config: LaunchConfig,
-  node: StartService
-): Promise<WalletStartService> {
-  const apiPort = config.apiPort || (await getPort());
-  const base: WalletStartService = {
-    command: `cardano-wallet-${config.nodeConfig.kind}`,
-    args: [
-      'serve',
-      '--shutdown-handler',
-      '--port',
-      '' + apiPort,
-      '--database',
-      path.join(baseDir, 'wallets'),
-    ].concat(
-      config.listenAddress ? ['--listen-address', config.listenAddress] : [],
-      config.syncToleranceSeconds
-        ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
-        : []
-    ),
-    extraEnv: config.stakePoolRegistryUrl
-      ? { CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl }
-      : undefined,
-    supportsCleanShutdown: true,
-    apiPort,
-  };
-  const addArgs = (args: string[]): WalletStartService =>
-    _.assign(base, { args: base.args.concat(args) });
-
-  switch (config.nodeConfig.kind) {
-    case 'jormungandr':
-      return addArgs([
-        '--genesis-block-hash',
-        config.nodeConfig.network.genesisBlock.hash,
-        '--node-port',
-        '' + config.nodeConfig.restPort,
-      ]);
-    case 'byron':
-      if (
-        config.networkName !== 'mainnet' &&
-        !config.nodeConfig.network.genesisFile
-      ) {
-        throw new Error('ByronNetwork.genesisFile must be configured');
-      }
-      const networkArg =
-        config.networkName === 'mainnet'
-          ? ['--mainnet']
-          : ['--testnet', '' + config.nodeConfig.network.genesisFile];
-
-      return addArgs(
-        networkArg.concat(
-          config.nodeConfig.socketFile
-            ? ['--node-socket', config.nodeConfig.socketFile]
-            : []
-        )
-      );
-    case 'shelley':
-      return base;
-  }
-}
-
-function nodeExe(
-  baseDir: DirPath,
-  config: LaunchConfig
-): Promise<StartService> {
-  switch (config.nodeConfig.kind) {
-    case 'jormungandr':
-      return jormungandr.startJormungandr(baseDir, config.nodeConfig);
-    case 'byron':
-      return byron.startByronNode(
-        baseDir,
-        config.nodeConfig,
-        config.networkName
-      );
-    case 'shelley':
-      return shelley.startShelleyNode(config.nodeConfig);
-  }
 }

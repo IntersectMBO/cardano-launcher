@@ -28,10 +28,7 @@ export function testService(
 /**
  * Expect the given process ID to not exist.
  */
-export const expectProcessToBeGone = (
-  pid: number,
-  signal: number = 0
-): void => {
+export const expectProcessToBeGone = (pid: number, signal = 0): void => {
   expect(() => process.kill(pid, signal)).toThrow();
 };
 
@@ -39,7 +36,7 @@ export const expectProcessToBeGone = (
  * @return mutable array which will contain events as they occur.
  */
 export const collectEvents = (service: Service): ServiceStatus[] => {
-  let events: ServiceStatus[] = [];
+  const events: ServiceStatus[] = [];
   service.events.on('statusChanged', status => events.push(status));
   return events;
 };
@@ -54,11 +51,11 @@ export interface MockLogger extends Logger {
   getLogs(): MockLog[];
 }
 
-export function mockLogger(echo: boolean = false): MockLogger {
-  let logs: MockLog[] = [];
+export function mockLogger(echo = false): MockLogger {
+  const logs: MockLog[] = [];
 
   const mockLog = (severity: 'debug' | 'info' | 'error'): LogFunc => {
-    return (msg: string, param?: object) => {
+    return (msg: string, param?: object): void => {
       if (echo) {
         if (param) {
           console[severity](msg, param);
@@ -74,11 +71,11 @@ export function mockLogger(echo: boolean = false): MockLogger {
     debug: mockLog('debug'),
     info: mockLog('info'),
     error: mockLog('error'),
-    getLogs: () => logs,
+    getLogs: (): MockLog[] => logs,
   };
 }
 
-export function delay(ms: number) {
+export function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -110,7 +107,7 @@ export function makeRequest(api: Api, path: string, options?: object): object {
  * If the node backend is run in a different working directory,
  * Windows will still be able to find the executables
  */
-export function setupExecPath() {
+export function setupExecPath(): void {
   if (process.platform === 'win32') {
     const cwd = process.cwd();
     const paths = (process.env.PATH || '')
@@ -130,9 +127,9 @@ export function setupExecPath() {
  * are resolved relative to the current working directory, rather than
  * relative to the path of the config file.
  */
-export async function withByronConfigDir(
-  cb: (configDir: string) => Promise<void>
-) {
+export async function withByronConfigDir<T>(
+  cb: (configDir: string) => Promise<T>
+): Promise<T> {
   const base = process.env.BYRON_CONFIGS;
   if (!base) {
     const msg =
@@ -149,7 +146,7 @@ export async function withByronConfigDir(
           genesis: 'mainnet-genesis.json',
           topology: 'mainnet-topology.json',
         },
-        f => {
+        (f: string) => {
           return { src: path.join(base, f), dst: path.join(o.path, f) };
         }
       );

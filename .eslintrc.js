@@ -8,14 +8,12 @@ module.exports = {
   extends: [
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended', // format sources with prettier.io
-
-    // Enabling the following may be helpful...
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-    // "plugin:@typescript-eslint/recommended",
+    'plugin:@typescript-eslint/recommended',
     // Recommended by https://www.npmjs.com/package/eslint-plugin-jest
-    // "plugin:jest/recommended",
+    'plugin:jest/recommended',
     // Optional pedantic stuff
-    // "plugin:jest/style",
+    'plugin:jest/style',
   ],
   plugins: [
     "@typescript-eslint",

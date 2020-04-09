@@ -22,13 +22,48 @@ import { ServiceExitStatus, serviceExitStatusMessage } from './service';
 import * as byron from './byron';
 import * as jormungandr from './jormungandr';
 
+function usage(): void {
+  console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR');
+  console.log('  BACKEND    - either jormungandr or byron');
+  console.log(
+    '  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1'
+  );
+  console.log(
+    '  CONFIG-DIR - directory which contains config files for a backend'
+  );
+  console.log('  STATE-DIR  - directory to put blockchains, databases, etc.');
+  process.exit(1);
+}
+
+function combineStatus(statuses: ServiceExitStatus[]): number {
+  const code = _.reduce(
+    statuses,
+    (res: number | null, status) => (res === null ? status.code : res),
+    null
+  );
+  const signal = _.reduce(
+    statuses,
+    (res: string | null, status) => (res === null ? status.signal : res),
+    null
+  );
+  // let err = _.reduce(statuses, (res, status) => res === null ? status.err : res, null);
+
+  return code === null ? (signal === null ? 0 : 127) : code;
+}
+
+function sendMaybe(message: object): void {
+  if (process.send) {
+    process.send(message);
+  }
+}
+
 /**
  * Main function of the CLI.
  *
  * Is just a very basic interface for testing things.
  */
-export function cli(argv: Process['argv']) {
-  const waitForExit = setInterval(function () {}, 3600000);
+export function cli(argv: Process['argv']): void {
+  const waitForExit = setInterval(() => undefined, 3600000);
   const args = argv;
 
   args.shift(); // /usr/bin/node
@@ -43,7 +78,7 @@ export function cli(argv: Process['argv']) {
   const configurationDir = args.shift() as string;
   const stateDir = args.shift() as string;
 
-  let nodeConfig: any;
+  let nodeConfig: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   if (backend === 'byron') {
     if (!(networkName in byron.networks)) {
@@ -91,41 +126,6 @@ export function cli(argv: Process['argv']) {
     clearInterval(waitForExit);
     process.exit(combineStatus([status.wallet, status.node]));
   });
-}
-
-function combineStatus(statuses: ServiceExitStatus[]): number {
-  let code = _.reduce(
-    statuses,
-    (res: number | null, status) => (res === null ? status.code : res),
-    null
-  );
-  let signal = _.reduce(
-    statuses,
-    (res: string | null, status) => (res === null ? status.signal : res),
-    null
-  );
-  // let err = _.reduce(statuses, (res, status) => res === null ? status.err : res, null);
-
-  return code === null ? (signal === null ? 0 : 127) : code;
-}
-
-function usage() {
-  console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR');
-  console.log('  BACKEND    - either jormungandr or byron');
-  console.log(
-    '  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1'
-  );
-  console.log(
-    '  CONFIG-DIR - directory which contains config files for a backend'
-  );
-  console.log('  STATE-DIR  - directory to put blockchains, databases, etc.');
-  process.exit(1);
-}
-
-function sendMaybe(message: object) {
-  if (process.send) {
-    process.send(message);
-  }
 }
 
 cli(process.argv);
