@@ -1,26 +1,14 @@
 {
-    "cardano-node": {
-        "branch": "dcoutts/issue-726-windows-clean-shutdown",
-        "description": "The core component that is used to participate in a Cardano decentralised blockchain.",
-        "homepage": "https://cardano.org",
-        "owner": "input-output-hk",
-        "repo": "cardano-node",
-        "rev": "45d2a06494720c6c05a754e8270c8e4b18426d08",
-        "sha256": "0gnhwpkm95fary2rijq5j7vm38wwzs72m0jj45wkdw0i19g2q3kp",
-        "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-node/archive/45d2a06494720c6c05a754e8270c8e4b18426d08.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "cardano-wallet": {
         "branch": "master",
         "description": "Official Wallet Backend & API for Cardano decentralized",
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "cardano-wallet",
-        "rev": "46f8a88c8cc08520b2e0d7f7fe1cd4b62bfebd99",
-        "sha256": "060xvlyxhlxaxi99hl5m3h94hdlkh66kabbyic380qic0a1x6iv8",
+        "rev": "77400e0a34eba0eca9985c5d90d9293b8e36df11",
+        "sha256": "0whjp7lg4x2k6nh0irnjibf4fzddpqk5hcy3pcipprasdfibh0ap",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-wallet/archive/46f8a88c8cc08520b2e0d7f7fe1cd4b62bfebd99.tar.gz",
+        "url": "https://github.com/input-output-hk/cardano-wallet/archive/77400e0a34eba0eca9985c5d90d9293b8e36df11.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "iohk-nix": {
