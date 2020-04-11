@@ -209,10 +209,10 @@ export interface LaunchConfig {
  *   stateDir: "/tmp/state-launcher",
  *   nodeConfig: {
  *     kind: "byron",
- *     configurationDir: "/home/user/cardano-node/configuration",
+ *     configurationDir: "/home/user/cardano-node/configuration/defaults/mainnet",
  *     network: {
- *       configFile: "configuration-mainnet.yaml",
- *       topologyFile: "mainnet-topology.json"
+ *       configFile: "configuration.yaml",
+ *       topologyFile: "topology.json"
  *     }
  *   }
  *   childProcessLogWriteStream: fs.createWriteStream('./logs')

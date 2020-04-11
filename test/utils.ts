@@ -143,12 +143,15 @@ export async function withByronConfigDir<T>(
     async (o: DirectoryResult) => {
       const configs = _.mapValues(
         {
-          configuration: 'configuration-mainnet.yaml',
-          genesis: 'mainnet-genesis.json',
-          topology: 'mainnet-topology.json',
+          configuration: 'configuration.yaml',
+          genesis: 'genesis.json',
+          topology: 'topology.json',
         },
         (f: string) => {
-          return { src: path.join(base, f), dst: path.join(o.path, f) };
+          return {
+            src: path.join(base, 'defaults', 'mainnet', f),
+            dst: path.join(o.path, f),
+          };
         }
       );
 
@@ -159,9 +162,7 @@ export async function withByronConfigDir<T>(
         configs.configuration.src,
         'utf-8'
       );
-      const configFixed = config
-        .replace(/configuration\//g, base + path.sep)
-        .replace(/^.*SocketPath.*$/gm, '');
+      const configFixed = config.replace(/^.*SocketPath.*$/gm, '');
       await fs.promises.writeFile(configs.configuration.dst, configFixed);
 
       return await cb(o.path);

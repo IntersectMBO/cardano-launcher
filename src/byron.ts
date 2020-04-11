@@ -16,8 +16,8 @@ import { FilePath, DirPath } from './common';
 /** Predefined networks. */
 export const networks: { [propName: string]: ByronNetwork } = {
   mainnet: {
-    configFile: 'configuration-mainnet.yaml',
-    topologyFile: 'mainnet-topology.json',
+    configFile: 'configuration.yaml',
+    topologyFile: 'topology.json',
   },
 };
 
