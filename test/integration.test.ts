@@ -59,7 +59,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
   const launcherTest = async (
     config: (stateDir: string) => LaunchConfig,
-    tls: boolean = false
+    tls = false
   ): Promise<void> => {
     setupExecPath();
 
@@ -75,14 +75,23 @@ describe('Starting cardano-wallet (and its node)', () => {
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
       const networkModule = tls ? https : http;
-      const req = networkModule.request(makeRequest(api, 'network/information', tls ? {
-        ca: fs.readFileSync(path.join(tlsDir, 'ca.crt')),
-        cert: fs.readFileSync(path.join(tlsDir, 'client.crt')),
-        key: fs.readFileSync(path.join(tlsDir, 'client.key'))
-      } : {}), res => {
-        res.setEncoding('utf8');
-        res.on('data', d => resolve(JSON.parse(d)));
-      });
+      const req = networkModule.request(
+        makeRequest(
+          api,
+          'network/information',
+          tls
+            ? {
+                ca: fs.readFileSync(path.join(tlsDir, 'ca.crt')),
+                cert: fs.readFileSync(path.join(tlsDir, 'client.crt')),
+                key: fs.readFileSync(path.join(tlsDir, 'client.key')),
+              }
+            : {}
+        ),
+        res => {
+          res.setEncoding('utf8');
+          res.on('data', d => resolve(JSON.parse(d)));
+        }
+      );
       req.on('error', (e: Error) => {
         console.error(`problem with request: ${e.message}`);
         reject(e);
@@ -164,32 +173,65 @@ describe('Starting cardano-wallet (and its node)', () => {
     await cleanupLauncher();
   });
 
-  it('Accepts a WriteStream, and pipes the child process stdout and stderr streams', () =>
-    tmp.withFile(async (logFile: tmp.FileResult) => {
-      const childProcessLogWriteStream = fs.createWriteStream(logFile.path, {
-        fd: logFile.fd,
-      });
-      const launcher = new Launcher({
-        stateDir: (
-          await tmp.dir({
-            unsafeCleanup: true,
-            prefix: 'launcher-integration-test-2',
-          })
-        ).path,
-        networkName: 'self',
-        nodeConfig: {
-          kind: 'jormungandr',
-          configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-          network: jormungandr.networks.self,
-        },
-        childProcessLogWriteStream,
-      });
-      await launcher.start();
-      const logFileStats = await stat(logFile.path);
-      expect(logFileStats.size).toBeGreaterThan(0);
-      await launcher.stop();
-    }));
+  it('accepts WriteStreams to pipe each child process stdout and stderr streams', async () => {
+    const walletLogFile = await tmp.file();
+    const nodeLogFile = await tmp.file();
+    const launcher = new Launcher({
+      stateDir: (
+        await tmp.dir({
+          unsafeCleanup: true,
+          prefix: 'launcher-integration-test-',
+        })
+      ).path,
+      networkName: 'self',
+      nodeConfig: {
+        kind: 'jormungandr',
+        configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
+        network: jormungandr.networks.self,
+      },
+      childProcessLogWriteStreams: {
+        node: fs.createWriteStream(nodeLogFile.path, { fd: nodeLogFile.fd }),
+        wallet: fs.createWriteStream(walletLogFile.path, {
+          fd: walletLogFile.fd,
+        }),
+      },
+    });
+    await launcher.start();
+    const nodeLogFileStats = await stat(nodeLogFile.path);
+    const walletLogFileStats = await stat(walletLogFile.path);
+    expect(nodeLogFileStats.size).toBeGreaterThan(0);
+    expect(walletLogFileStats.size).toBeGreaterThan(0);
+    await launcher.stop();
+  });
 
+  it('accepts the same WriteStream for both the wallet and node to produce a combined stream', async () => {
+    const logFile = await tmp.file();
+    const writeStream = fs.createWriteStream(logFile.path, { fd: logFile.fd });
+    const launcher = new Launcher({
+      stateDir: (
+        await tmp.dir({
+          unsafeCleanup: true,
+          prefix: 'launcher-integration-test-',
+        })
+      ).path,
+      networkName: 'self',
+      nodeConfig: {
+        kind: 'jormungandr',
+        configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
+        network: jormungandr.networks.self,
+      },
+      childProcessLogWriteStreams: {
+        node: writeStream,
+        wallet: writeStream,
+      },
+    });
+    await launcher.start();
+    const logFileStats = await stat(writeStream.path);
+    expect(logFileStats.size).toBeGreaterThan(0);
+    await launcher.stop();
+  });
+
+  // eslint-disable-next-line jest/expect-expect
   it('can configure the cardano-wallet-byron to serve the API with TLS', async () =>
     withByronConfigDir(configurationDir =>
       launcherTest(stateDir => {
@@ -202,14 +244,13 @@ describe('Starting cardano-wallet (and its node)', () => {
             network: byron.networks.mainnet,
           },
           tlsConfiguration: {
-            caCert: path.join(tlsDir,'ca.crt'),
+            caCert: path.join(tlsDir, 'ca.crt'),
             svCert: path.join(tlsDir, 'server.crt'),
-            svKey: path.join(tlsDir, 'server.key')
-          }
+            svKey: path.join(tlsDir, 'server.key'),
+          },
         };
       }, true)
-    )
-  )
+    ));
 
   it('handles case where (jormungandr) node fails to start', async () => {
     const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
