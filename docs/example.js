@@ -8,10 +8,10 @@ var launcher = new cardanoLauncher.Launcher({
   stateDir: "/tmp/state-launcher",
   nodeConfig: {
     kind: "byron",
-    configurationDir: "/home/rodney/iohk/cardano-node/configuration",
+    configurationDir: "/home/rodney/iohk/cardano-node/configuration/defaults/mainnet",
     network: {
-      configFile: "configuration-mainnet.yaml",
-      topologyFile: "mainnet-topology.json"
+      configFile: "configuration.yaml",
+      topologyFile: "topology.json"
     }
   }
 });

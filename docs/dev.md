@@ -18,7 +18,18 @@ This will use the branches configuration in
 [`nix/sources.json`](../nix/sources.json). Niv also provides options
 for choosing another branch or git rev.
 
-The `cardano-node` version is set by `cardano-wallet`.
+### cardano-node
+
+The `cardano-node` version is set by `cardano-wallet`. To temporarily
+override this version, add a source, using something like:
+
+    niv add local $HOME/iohk/cardano-node
+
+Once this is set, `nix-shell` should report `trace: Note: using cardano-node from ...`.
+
+When finished, remove the source override with:
+
+    niv drop cardano-node
 
 ## cardano-node configurations for tests
 

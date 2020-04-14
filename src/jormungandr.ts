@@ -10,7 +10,7 @@
 import path from 'path';
 import _ from 'lodash';
 import getPort from 'get-port';
-import { StartService } from './service';
+import { StartService, ShutdownMethod } from './service';
 import { FilePath, DirPath } from './common';
 
 /**
@@ -165,6 +165,6 @@ export async function startJormungandr(
       )
       .concat(_.flatMap(args.secretFile || [], secret => ['--secret', secret]))
       .concat(args.extra || []),
-    supportsCleanShutdown: false,
+    shutdownMethod: ShutdownMethod.Signal,
   };
 }

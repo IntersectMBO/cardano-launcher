@@ -26,6 +26,7 @@ import {
   StartService,
   setupService,
   serviceExitStatusMessage,
+  ShutdownMethod,
 } from './service';
 import {
   DirPath,
@@ -208,10 +209,10 @@ export interface LaunchConfig {
  *   stateDir: "/tmp/state-launcher",
  *   nodeConfig: {
  *     kind: "byron",
- *     configurationDir: "/home/user/cardano-node/configuration",
+ *     configurationDir: "/home/user/cardano-node/configuration/defaults/mainnet",
  *     network: {
- *       configFile: "configuration-mainnet.yaml",
- *       topologyFile: "mainnet-topology.json"
+ *       configFile: "configuration.yaml",
+ *       topologyFile: "topology.json"
  *     }
  *   }
  *   childProcessLogWriteStream: fs.createWriteStream('./logs')
@@ -427,9 +428,7 @@ export class Launcher {
     const node = mkdirp(config.stateDir).then(() =>
       Launcher.nodeExe(config.stateDir, config)
     );
-    const wallet = node.then(nodeService =>
-      Launcher.walletExe(config.stateDir, config)
-    );
+    const wallet = node.then(() => Launcher.walletExe(config.stateDir, config));
     return { wallet, node };
   }
 
@@ -458,7 +457,7 @@ export class Launcher {
             CARDANO_WALLET_STAKE_POOL_REGISTRY_URL: config.stakePoolRegistryUrl,
           }
         : undefined,
-      supportsCleanShutdown: true,
+      shutdownMethod: ShutdownMethod.CloseStdin,
       apiPort,
     };
     const addArgs = (args: string[]): WalletStartService =>

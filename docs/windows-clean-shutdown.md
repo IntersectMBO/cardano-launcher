@@ -8,9 +8,10 @@ On Windows, the only way to stop a non-gui program is by using [TerminateProcess
 > ... This function stops execution of all threads within the process and requests cancellation of all pending I/O.
 > ... A process cannot prevent itself from being terminated.
 
-The problem is that if `cardano-wallet` is stopped like this, it will
-be unable to nicely close its database, flush logs, or end any child
-processes. The effect is basically the same as `kill -9` on POSIX.
+The problem is that if `cardano-wallet` or `cardano-node` is stopped
+like this, it will be unable to nicely close its database, flush logs,
+or end any child processes. The effect is basically the same as `kill -9`
+on POSIX.
 
 ## Solution
 
@@ -30,14 +31,21 @@ then the child process knows that it's time to exit. The parent
 process can trigger this condition by closing the file descriptor that
 it has passed as the `stdin` of the child process.
 
+If `stdin` can't be used for clean shutdown, then a supplementary
+inherited pipe file descriptor can be used instead. In this case the
+parent process will also need to provide the fd number to the child
+process via command-line option or environment variable.
+
 ![Launch message sequence diagram](./launch.png)
 
 ## POSIX
 
-On POSIX platforms, `cardano-wallet` can shutdown cleanly after being killed with `SIGTERM`.
+On POSIX platforms, `cardano-wallet` can shutdown cleanly after being
+killed with `SIGTERM`.
 
-However, we use identical shutdown methods on both Windows and POSIX
-in an attempt to avoid platform-specific bugs.
+However, when running under `cardano-launcher`, we use identical
+shutdown methods on both Windows and POSIX in an attempt to avoid
+platform-specific bugs.
 
 ## Timeouts
 
@@ -56,3 +64,18 @@ then it should ensure that its own child processes are killed.
 
 In this case `stdin` of the child process will be automatically
 closed, and it will exit.
+
+## Command-line options
+
+This cross-platform clean shutdown method is only necessary in
+situations where the code will be running on Windows as a child
+process of an application. In other circumstances, the process can be
+killed with [Control-C](https://docs.microsoft.com/en-us/windows/console/generateconsolectrlevent)
+(Windows) or `SIGTERM` (POSIX). Therefore, an optional command-line
+parameter such as `--shutdown-ipc=FD` should be used to enable the
+clean shutdown handler.
+
+## Example implementations
+
+* [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/blob/master/lib/launcher/src/Cardano/Startup.hs)
+* [cardano-node](https://github.com/input-output-hk/cardano-node/blob/1.10.1/cardano-node/src/Cardano/Node/Run.hs#L318-L358)

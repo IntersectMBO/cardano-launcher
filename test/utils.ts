@@ -7,7 +7,7 @@ import * as path from 'path';
 import _ from 'lodash';
 
 import { Service, ServiceStatus, Api } from '../src';
-import { StartService } from '../src/service';
+import { StartService, ShutdownMethod } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
 
 /*******************************************************************************
@@ -18,11 +18,9 @@ import { Logger, LogFunc } from '../src/logging';
 export function testService(
   command: string,
   args: string[],
-  supportsCleanShutdown = true
+  shutdownMethod = ShutdownMethod.CloseStdin
 ): Promise<StartService> {
-  return new Promise(resolve =>
-    resolve({ command, args, supportsCleanShutdown })
-  );
+  return new Promise(resolve => resolve({ command, args, shutdownMethod }));
 }
 
 /**
@@ -126,6 +124,9 @@ export function setupExecPath(): void {
  * This is needed because files in the cardano-node configuration file
  * are resolved relative to the current working directory, rather than
  * relative to the path of the config file.
+ *
+ * The temporary directory is deleted after the callback completes,
+ * unless the environment variable `NO_CLEANUP` is set.
  */
 export async function withByronConfigDir<T>(
   cb: (configDir: string) => Promise<T>
@@ -142,12 +143,15 @@ export async function withByronConfigDir<T>(
     async (o: DirectoryResult) => {
       const configs = _.mapValues(
         {
-          configuration: 'configuration-mainnet.yaml',
-          genesis: 'mainnet-genesis.json',
-          topology: 'mainnet-topology.json',
+          configuration: 'configuration.yaml',
+          genesis: 'genesis.json',
+          topology: 'topology.json',
         },
         (f: string) => {
-          return { src: path.join(base, f), dst: path.join(o.path, f) };
+          return {
+            src: path.join(base, 'defaults', 'mainnet', f),
+            dst: path.join(o.path, f),
+          };
         }
       );
 
@@ -158,13 +162,15 @@ export async function withByronConfigDir<T>(
         configs.configuration.src,
         'utf-8'
       );
-      const configFixed = config
-        .replace(/configuration\//g, base + path.sep)
-        .replace(/^.*SocketPath.*$/gm, '');
+      const configFixed = config.replace(/^.*SocketPath.*$/gm, '');
       await fs.promises.writeFile(configs.configuration.dst, configFixed);
 
       return await cb(o.path);
     },
-    { unsafeCleanup: true }
+    {
+      unsafeCleanup: true,
+      keep: !!process.env.NO_CLEANUP,
+      prefix: 'launcher-test-config-',
+    }
   );
 }
