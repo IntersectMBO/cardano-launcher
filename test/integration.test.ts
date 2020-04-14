@@ -75,14 +75,23 @@ describe('Starting cardano-wallet (and its node)', () => {
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
       const networkModule = tls ? https : http;
-      const req = networkModule.request(makeRequest(api, 'network/information', tls ? {
-        ca: fs.readFileSync(path.join(tlsDir, 'ca.crt')),
-        cert: fs.readFileSync(path.join(tlsDir, 'client.crt')),
-        key: fs.readFileSync(path.join(tlsDir, 'client.key'))
-      } : {}), res => {
-        res.setEncoding('utf8');
-        res.on('data', d => resolve(JSON.parse(d)));
-      });
+      const req = networkModule.request(
+        makeRequest(
+          api,
+          'network/information',
+          tls
+            ? {
+                ca: fs.readFileSync(path.join(tlsDir, 'ca.crt')),
+                cert: fs.readFileSync(path.join(tlsDir, 'client.crt')),
+                key: fs.readFileSync(path.join(tlsDir, 'client.key')),
+              }
+            : {}
+        ),
+        res => {
+          res.setEncoding('utf8');
+          res.on('data', d => resolve(JSON.parse(d)));
+        }
+      );
       req.on('error', (e: Error) => {
         console.error(`problem with request: ${e.message}`);
         reject(e);
@@ -195,6 +204,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     await launcher.stop();
   });
 
+  // eslint-disable-next-line jest/expect-expect
   it('can configure the cardano-wallet-byron to serve the API with TLS', async () =>
     withByronConfigDir(configurationDir =>
       launcherTest(stateDir => {
@@ -207,14 +217,13 @@ describe('Starting cardano-wallet (and its node)', () => {
             network: byron.networks.mainnet,
           },
           tlsConfiguration: {
-            caCert: path.join(tlsDir,'ca.crt'),
+            caCert: path.join(tlsDir, 'ca.crt'),
             svCert: path.join(tlsDir, 'server.crt'),
-            svKey: path.join(tlsDir, 'server.key')
-          }
+            svKey: path.join(tlsDir, 'server.key'),
+          },
         };
       }, true)
-    )
-  )
+    ));
 
   it('handles case where (jormungandr) node fails to start', async () => {
     const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
