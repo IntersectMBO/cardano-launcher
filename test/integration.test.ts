@@ -4,6 +4,7 @@
 import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
 
 import * as http from 'http';
+import * as https from 'https';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -17,6 +18,7 @@ import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
+const tlsDir = path.resolve(__dirname, 'data', 'tls');
 
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
@@ -56,7 +58,8 @@ describe('Starting cardano-wallet (and its node)', () => {
   };
 
   const launcherTest = async (
-    config: (stateDir: string) => LaunchConfig
+    config: (stateDir: string) => LaunchConfig,
+    tls: boolean = false
   ): Promise<void> => {
     setupExecPath();
 
@@ -71,7 +74,12 @@ describe('Starting cardano-wallet (and its node)', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const info: any = await new Promise((resolve, reject) => {
       console.log('running req');
-      const req = http.request(makeRequest(api, 'network/information'), res => {
+      const networkModule = tls ? https : http;
+      const req = networkModule.request(makeRequest(api, 'network/information', tls ? {
+        ca: fs.readFileSync(path.join(tlsDir, 'ca.crt')),
+        cert: fs.readFileSync(path.join(tlsDir, 'client.crt')),
+        key: fs.readFileSync(path.join(tlsDir, 'client.key'))
+      } : {}), res => {
         res.setEncoding('utf8');
         res.on('data', d => resolve(JSON.parse(d)));
       });
@@ -181,6 +189,27 @@ describe('Starting cardano-wallet (and its node)', () => {
       expect(logFileStats.size).toBeGreaterThan(0);
       await launcher.stop();
     }));
+
+  it('can configure the cardano-wallet-byron to serve the API with TLS', async () =>
+    withByronConfigDir(configurationDir =>
+      launcherTest(stateDir => {
+        return {
+          stateDir,
+          networkName: 'mainnet',
+          nodeConfig: {
+            kind: 'byron',
+            configurationDir,
+            network: byron.networks.mainnet,
+          },
+          tlsConfiguration: {
+            caCert: path.join(tlsDir,'ca.crt'),
+            svCert: path.join(tlsDir, 'server.crt'),
+            svKey: path.join(tlsDir, 'server.key')
+          }
+        };
+      }, true)
+    )
+  )
 
   it('handles case where (jormungandr) node fails to start', async () => {
     const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
