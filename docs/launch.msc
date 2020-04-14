@@ -41,7 +41,7 @@ msc {
   daedalus rbox daedalus [ label = "User exits Daedalus Frontend" ];
   daedalus=>cardano_launcher [ label = "var promise = wallet.stop();" ];
   cardano_launcher=>cardano_wallet [ label = "close handle of stdin" ];
-  cardano_launcher=>cardano_node [ label = "close handle of stdin" ];
+  cardano_launcher=>cardano_node [ label = "close handle of shutdown notifier" ];
   
   cardano_wallet box cardano_wallet [ label = "shut down" ];
   cardano_wallet->cardano_launcher [ label = "exit status 0" ];
