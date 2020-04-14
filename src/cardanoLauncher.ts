@@ -187,9 +187,12 @@ export interface LaunchConfig {
     | jormungandr.JormungandrConfig;
 
   /**
-   *  WriteStream for writing the child process data events from stdout and stderr
+   *  WriteStreams for the child process data events from stdout and stderr
    */
-  childProcessLogWriteStream?: WriteStream;
+  childProcessLogWriteStreams?: {
+    node: WriteStream;
+    wallet: WriteStream;
+  };
 
   /**
    *  Control the termination signal handling. Set this to false if the default
@@ -262,19 +265,22 @@ export class Launcher {
    */
   constructor(config: LaunchConfig, logger: Logger = console) {
     logger.debug('Launcher init');
-    const { childProcessLogWriteStream, installSignalHandlers = true } = config;
+    const {
+      childProcessLogWriteStreams,
+      installSignalHandlers = true,
+    } = config;
     this.logger = logger;
 
     const start = Launcher.makeServiceCommands(config, logger);
     this.walletService = setupService(
       start.wallet,
       prependName(logger, 'wallet'),
-      childProcessLogWriteStream
+      childProcessLogWriteStreams?.wallet
     );
     this.nodeService = setupService(
       start.node,
       prependName(logger, 'node'),
-      childProcessLogWriteStream
+      childProcessLogWriteStreams?.node
     );
 
     this.walletBackend = {
