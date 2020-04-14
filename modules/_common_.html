@@ -82,6 +82,13 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_common_.html#filepath" class="tsd-kind-icon">File<wbr>Path</a></li>
 							</ul>
 						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_common_.html#ignorepromiserejection" class="tsd-kind-icon">ignore<wbr>Promise<wbr>Rejection</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_common_.html#passthrougherrorlogger" class="tsd-kind-icon">passthrough<wbr>Error<wbr>Logger</a></li>
+							</ul>
+						</section>
 					</div>
 				</section>
 			</section>
@@ -93,7 +100,7 @@
 					<div class="tsd-signature tsd-kind-icon">Dir<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/common.ts#L10">common.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/common.ts#L13">src/common.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -108,7 +115,7 @@
 					<div class="tsd-signature tsd-kind-icon">File<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/common.ts#L8">common.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/common.ts#L11">src/common.ts:11</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -116,6 +123,70 @@
 							<p>Type alias to indicate the path of a file.</p>
 						</div>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="ignorepromiserejection" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Promise<wbr>Rejection</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">ignore<wbr>Promise<wbr>Rejection<span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><a href="../classes/_cardanolauncher_.backendexitederror.html#error" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/common.ts#L36">src/common.ts:36</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Use this with <code>.catch()</code> on promises where the error is already
+										handled elsewhere. This handler does nothing except prevent an
+									eslint warning from appearing.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>_: <a href="../classes/_cardanolauncher_.backendexitederror.html#error" class="tsd-signature-type">Error</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="passthrougherrorlogger" class="tsd-anchor"></a>
+					<h3>passthrough<wbr>Error<wbr>Logger</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">passthrough<wbr>Error<wbr>Logger<span class="tsd-signature-symbol">(</span>err<span class="tsd-signature-symbol">: </span><a href="../classes/_cardanolauncher_.backendexitederror.html#error" class="tsd-signature-type">Error</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/common.ts#L22">src/common.ts:22</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Use this with <code>.catch()</code> on promises where the error condition is
+									already handled elsewhere (e.g. by an event or another promise).</p>
+								</div>
+								<p>It will debug log the <code>Error</code> and a stack trace of the &quot;floating
+								promise&quot;.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>err: <a href="../classes/_cardanolauncher_.backendexitederror.html#error" class="tsd-signature-type">Error</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -161,6 +232,12 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="_common_.html#filepath" class="tsd-kind-icon">File<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_common_.html#ignorepromiserejection" class="tsd-kind-icon">ignore<wbr>Promise<wbr>Rejection</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_common_.html#passthrougherrorlogger" class="tsd-kind-icon">passthrough<wbr>Error<wbr>Logger</a>
 					</li>
 				</ul>
 			</nav>

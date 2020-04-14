@@ -93,10 +93,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#databasedir" class="tsd-kind-icon">database<wbr>Dir</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#delegationcertificate" class="tsd-kind-icon">delegation<wbr>Certificate</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#extra" class="tsd-kind-icon">extra</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#genesis" class="tsd-kind-icon">genesis</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#listen" class="tsd-kind-icon">listen</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#signingkey" class="tsd-kind-icon">signing<wbr>Key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#socketdir" class="tsd-kind-icon">socket<wbr>Dir</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#socketfile" class="tsd-kind-icon">socket<wbr>File</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#topologyfile" class="tsd-kind-icon">topology<wbr>File</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeargs.html#validatedb" class="tsd-kind-icon">validate<wbr>Db</a></li>
 							</ul>
@@ -112,7 +111,7 @@
 					<div class="tsd-signature tsd-kind-icon">config<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L97">byron.ts:97</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L108">src/byron.ts:108</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -127,7 +126,7 @@
 					<div class="tsd-signature tsd-kind-icon">database<wbr>Dir<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L72">byron.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L91">src/byron.ts:91</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -142,7 +141,7 @@
 					<div class="tsd-signature tsd-kind-icon">delegation<wbr>Certificate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L75">byron.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L94">src/byron.ts:94</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">extra<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L105">byron.ts:105</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L116">src/byron.ts:116</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -167,48 +166,12 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="genesis" class="tsd-anchor"></a>
-					<h3>genesis</h3>
-					<div class="tsd-signature tsd-kind-icon">genesis<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>file<span class="tsd-signature-symbol">: </span><a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a><span class="tsd-signature-symbol">; </span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L81">byron.ts:81</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The genesis block for this network&#39;s chain.</p>
-						</div>
-					</div>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>file<span class="tsd-signature-symbol">: </span><a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></h5>
-								<div class="tsd-comment tsd-typography">
-									<div class="lead">
-										<p>The filename of the genesis block.</p>
-									</div>
-								</div>
-							</li>
-							<li class="tsd-parameter">
-								<h5>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-								<div class="tsd-comment tsd-typography">
-									<div class="lead">
-										<p>The hash of the genesis block.</p>
-									</div>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="listen" class="tsd-anchor"></a>
 					<h3>listen</h3>
 					<div class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>address<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>port<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L89">byron.ts:89</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L100">src/byron.ts:100</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -244,7 +207,7 @@
 					<div class="tsd-signature tsd-kind-icon">signing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L78">byron.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L97">src/byron.ts:97</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -254,18 +217,18 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="socketdir" class="tsd-anchor"></a>
-					<h3>socket<wbr>Dir</h3>
-					<div class="tsd-signature tsd-kind-icon">socket<wbr>Dir<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a></div>
+					<a name="socketfile" class="tsd-anchor"></a>
+					<h3>socket<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">socket<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L63">byron.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L82">src/byron.ts:82</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Directory which will contain a socket file to use for
-							communicating with the node.</p>
+							<p>Filename for the socket file to use for communicating with the
+							node.</p>
 						</div>
 					</div>
 				</section>
@@ -275,7 +238,7 @@
 					<div class="tsd-signature tsd-kind-icon">topology<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L69">byron.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L88">src/byron.ts:88</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -291,7 +254,7 @@
 					<div class="tsd-signature tsd-kind-icon">validate<wbr>Db<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L100">byron.ts:100</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L111">src/byron.ts:111</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -360,16 +323,13 @@
 								<a href="_byron_.byronnodeargs.html#extra" class="tsd-kind-icon">extra</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeargs.html#genesis" class="tsd-kind-icon">genesis</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_byron_.byronnodeargs.html#listen" class="tsd-kind-icon">listen</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_byron_.byronnodeargs.html#signingkey" class="tsd-kind-icon">signing<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeargs.html#socketdir" class="tsd-kind-icon">socket<wbr>Dir</a>
+								<a href="_byron_.byronnodeargs.html#socketfile" class="tsd-kind-icon">socket<wbr>File</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_byron_.byronnodeargs.html#topologyfile" class="tsd-kind-icon">topology<wbr>File</a>

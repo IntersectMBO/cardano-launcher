@@ -98,7 +98,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#command" class="tsd-kind-icon">command</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#cwd" class="tsd-kind-icon">cwd</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#extraenv" class="tsd-kind-icon">extra<wbr>Env</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#supportscleanshutdown" class="tsd-kind-icon">supports<wbr>Clean<wbr>Shutdown</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#shutdownmethod" class="tsd-kind-icon">shutdown<wbr>Method</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,7 +112,7 @@
 					<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L336">service.ts:336</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L378">src/service.ts:378</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -127,7 +127,7 @@
 					<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L334">service.ts:334</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L376">src/service.ts:376</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -142,7 +142,7 @@
 					<div class="tsd-signature tsd-kind-icon">cwd<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L338">service.ts:338</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L380">src/service.ts:380</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,7 +157,7 @@
 					<div class="tsd-signature tsd-kind-icon">extra<wbr>Env<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L340">service.ts:340</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L382">src/service.ts:382</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -167,12 +167,12 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="supportscleanshutdown" class="tsd-anchor"></a>
-					<h3>supports<wbr>Clean<wbr>Shutdown</h3>
-					<div class="tsd-signature tsd-kind-icon">supports<wbr>Clean<wbr>Shutdown<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="shutdownmethod" class="tsd-anchor"></a>
+					<h3>shutdown<wbr>Method</h3>
+					<div class="tsd-signature tsd-kind-icon">shutdown<wbr>Method<span class="tsd-signature-symbol">:</span> <a href="../enums/_service_.shutdownmethod.html" class="tsd-signature-type">ShutdownMethod</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L345">service.ts:345</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L387">src/service.ts:387</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -224,6 +224,9 @@
 					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
 						<a href="../enums/_service_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
 					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_service_.shutdownmethod.html" class="tsd-kind-icon">Shutdown<wbr>Method</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="_service_.service.html" class="tsd-kind-icon">Service</a>
 					</li>
@@ -248,7 +251,7 @@
 								<a href="_service_.startservice.html#extraenv" class="tsd-kind-icon">extra<wbr>Env</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.startservice.html#supportscleanshutdown" class="tsd-kind-icon">supports<wbr>Clean<wbr>Shutdown</a>
+								<a href="_service_.startservice.html#shutdownmethod" class="tsd-kind-icon">shutdown<wbr>Method</a>
 							</li>
 						</ul>
 					</li>
@@ -259,6 +262,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_service_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_service_.html#cleanshutdownfd" class="tsd-kind-icon">clean<wbr>ShutdownFD</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="../modules/_service_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>

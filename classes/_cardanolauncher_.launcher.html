@@ -79,14 +79,13 @@
   <span class="hljs-attr">stateDir</span>: <span class="hljs-string">"/tmp/state-launcher"</span>,
   <span class="hljs-attr">nodeConfig</span>: {
     <span class="hljs-attr">kind</span>: <span class="hljs-string">"byron"</span>,
-    <span class="hljs-attr">configurationDir</span>: <span class="hljs-string">"/home/user/cardano-node/configuration"</span>,
+    <span class="hljs-attr">configurationDir</span>: <span class="hljs-string">"/home/user/cardano-node/configuration/defaults/mainnet"</span>,
     <span class="hljs-attr">network</span>: {
-      <span class="hljs-attr">configFile</span>: <span class="hljs-string">"configuration-mainnet.yaml"</span>,
-      <span class="hljs-attr">genesisFile</span>: <span class="hljs-string">"mainnet-genesis.json"</span>,
-      <span class="hljs-attr">genesisHash</span>: <span class="hljs-string">"5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb"</span>,
-      <span class="hljs-attr">topologyFile</span>: <span class="hljs-string">"mainnet-topology.json"</span>
+      <span class="hljs-attr">configFile</span>: <span class="hljs-string">"configuration.yaml"</span>,
+      <span class="hljs-attr">topologyFile</span>: <span class="hljs-string">"topology.json"</span>
     }
   }
+  <span class="hljs-attr">childProcessLogWriteStream</span>: fs.createWriteStream(<span class="hljs-string">'./logs'</span>)
 });</code></pre>
 					<p>Initially, the backend is not started. Use <a href="_cardanolauncher_.launcher.html#start">Launcher.start</a> for that.</p>
 				</div>
@@ -119,6 +118,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cardanolauncher_.launcher.html#apiport" class="tsd-kind-icon">api<wbr>Port</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cardanolauncher_.launcher.html#exited" class="tsd-kind-icon">exited</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_cardanolauncher_.launcher.html#logger" class="tsd-kind-icon">logger</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_cardanolauncher_.launcher.html#nodeservice" class="tsd-kind-icon">node<wbr>Service</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_cardanolauncher_.launcher.html#walletbackend" class="tsd-kind-icon">wallet<wbr>Backend</a></li>
@@ -131,6 +131,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_cardanolauncher_.launcher.html#installsignalhandlers" class="tsd-kind-icon">install<wbr>Signal<wbr>Handlers</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cardanolauncher_.launcher.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_cardanolauncher_.launcher.html#waitforapi" class="tsd-kind-icon">wait<wbr>For<wbr>Api</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="_cardanolauncher_.launcher.html#makeservicecommands" class="tsd-kind-icon">make<wbr>Service<wbr>Commands</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="_cardanolauncher_.launcher.html#nodeexe" class="tsd-kind-icon">node<wbr>Exe</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static"><a href="_cardanolauncher_.launcher.html#walletexe" class="tsd-kind-icon">wallet<wbr>Exe</a></li>
 							</ul>
 						</section>
 					</div>
@@ -148,7 +151,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L145">cardanoLauncher.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L247">src/cardanoLauncher.ts:247</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -192,7 +195,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L269">cardanoLauncher.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L389">src/cardanoLauncher.ts:389</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -225,12 +228,27 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L145">cardanoLauncher.ts:145</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L244">src/cardanoLauncher.ts:244</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Wallet API server port - set once it&#39;s known.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="exited" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> exited</h3>
+					<div class="tsd-signature tsd-kind-icon">exited<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L247">src/cardanoLauncher.ts:247</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A state flag for whether the backend services have exited yet.</p>
 						</div>
 					</div>
 				</section>
@@ -240,7 +258,7 @@
 					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L142">cardanoLauncher.ts:142</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L241">src/cardanoLauncher.ts:241</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -255,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">node<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L139">cardanoLauncher.ts:139</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L238">src/cardanoLauncher.ts:238</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -270,7 +288,7 @@
 					<div class="tsd-signature tsd-kind-icon">wallet<wbr>Backend<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_cardanolauncher_.walletbackend.html" class="tsd-signature-type">WalletBackend</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L134">cardanoLauncher.ts:134</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L233">src/cardanoLauncher.ts:233</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -285,7 +303,7 @@
 					<div class="tsd-signature tsd-kind-icon">wallet<wbr>Service<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L129">cardanoLauncher.ts:129</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L228">src/cardanoLauncher.ts:228</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -307,7 +325,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L287">cardanoLauncher.ts:287</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L410">src/cardanoLauncher.ts:410</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -329,7 +347,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L207">cardanoLauncher.ts:207</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L317">src/cardanoLauncher.ts:317</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -351,13 +369,13 @@
 					<a name="waitforapi" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> wait<wbr>For<wbr>Api</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">wait<wbr>For<wbr>Api<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">wait<wbr>For<wbr>Api<span class="tsd-signature-symbol">(</span>stop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span>, ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/cardanoLauncher.ts#L226">cardanoLauncher.ts:226</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L346">src/cardanoLauncher.ts:346</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -365,8 +383,134 @@
 									<p>Poll TCP port of wallet API server until it accepts connections.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>a promise that is completed once the wallet API server accepts connections.</p>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>stop: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>a callback, which will terminate the polling loop
+										if it returns a truey value.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>ready: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>a callback which is called once the wallet API
+										server accepts connections.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+					<a name="makeservicecommands" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> make<wbr>Service<wbr>Commands</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Service<wbr>Commands<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a>, logger<span class="tsd-signature-symbol">: </span><a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>wallet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L421">src/cardanoLauncher.ts:421</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>config: <a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a></h5>
+								</li>
+								<li>
+									<h5>logger: <a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>wallet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter">
+									<h5>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>wallet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+					<a name="nodeexe" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> node<wbr>Exe</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">node<wbr>Exe<span class="tsd-signature-symbol">(</span>baseDir<span class="tsd-signature-symbol">: </span><a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a>, config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L498">src/cardanoLauncher.ts:498</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>baseDir: <a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a></h5>
+								</li>
+								<li>
+									<h5>config: <a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+					<a name="walletexe" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagPrivate">Private</span> wallet<wbr>Exe</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">wallet<wbr>Exe<span class="tsd-signature-symbol">(</span>baseDir<span class="tsd-signature-symbol">: </span><a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a>, config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L435">src/cardanoLauncher.ts:435</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>baseDir: <a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a></h5>
+								</li>
+								<li>
+									<h5>config: <a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -421,6 +565,9 @@
 					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
 						<a href="../modules/_cardanolauncher_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_cardanolauncher_.backendexitederror.html" class="tsd-kind-icon">Backend<wbr>Exited<wbr>Error</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
@@ -434,6 +581,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_cardanolauncher_.launcher.html#apiport" class="tsd-kind-icon">api<wbr>Port</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_cardanolauncher_.launcher.html#exited" class="tsd-kind-icon">exited</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 								<a href="_cardanolauncher_.launcher.html#logger" class="tsd-kind-icon">logger</a>
@@ -455,6 +605,15 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_cardanolauncher_.launcher.html#waitforapi" class="tsd-kind-icon">wait<wbr>For<wbr>Api</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+								<a href="_cardanolauncher_.launcher.html#makeservicecommands" class="tsd-kind-icon">make<wbr>Service<wbr>Commands</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+								<a href="_cardanolauncher_.launcher.html#nodeexe" class="tsd-kind-icon">node<wbr>Exe</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-static">
+								<a href="_cardanolauncher_.launcher.html#walletexe" class="tsd-kind-icon">wallet<wbr>Exe</a>
 							</li>
 						</ul>
 					</li>
@@ -484,17 +643,11 @@
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_cardanolauncher_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
 					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanolauncher_.html#signals" class="tsd-kind-icon">Signals</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="../modules/_cardanolauncher_.html#exitstatusmessage" class="tsd-kind-icon">exit<wbr>Status<wbr>Message</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_cardanolauncher_.html#makeservicecommands" class="tsd-kind-icon">make<wbr>Service<wbr>Commands</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_cardanolauncher_.html#nodeexe" class="tsd-kind-icon">node<wbr>Exe</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_cardanolauncher_.html#walletexe" class="tsd-kind-icon">wallet<wbr>Exe</a>
 					</li>
 				</ul>
 			</nav>

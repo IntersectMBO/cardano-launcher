@@ -91,7 +91,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnetwork.html#configfile" class="tsd-kind-icon">config<wbr>File</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnetwork.html#genesisfile" class="tsd-kind-icon">genesis<wbr>File</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnetwork.html#genesishash" class="tsd-kind-icon">genesis<wbr>Hash</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnetwork.html#topologyfile" class="tsd-kind-icon">topology<wbr>File</a></li>
 							</ul>
 						</section>
@@ -106,29 +105,32 @@
 					<div class="tsd-signature tsd-kind-icon">config<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L28">byron.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L31">src/byron.ts:31</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The YAML configuration file for cardano-node.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="genesisfile" class="tsd-anchor"></a>
-					<h3>genesis<wbr>File</h3>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> genesis<wbr>File</h3>
 					<div class="tsd-signature tsd-kind-icon">genesis<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L29">byron.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L42">src/byron.ts:42</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="genesishash" class="tsd-anchor"></a>
-					<h3>genesis<wbr>Hash</h3>
-					<div class="tsd-signature tsd-kind-icon">genesis<wbr>Hash<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L30">byron.ts:30</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Path to the genesis file in JSON format.
+								This is required for testnet but not mainnet.
+								It is used to configure the parameters of cardano-wallet.
+							It should match the genesis file configured in the cardano-node YAML file.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="topologyfile" class="tsd-anchor"></a>
@@ -136,9 +138,14 @@
 					<div class="tsd-signature tsd-kind-icon">topology<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/byron.ts#L31">byron.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L35">src/byron.ts:35</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Network topology data to pass to cardano-node.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -189,9 +196,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_byron_.byronnetwork.html#genesisfile" class="tsd-kind-icon">genesis<wbr>File</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnetwork.html#genesishash" class="tsd-kind-icon">genesis<wbr>Hash</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_byron_.byronnetwork.html#topologyfile" class="tsd-kind-icon">topology<wbr>File</a>

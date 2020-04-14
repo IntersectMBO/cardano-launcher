@@ -80,6 +80,7 @@
 							<h3>Enumerations</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-enum tsd-parent-kind-external-module"><a href="../enums/_service_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a></li>
+								<li class="tsd-kind-enum tsd-parent-kind-external-module"><a href="../enums/_service_.shutdownmethod.html" class="tsd-kind-icon">Shutdown<wbr>Method</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -95,6 +96,12 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_service_.html#pid" class="tsd-kind-icon">Pid</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="_service_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_service_.html#cleanshutdownfd" class="tsd-kind-icon">clean<wbr>ShutdownFD</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -115,7 +122,7 @@
 					<div class="tsd-signature tsd-kind-icon">Pid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L109">service.ts:109</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L114">src/service.ts:114</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -130,12 +137,31 @@
 					<div class="tsd-signature tsd-kind-icon">Service<wbr>Events<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>statusChanged<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>status<span class="tsd-signature-symbol">: </span><a href="../enums/_service_.servicestatus.html" class="tsd-signature-type">ServiceStatus</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L114">service.ts:114</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L119">src/service.ts:119</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The type of events for <a href="../interfaces/_service_.service.html">Service</a>.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="cleanshutdownfd" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> clean<wbr>ShutdownFD</h3>
+					<div class="tsd-signature tsd-kind-icon">clean<wbr>ShutdownFD<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">3</span><span class="tsd-signature-symbol"> = 3</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L145">src/service.ts:145</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The file number that <a href="../interfaces/_service_.service.html">Service</a> will use for child process
+							notification when <a href="../enums/_service_.shutdownmethod.html#closefd">ShutdownMethod.CloseFD</a> is in use.</p>
 						</div>
 					</div>
 				</section>
@@ -152,7 +178,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L31">service.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L36">src/service.ts:36</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -178,13 +204,13 @@
 					<a name="setupservice" class="tsd-anchor"></a>
 					<h3>setup<wbr>Service</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">setup<wbr>Service<span class="tsd-signature-symbol">(</span>cfgPromise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span>, logger<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></li>
+						<li class="tsd-signature tsd-kind-icon">setup<wbr>Service<span class="tsd-signature-symbol">(</span>cfgPromise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_service_.startservice.html" class="tsd-signature-type">StartService</a><span class="tsd-signature-symbol">&gt;</span>, logger<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a>, childProcessLogWriteStream<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">WriteStream</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_service_.service.html" class="tsd-signature-type">Service</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/c22514b/src/service.ts#L134">service.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/service.ts#L158">src/service.ts:158</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -206,6 +232,12 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> logger: <a href="../interfaces/_logging_.logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol"> = console</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>logging object.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> childProcessLogWriteStream: <span class="tsd-signature-type">WriteStream</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>WriteStream for writing the child process data events from stdout and stderr.</p>
 									</div>
 								</li>
 							</ul>
@@ -256,6 +288,9 @@
 					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
 						<a href="../enums/_service_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
 					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_service_.shutdownmethod.html" class="tsd-kind-icon">Shutdown<wbr>Method</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_service_.service.html" class="tsd-kind-icon">Service</a>
 					</li>
@@ -270,6 +305,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_service_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_service_.html#cleanshutdownfd" class="tsd-kind-icon">clean<wbr>ShutdownFD</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_service_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>
