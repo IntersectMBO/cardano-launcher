@@ -30,6 +30,13 @@ for example code.
 
 ## Local Development
 
+```
+nix-shell
+```
+This runs a bash shell with project development dependencies
+(e.g. `npm`, `cardano-wallet`) in the `PATH`. See [nix.md](https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md)
+for information on how to set up Nix.
+
 ### Build the code
 
 Transpile TypeScript to Javascript in the `dist` directory, checking for errors:
@@ -76,16 +83,6 @@ To automatically fix lint and formatting errors, where possible:
 Generates API documentation to the `site` folder.
 
     npm run typedoc
-
-### Development environment
-
-This runs a bash shell with project development dependencies
-(e.g. `npm`, `cardano-wallet`) in the `PATH`.
-
-    nix-shell
-
-See [nix.md](https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md)
-for information on how to set up Nix.
 
 ### Updating cardano-wallet version
 
