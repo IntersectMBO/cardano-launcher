@@ -155,7 +155,7 @@ export async function withByronConfigDir<T>(
         },
         (f: string) => {
           return {
-            src: path.join(base, 'defaults', 'mainnet', f),
+            src: path.join(base, 'defaults', 'byron-mainnet', f),
             dst: path.join(o.path, f),
           };
         }
