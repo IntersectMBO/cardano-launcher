@@ -12,6 +12,7 @@ import { stat } from 'fs-extra';
 
 import * as jormungandr from '../src/jormungandr';
 import * as byron from '../src/byron';
+import * as shelley from '../src/shelley';
 import { ExitStatus } from '../src/cardanoLauncher';
 import { passthroughErrorLogger } from '../src/common';
 import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
@@ -145,6 +146,29 @@ describe('Starting cardano-wallet (and its node)', () => {
             },
           };
         });
+      }),
+    longTestTimeoutMs
+  );
+
+  // eslint-disable-next-line jest/expect-expect
+  it(
+    'cardano-wallet-shelley responds to requests',
+    () =>
+      launcherTest(stateDir => {
+        return {
+          stateDir,
+          networkName: 'ff',
+          nodeConfig: {
+            kind: 'shelley',
+            configurationDir: path.resolve(
+              __dirname,
+              'data',
+              'cardano-node',
+              'ff'
+            ),
+            network: shelley.networks.ff,
+          },
+        };
       }),
     longTestTimeoutMs
   );

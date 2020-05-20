@@ -499,12 +499,12 @@ export class Launcher {
           '--node-port',
           '' + config.nodeConfig.restPort,
         ]);
-      case 'byron':
+      default:
         if (
           config.networkName !== 'mainnet' &&
           !config.nodeConfig.network.genesisFile
         ) {
-          throw new Error('ByronNetwork.genesisFile must be configured');
+          throw new Error('genesisFile must be configured');
         }
         const networkArg =
           config.networkName === 'mainnet'
@@ -518,8 +518,6 @@ export class Launcher {
               : []
           )
         );
-      case 'shelley':
-        return base;
     }
   }
 
@@ -537,7 +535,11 @@ export class Launcher {
           config.networkName
         );
       case 'shelley':
-        return shelley.startShelleyNode(config.nodeConfig);
+        return shelley.startShelleyNode(
+          baseDir,
+          config.nodeConfig,
+          config.networkName
+        );
     }
   }
 }

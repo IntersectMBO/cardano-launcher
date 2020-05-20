@@ -10,12 +10,13 @@ mkShell {
     pandoc mscgen librsvg gnumake
     # util to update nixpkgs pins
     niv.niv
-    # cardano jormungandr
-    cardanoWalletPackages.cardano-wallet-jormungandr
+    # jormungandr
     cardanoWalletPackages.jormungandr
-    # cardano byron
-    cardanoWalletPackages.cardano-wallet-byron
+    cardanoWalletPackages.cardano-wallet-jormungandr
+    # cardano-node
     cardano-node
+    cardanoWalletPackages.cardano-wallet-byron
+    cardanoWalletPackages.cardano-wallet-shelley
   ];
 
   BYRON_CONFIGS = cardanoWalletPackages.cardano-node.configs;
