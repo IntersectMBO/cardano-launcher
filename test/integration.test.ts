@@ -148,88 +148,94 @@ describe('Starting cardano-wallet (and its node)', () => {
     longTestTimeoutMs
   );
 
-  it('emits one and only one exit event', async () => {
-    const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
-      return {
-        stateDir,
-        networkName: 'self',
+  it('emits one and only one exit event', () =>
+    withByronConfigDir(async configurationDir => {
+      const { launcher, cleanupLauncher } = await setupTestLauncher(
+        stateDir => {
+          return {
+            stateDir,
+            networkName: 'mainnet',
+            nodeConfig: {
+              kind: 'byron',
+              configurationDir,
+              network: byron.networks.mainnet,
+            },
+          };
+        }
+      );
+      const events: ExitStatus[] = [];
+      launcher.walletBackend.events.on('exit', st => events.push(st));
+
+      await launcher.start();
+      await Promise.all([launcher.stop(), launcher.stop(), launcher.stop()]);
+      await launcher.stop();
+
+      expect(events).toHaveLength(1);
+
+      await cleanupLauncher();
+    }));
+
+  it('accepts WriteStreams to pipe each child process stdout and stderr streams', () =>
+    withByronConfigDir(async configurationDir => {
+      const walletLogFile = await tmp.file();
+      const nodeLogFile = await tmp.file();
+      const launcher = new Launcher({
+        stateDir: (
+          await tmp.dir({
+            unsafeCleanup: true,
+            prefix: 'launcher-integration-test-',
+          })
+        ).path,
+        networkName: 'mainnet',
         nodeConfig: {
-          kind: 'jormungandr',
-          configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-          network: jormungandr.networks.self,
+          kind: 'byron',
+          configurationDir,
+          network: byron.networks.mainnet,
         },
-      };
-    });
+        childProcessLogWriteStreams: {
+          node: fs.createWriteStream(nodeLogFile.path, { fd: nodeLogFile.fd }),
+          wallet: fs.createWriteStream(walletLogFile.path, {
+            fd: walletLogFile.fd,
+          }),
+        },
+      });
+      await launcher.start();
+      const nodeLogFileStats = await stat(nodeLogFile.path);
+      const walletLogFileStats = await stat(walletLogFile.path);
+      expect(nodeLogFileStats.size).toBeGreaterThan(0);
+      expect(walletLogFileStats.size).toBeGreaterThan(0);
+      await launcher.stop();
+    }));
 
-    const events: ExitStatus[] = [];
-    launcher.walletBackend.events.on('exit', st => events.push(st));
-
-    await launcher.start();
-    await Promise.all([launcher.stop(), launcher.stop(), launcher.stop()]);
-    await launcher.stop();
-
-    expect(events).toHaveLength(1);
-
-    await cleanupLauncher();
-  });
-
-  it('accepts WriteStreams to pipe each child process stdout and stderr streams', async () => {
-    const walletLogFile = await tmp.file();
-    const nodeLogFile = await tmp.file();
-    const launcher = new Launcher({
-      stateDir: (
-        await tmp.dir({
-          unsafeCleanup: true,
-          prefix: 'launcher-integration-test-',
-        })
-      ).path,
-      networkName: 'self',
-      nodeConfig: {
-        kind: 'jormungandr',
-        configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-        network: jormungandr.networks.self,
-      },
-      childProcessLogWriteStreams: {
-        node: fs.createWriteStream(nodeLogFile.path, { fd: nodeLogFile.fd }),
-        wallet: fs.createWriteStream(walletLogFile.path, {
-          fd: walletLogFile.fd,
-        }),
-      },
-    });
-    await launcher.start();
-    const nodeLogFileStats = await stat(nodeLogFile.path);
-    const walletLogFileStats = await stat(walletLogFile.path);
-    expect(nodeLogFileStats.size).toBeGreaterThan(0);
-    expect(walletLogFileStats.size).toBeGreaterThan(0);
-    await launcher.stop();
-  });
-
-  it('accepts the same WriteStream for both the wallet and node to produce a combined stream', async () => {
-    const logFile = await tmp.file();
-    const writeStream = fs.createWriteStream(logFile.path, { fd: logFile.fd });
-    const launcher = new Launcher({
-      stateDir: (
-        await tmp.dir({
-          unsafeCleanup: true,
-          prefix: 'launcher-integration-test-',
-        })
-      ).path,
-      networkName: 'self',
-      nodeConfig: {
-        kind: 'jormungandr',
-        configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-        network: jormungandr.networks.self,
-      },
-      childProcessLogWriteStreams: {
-        node: writeStream,
-        wallet: writeStream,
-      },
-    });
-    await launcher.start();
-    const logFileStats = await stat(writeStream.path);
-    expect(logFileStats.size).toBeGreaterThan(0);
-    await launcher.stop();
-  });
+  it('accepts the same WriteStream for both the wallet and node to produce a combined stream', async () =>
+    withByronConfigDir(async configurationDir => {
+      const logFile = await tmp.file();
+      const writeStream = fs.createWriteStream(logFile.path, {
+        fd: logFile.fd,
+      });
+      const launcher = new Launcher({
+        stateDir: (
+          await tmp.dir({
+            unsafeCleanup: true,
+            prefix: 'launcher-integration-test-',
+          })
+        ).path,
+        networkName: 'mainnet',
+        nodeConfig: {
+          kind: 'byron',
+          configurationDir,
+          network: byron.networks.mainnet,
+        },
+        childProcessLogWriteStreams: {
+          node: writeStream,
+          wallet: writeStream,
+        },
+      });
+      await launcher.start();
+      const logFileStats = await stat(writeStream.path);
+      expect(logFileStats.size).toBeGreaterThan(0);
+      await launcher.stop();
+    }));
 
   // eslint-disable-next-line jest/expect-expect
   it('can configure the cardano-wallet-byron to serve the API with TLS', async () =>
