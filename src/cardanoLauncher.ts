@@ -509,7 +509,14 @@ export class Launcher {
         const networkArg =
           config.networkName === 'mainnet'
             ? ['--mainnet']
-            : ['--testnet', '' + config.nodeConfig.network.genesisFile];
+            : [
+                '--testnet',
+                '' +
+                  path.join(
+                    config.nodeConfig.configurationDir,
+                    config.nodeConfig.network.genesisFile as string
+                  ),
+              ];
 
         return addArgs(
           networkArg.concat(

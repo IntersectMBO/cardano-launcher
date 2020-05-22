@@ -173,7 +173,7 @@ describe('Starting cardano-wallet (and its node)', () => {
     longTestTimeoutMs
   );
 
-  it('emits one and only one exit event', () =>
+  it('emits one and only one exit event - Byron', () =>
     withByronConfigDir(async configurationDir => {
       const { launcher, cleanupLauncher } = await setupTestLauncher(
         stateDir => {
@@ -199,6 +199,36 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await cleanupLauncher();
     }));
+
+  it('emits one and only one exit event - Shelley', async () => {
+    const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
+      return {
+        stateDir,
+        networkName: 'ff',
+        nodeConfig: {
+          kind: 'shelley',
+          configurationDir: path.resolve(
+            __dirname,
+            'data',
+            'cardano-node',
+            'ff'
+          ),
+          network: shelley.networks.ff,
+        },
+      };
+    });
+
+    const events: ExitStatus[] = [];
+    launcher.walletBackend.events.on('exit', st => events.push(st));
+
+    await launcher.start();
+    await Promise.all([launcher.stop(), launcher.stop(), launcher.stop()]);
+    await launcher.stop();
+
+    expect(events).toHaveLength(1);
+
+    await cleanupLauncher();
+  });
 
   it('accepts WriteStreams to pipe each child process stdout and stderr streams', () =>
     withByronConfigDir(async configurationDir => {
@@ -282,6 +312,30 @@ describe('Starting cardano-wallet (and its node)', () => {
         };
       }, true)
     ));
+
+  // eslint-disable-next-line jest/expect-expect
+  it('can configure the cardano-wallet-shelley to serve the API with TLS', async () =>
+    launcherTest(stateDir => {
+      return {
+        stateDir,
+        networkName: 'ff',
+        nodeConfig: {
+          kind: 'shelley',
+          configurationDir: path.resolve(
+            __dirname,
+            'data',
+            'cardano-node',
+            'ff'
+          ),
+          network: shelley.networks.ff,
+        },
+        tlsConfiguration: {
+          caCert: path.join(tlsDir, 'ca.crt'),
+          svCert: path.join(tlsDir, 'server.crt'),
+          svKey: path.join(tlsDir, 'server.key'),
+        },
+      };
+    }, true));
 
   it('handles case where (jormungandr) node fails to start', async () => {
     const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
