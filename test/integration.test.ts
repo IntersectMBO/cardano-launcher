@@ -112,23 +112,22 @@ describe('Starting cardano-wallet (and its node)', () => {
   };
 
   // eslint-disable-next-line jest/expect-expect
-  // eslint-disable-next-line jest/no-commented-out-tests
-  // it(
-  //   'cardano-wallet-jormungandr responds to requests',
-  //   () =>
-  //     launcherTest(stateDir => {
-  //       return {
-  //         stateDir,
-  //         networkName: 'self',
-  //         nodeConfig: {
-  //           kind: 'jormungandr',
-  //           configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-  //           network: jormungandr.networks.self,
-  //         },
-  //       };
-  //     }),
-  //   longTestTimeoutMs
-  // );
+  it(
+    'cardano-wallet-jormungandr responds to requests',
+    () =>
+      launcherTest(stateDir => {
+        return {
+          stateDir,
+          networkName: 'self',
+          nodeConfig: {
+            kind: 'jormungandr',
+            configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
+            network: jormungandr.networks.self,
+          },
+        };
+      }),
+    longTestTimeoutMs
+  );
 
   // eslint-disable-next-line jest/expect-expect
   it(
