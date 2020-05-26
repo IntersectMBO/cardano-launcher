@@ -76,6 +76,15 @@ describe('CLI tests', () => {
     ])
   );
 
-  it('when the parent process is killed, cardano-node gets stopped', () =>
+  it('when the parent process is killed, cardano-node gets stopped - Byron', () =>
     withByronConfigDir(configs => killTest(['byron', 'mainnet', configs])()));
+
+  it(
+    'when the parent process is killed, cardano-node gets stopped- Shelley',
+    killTest([
+      'shelley',
+      'ff',
+      path.resolve(__dirname, 'data', 'cardano-node', 'ff'),
+    ])
+  );
 });

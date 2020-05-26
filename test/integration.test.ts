@@ -11,8 +11,7 @@ import * as fs from 'fs';
 import { stat } from 'fs-extra';
 
 import * as jormungandr from '../src/jormungandr';
-import * as byron from '../src/byron';
-import * as shelley from '../src/shelley';
+import * as cardanoNode from '../src/cardanoNode';
 import { ExitStatus } from '../src/cardanoLauncher';
 import { passthroughErrorLogger } from '../src/common';
 import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
@@ -141,7 +140,7 @@ describe('Starting cardano-wallet (and its node)', () => {
             nodeConfig: {
               kind: 'byron',
               configurationDir,
-              network: byron.networks.mainnet,
+              network: cardanoNode.networks.mainnet,
             },
           };
         });
@@ -165,7 +164,7 @@ describe('Starting cardano-wallet (and its node)', () => {
               'cardano-node',
               'ff'
             ),
-            network: shelley.networks.ff,
+            network: cardanoNode.networks.ff,
           },
         };
       }),
@@ -182,7 +181,7 @@ describe('Starting cardano-wallet (and its node)', () => {
             nodeConfig: {
               kind: 'byron',
               configurationDir,
-              network: byron.networks.mainnet,
+              network: cardanoNode.networks.mainnet,
             },
           };
         }
@@ -212,7 +211,7 @@ describe('Starting cardano-wallet (and its node)', () => {
             'cardano-node',
             'ff'
           ),
-          network: shelley.networks.ff,
+          network: cardanoNode.networks.ff,
         },
       };
     });
@@ -244,7 +243,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         nodeConfig: {
           kind: 'byron',
           configurationDir,
-          network: byron.networks.mainnet,
+          network: cardanoNode.networks.mainnet,
         },
         childProcessLogWriteStreams: {
           node: fs.createWriteStream(nodeLogFile.path, { fd: nodeLogFile.fd }),
@@ -278,7 +277,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         nodeConfig: {
           kind: 'byron',
           configurationDir,
-          network: byron.networks.mainnet,
+          network: cardanoNode.networks.mainnet,
         },
         childProcessLogWriteStreams: {
           node: writeStream,
@@ -301,7 +300,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           nodeConfig: {
             kind: 'byron',
             configurationDir,
-            network: byron.networks.mainnet,
+            network: cardanoNode.networks.mainnet,
           },
           tlsConfiguration: {
             caCert: path.join(tlsDir, 'ca.crt'),
@@ -326,7 +325,7 @@ describe('Starting cardano-wallet (and its node)', () => {
             'cardano-node',
             'ff'
           ),
-          network: shelley.networks.ff,
+          network: cardanoNode.networks.ff,
         },
         tlsConfiguration: {
           caCert: path.join(tlsDir, 'ca.crt'),
@@ -374,7 +373,7 @@ describe('Starting cardano-wallet (and its node)', () => {
                 nodeConfig: {
                   kind: 'byron',
                   configurationDir,
-                  network: byron.networks.mainnet,
+                  network: cardanoNode.networks.mainnet,
                 },
               };
             })

@@ -34,8 +34,7 @@ import {
   ignorePromiseRejection,
 } from './common';
 
-import * as byron from './byron';
-import * as shelley from './shelley';
+import * as cardanoNode from './cardanoNode';
 import * as jormungandr from './jormungandr';
 import { WriteStream } from 'fs';
 import Signals = NodeJS.Signals;
@@ -181,10 +180,7 @@ export interface LaunchConfig {
    *  * `"shelley"` - [[ShelleyNodeConfig]]
    *  * `"jormungandr"` - [[JormungandrConfig]]
    */
-  nodeConfig:
-    | byron.ByronNodeConfig
-    | shelley.ShelleyNodeConfig
-    | jormungandr.JormungandrConfig;
+  nodeConfig: cardanoNode.CardanoNodeConfig | jormungandr.JormungandrConfig;
 
   /**
    *  WriteStreams for the child process data events from stdout and stderr
@@ -536,13 +532,13 @@ export class Launcher {
       case 'jormungandr':
         return jormungandr.startJormungandr(baseDir, config.nodeConfig);
       case 'byron':
-        return byron.startByronNode(
+        return cardanoNode.startCardanoNode(
           baseDir,
           config.nodeConfig,
           config.networkName
         );
       case 'shelley':
-        return shelley.startShelleyNode(
+        return cardanoNode.startCardanoNode(
           baseDir,
           config.nodeConfig,
           config.networkName

@@ -2,7 +2,7 @@
 // License: Apache-2.0
 
 /**
- * Configuration for `cardano-node` (Shelley)
+ * Configuration for `cardano-node`
  *
  * @packageDocumentation
  */
@@ -13,19 +13,10 @@ import getPort from 'get-port';
 import { StartService, ShutdownMethod, cleanShutdownFD } from './service';
 import { FilePath, DirPath } from './common';
 
-/** Predefined networks. */
-export const networks: { [propName: string]: ShelleyNetwork } = {
-  ff: {
-    configFile: 'configuration.yaml',
-    topologyFile: 'topology.json',
-    genesisFile: 'genesis.json',
-  },
-};
-
 /**
- * Definition of a `cardano-node` (Shelley) network.
+ * Definition of a `cardano-node` network.
  */
-export interface ShelleyNetwork {
+export interface CardanoNetwork {
   /**
    * The YAML configuration file for cardano-node.
    */
@@ -43,39 +34,23 @@ export interface ShelleyNetwork {
   genesisFile?: FilePath;
 }
 
-/**
- * Configuration parameters for starting the rewritten version of
- * cardano-node (Shelley).
- */
-export interface ShelleyNodeConfig {
-  kind: 'shelley';
-
-  /** Directory containing configurations for all networks. */
-  configurationDir: DirPath;
-
-  /** Network parameters */
-  network: ShelleyNetwork;
-
-  /** Path to the KES signing key. */
-  kesKey?: string;
-
-  /** Path to the VRF signing key. */
-  vrfKey?: string;
-
-  /** Path to the delegation certificate */
-  operationalCertificate?: string;
-
-  /**
-   * Filename for the socket to use for communicating with the
-   * node. Optional -- will be set automatically if not provided.
-   */
-  socketFile?: FilePath;
-}
+/** Predefined networks. */
+export const networks: { [propName: string]: CardanoNetwork } = {
+  ff: {
+    configFile: 'configuration.yaml',
+    topologyFile: 'topology.json',
+    genesisFile: 'genesis.json',
+  },
+  mainnet: {
+    configFile: 'configuration.yaml',
+    topologyFile: 'topology.json',
+  },
+};
 
 /**
- * The command-line arguments which can be supplied to `cardano-node` (Shelley).
+ * The command-line arguments which can be supplied to `cardano-node`.
  */
-export interface ShelleyNodeArgs {
+export interface CardanoNodeArgs {
   /**
    * Filename for the socket file to use for communicating with the
    * node.
@@ -90,6 +65,12 @@ export interface ShelleyNodeArgs {
 
   /** Directory where the state is stored. */
   databaseDir: DirPath;
+
+  /** Path to the delegation certificate. */
+  delegationCertificate?: string;
+
+  /** Path to the signing key. */
+  signingKey?: string;
 
   /** Path to the KES signing key. */
   kesKey?: string;
@@ -108,7 +89,7 @@ export interface ShelleyNodeArgs {
     address?: string;
   };
 
-  /** Configuration file for the cardano-node. */
+  /** Configuration file for cardano-node. */
   configFile: FilePath;
 
   /** Validate all on-disk database files. */
@@ -121,15 +102,52 @@ export interface ShelleyNodeArgs {
 }
 
 /**
- * Convert a [[ShelleyNodeConfig]] into command-line arguments
- * ([[ShelleyNodeArgs]]) for `cardano-node`.
+ * Configuration parameters for starting cardano-node.
+ */
+export interface CardanoNodeConfig {
+  kind: 'byron' | 'shelley';
+
+  /** Directory containing configurations for all networks. */
+  configurationDir: DirPath;
+
+  /** Path to the delegation certificate. The delegation certificate allows the delegator
+   * (the issuer of said certificate) to give his/her own block signing rights to somebody
+   * else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.
+   * */
+  delegationCertificate?: string;
+
+  /** Network parameters */
+  network: CardanoNetwork;
+
+  /** Path to the KES signing key. */
+  kesKey?: string;
+
+  /** Path to the VRF signing key. */
+  vrfKey?: string;
+
+  /** Path to the delegation certificate */
+  operationalCertificate?: string;
+
+  /** Path to the signing key. */
+  signingKey?: string;
+
+  /**
+   * Filename for the socket to use for communicating with the
+   * node. Optional -- will be set automatically if not provided.
+   */
+  socketFile?: FilePath;
+}
+
+/**
+ * Convert a [[CardanoNodeConfig]] into command-line arguments
+ * ([[CardanoNodeArgs]]) for `cardano-node`.
  */
 function makeArgs(
   stateDir: DirPath,
-  config: ShelleyNodeConfig,
+  config: CardanoNodeConfig,
   networkName: string,
   listenPort: number
-): ShelleyNodeArgs {
+): CardanoNodeArgs {
   let socketFile = config.socketFile;
   if (!socketFile) {
     if (process.platform === 'win32') {
@@ -146,10 +164,12 @@ function makeArgs(
       config.network.topologyFile
     ),
     databaseDir: 'chain', // relative to working directory
+    delegationCertificate: config.delegationCertificate,
     listen: {
       port: listenPort,
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
+    signingKey: config.signingKey,
     kesKey: config.kesKey,
     vrfKey: config.vrfKey,
   };
@@ -162,9 +182,9 @@ function makeArgs(
  * @param config - parameters for starting the node.
  * @return the command-line for starting this node.
  */
-export async function startShelleyNode(
+export async function startCardanoNode(
   stateDir: DirPath,
-  config: ShelleyNodeConfig,
+  config: CardanoNodeConfig,
   networkName: string
 ): Promise<StartService> {
   const listenPort = await getPort();
@@ -188,6 +208,12 @@ export async function startShelleyNode(
     ]
       .concat(args.listen.address ? ['--host-addr', args.listen.address] : [])
       .concat(args.validateDb || false ? ['--validate-db'] : [])
+      .concat(args.signingKey ? ['--signing-key', args.signingKey] : [])
+      .concat(
+        args.delegationCertificate
+          ? ['--delegation-certificate', args.delegationCertificate]
+          : []
+      )
       .concat(args.kesKey ? ['--shelley-kes-key', args.kesKey] : [])
       .concat(args.vrfKey ? ['--shelley-vrf-key', args.vrfKey] : [])
       .concat(
