@@ -27,6 +27,14 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $output
           Expand-Archive -Force -LiteralPath $output -DestinationPath .
           Get-ChildItem
+      - name: Fetch cardano-wallet-shelley
+        shell: powershell
+        run: |
+          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-shelley-win64/latest/download/1"
+          $output = "cardano-wallet-shelley-win64.zip"
+          Invoke-WebRequest -Uri $url -OutFile $output
+          Expand-Archive -Force -LiteralPath $output -DestinationPath .
+          Get-ChildItem
       - name: Fetch cardano-node configuration
         shell: powershell
         run: |
