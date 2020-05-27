@@ -14,7 +14,12 @@ import * as jormungandr from '../src/jormungandr';
 import * as cardanoNode from '../src/cardanoNode';
 import { ExitStatus } from '../src/cardanoLauncher';
 import { passthroughErrorLogger } from '../src/common';
-import { makeRequest, setupExecPath, withByronConfigDir } from './utils';
+import {
+  makeRequest,
+  setupExecPath,
+  withByronConfigDir,
+  getShelleyConfigDir,
+} from './utils';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
@@ -158,12 +163,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           networkName: 'ff',
           nodeConfig: {
             kind: 'shelley',
-            configurationDir: path.resolve(
-              __dirname,
-              'data',
-              'cardano-node',
-              'ff'
-            ),
+            configurationDir: getShelleyConfigDir('ff'),
             network: cardanoNode.networks.ff,
           },
         };
@@ -205,12 +205,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         networkName: 'ff',
         nodeConfig: {
           kind: 'shelley',
-          configurationDir: path.resolve(
-            __dirname,
-            'data',
-            'cardano-node',
-            'ff'
-          ),
+          configurationDir: getShelleyConfigDir('ff'),
           network: cardanoNode.networks.ff,
         },
       };
@@ -319,12 +314,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         networkName: 'ff',
         nodeConfig: {
           kind: 'shelley',
-          configurationDir: path.resolve(
-            __dirname,
-            'data',
-            'cardano-node',
-            'ff'
-          ),
+          configurationDir: getShelleyConfigDir('ff'),
           network: cardanoNode.networks.ff,
         },
         tlsConfiguration: {

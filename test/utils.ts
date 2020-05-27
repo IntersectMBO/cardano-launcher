@@ -180,3 +180,15 @@ export async function withByronConfigDir<T>(
     }
   );
 }
+
+export function getShelleyConfigDir(networkName: string): string {
+  const base = process.env.CARDANO_NODE_CONFIGS;
+  if (!base) {
+    const msg =
+      'CARDANO_NODE_CONFIGS environment variable is not set. The tests will not work.';
+    console.error(msg);
+    throw new Error(msg);
+  }
+
+  return path.resolve(base, networkName);
+}

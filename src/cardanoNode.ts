@@ -37,13 +37,18 @@ export interface CardanoNetwork {
 /** Predefined networks. */
 export const networks: { [propName: string]: CardanoNetwork } = {
   ff: {
-    configFile: 'configuration.yaml',
+    configFile: 'configuration.json',
     topologyFile: 'topology.json',
     genesisFile: 'genesis.json',
   },
   mainnet: {
     configFile: 'configuration.yaml',
     topologyFile: 'topology.json',
+  },
+  testnet: {
+    configFile: 'configuration.json',
+    topologyFile: 'topology.json',
+    genesisFile: 'genesis.json',
   },
 };
 

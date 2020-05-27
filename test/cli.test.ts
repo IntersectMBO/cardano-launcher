@@ -21,6 +21,7 @@ import {
   expectProcessToBeGone,
   setupExecPath,
   withByronConfigDir,
+  getShelleyConfigDir,
 } from './utils';
 import { fork } from 'child_process';
 
@@ -81,10 +82,6 @@ describe('CLI tests', () => {
 
   it(
     'when the parent process is killed, cardano-node gets stopped- Shelley',
-    killTest([
-      'shelley',
-      'ff',
-      path.resolve(__dirname, 'data', 'cardano-node', 'ff'),
-    ])
+    killTest(['shelley', 'ff', getShelleyConfigDir('ff')])
   );
 });
