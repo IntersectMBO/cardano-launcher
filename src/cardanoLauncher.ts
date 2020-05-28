@@ -204,6 +204,10 @@ export interface LaunchConfig {
   tlsConfiguration?: ServerTlsConfiguration;
 }
 
+function noop(): void {
+  /* empty */
+}
+
 /**
  * This is the main object which controls the launched wallet backend
  * and its node.
@@ -252,6 +256,9 @@ export class Launcher {
 
   /** A state flag for whether the backend services have exited yet. */
   private exited = false;
+
+  /** Removes process signal handlers, if they were installed. */
+  private cleanupSignalHandlers: () => void = noop;
 
   /**
    * Sets up a Launcher which can start and control the wallet backend.
@@ -414,6 +421,7 @@ export class Launcher {
         this.walletBackend.events.emit('exit', status);
         this.exited = true;
       }
+      this.cleanupSignalHandlers();
       return status;
     });
   }
@@ -423,13 +431,16 @@ export class Launcher {
    */
   private installSignalHandlers(): void {
     const signals: Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'];
-    signals.forEach((signal: Signals) =>
-      process.on(signal, () => {
-        this.logger.info(`Received ${signal} - stopping services...`);
-        this.walletService.stop(0).catch(passthroughErrorLogger);
-        this.nodeService.stop(0).catch(passthroughErrorLogger);
-      })
-    );
+    const handler = (signal: Signals): void => {
+      this.logger.info(`Received ${signal} - stopping services...`);
+      this.walletService.stop(0).catch(passthroughErrorLogger);
+      this.nodeService.stop(0).catch(passthroughErrorLogger);
+    };
+    signals.forEach(signal => process.on(signal, handler));
+    this.cleanupSignalHandlers = (): void => {
+      signals.forEach(signal => process.off(signal, handler));
+      this.cleanupSignalHandlers = noop;
+    };
   }
 
   private static makeServiceCommands(
