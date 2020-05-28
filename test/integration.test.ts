@@ -25,6 +25,8 @@ import {
 const longTestTimeoutMs = 15000;
 const tlsDir = path.resolve(__dirname, 'data', 'tls');
 
+setupExecPath();
+
 describe('Starting cardano-wallet (and its node)', () => {
   const setupTestLauncher = async (
     config: (stateDir: string) => LaunchConfig
@@ -66,8 +68,6 @@ describe('Starting cardano-wallet (and its node)', () => {
     config: (stateDir: string) => LaunchConfig,
     tls = false
   ): Promise<void> => {
-    setupExecPath();
-
     const { launcher, cleanupLauncher } = await setupTestLauncher(config);
     const api = await launcher.start();
     const walletProc = launcher.walletService.getProcess();
