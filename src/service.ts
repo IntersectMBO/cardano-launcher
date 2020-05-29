@@ -172,6 +172,8 @@ export function setupService(
   let proc: ChildProcess | null = null;
   // Pipe file descriptor for clean shutdown, or null if not yet running.
   let shutdownFD: number | null;
+  // When the service started (milliseconds since epoch)
+  let startTimeMs = 0;
   // How the child process exited, or null if it hasn't yet exited.
   let exitStatus: ServiceExitStatus | null;
   // For cancelling the kill timeout.
@@ -183,6 +185,9 @@ export function setupService(
       `setStatus ${ServiceStatus[status]} -> ${ServiceStatus[newStatus]}`
     );
     status = newStatus;
+    if (status === ServiceStatus.Started) {
+      startTimeMs = Date.now();
+    }
     events.emit('statusChanged', status);
   };
 
@@ -265,7 +270,19 @@ export function setupService(
         proc.kill('SIGTERM');
       } else if (shutdownFD !== null && proc.stdio[shutdownFD]) {
         const stream = proc.stdio[shutdownFD] as Writable;
-        stream.end();
+        const closeFD = (): void => {
+          stream.end();
+        };
+
+        // Allow the service one second to start reading from its
+        // shutdownFD, before closing the shutdown FD.
+        const shutdownFDGracePeriodMs = 1000;
+        const grace = startTimeMs - Date.now() + shutdownFDGracePeriodMs;
+        if (grace > 0) {
+          setTimeout(closeFD, grace);
+        } else {
+          closeFD();
+        }
       }
     }
     killTimer = setTimeout(() => {
