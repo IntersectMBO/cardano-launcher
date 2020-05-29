@@ -143,6 +143,25 @@ export interface CardanoNodeConfig {
   socketFile?: FilePath;
 }
 
+let pipeCounter = 0;
+
+/**
+ * Allocate a name for the pipe used to communicate with the node on
+ * Windows. The network name and PID are used to ensure different
+ * applications do not cross their streams.
+ *
+ * The name also includes a per-process counter, mostly so that
+ * integration tests do not conflict with each other.
+ *
+ * @networkName: which network to put in the pipe name.
+ * @return a [Pipe Name](https://docs.microsoft.com/en-us/windows/win32/ipc/pipe-names)
+ */
+function windowsPipeName(networkName: string): string {
+  return `\\\\.\\pipe\\cardano-node-${networkName}.${
+    process.pid
+  }.${pipeCounter++}`;
+}
+
 /**
  * Convert a [[CardanoNodeConfig]] into command-line arguments
  * ([[CardanoNodeArgs]]) for `cardano-node`.
@@ -156,7 +175,7 @@ function makeArgs(
   let socketFile = config.socketFile;
   if (!socketFile) {
     if (process.platform === 'win32') {
-      config.socketFile = socketFile = `\\\\.\\pipe\\cardano-node-${networkName}`;
+      config.socketFile = socketFile = windowsPipeName(networkName);
     } else {
       socketFile = 'cardano-node.socket'; // relative to working directory
       config.socketFile = path.join(stateDir, socketFile);
