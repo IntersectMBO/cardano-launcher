@@ -7,7 +7,8 @@ mkShell {
     # javascript
     nodejs nodePackages.npm
     # documentation tools
-    pandoc mscgen librsvg gnumake
+    pandoc librsvg gnumake
+  ] ++ lib.optional stdenv.isLinux mscgen ++ [
     # util to update nixpkgs pins
     niv.niv
     # jormungandr
