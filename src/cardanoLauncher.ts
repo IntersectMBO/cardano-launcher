@@ -34,8 +34,7 @@ import {
   ignorePromiseRejection,
 } from './common';
 
-import * as byron from './byron';
-import * as shelley from './shelley';
+import * as cardanoNode from './cardanoNode';
 import * as jormungandr from './jormungandr';
 import { WriteStream } from 'fs';
 import Signals = NodeJS.Signals;
@@ -181,10 +180,7 @@ export interface LaunchConfig {
    *  * `"shelley"` - [[ShelleyNodeConfig]]
    *  * `"jormungandr"` - [[JormungandrConfig]]
    */
-  nodeConfig:
-    | byron.ByronNodeConfig
-    | shelley.ShelleyNodeConfig
-    | jormungandr.JormungandrConfig;
+  nodeConfig: cardanoNode.CardanoNodeConfig | jormungandr.JormungandrConfig;
 
   /**
    *  WriteStreams for the child process data events from stdout and stderr
@@ -206,6 +202,10 @@ export interface LaunchConfig {
    * If not set, the connection will be served insecurely over HTTP.
    */
   tlsConfiguration?: ServerTlsConfiguration;
+}
+
+function noop(): void {
+  /* empty */
 }
 
 /**
@@ -256,6 +256,9 @@ export class Launcher {
 
   /** A state flag for whether the backend services have exited yet. */
   private exited = false;
+
+  /** Removes process signal handlers, if they were installed. */
+  private cleanupSignalHandlers: () => void = noop;
 
   /**
    * Sets up a Launcher which can start and control the wallet backend.
@@ -418,6 +421,7 @@ export class Launcher {
         this.walletBackend.events.emit('exit', status);
         this.exited = true;
       }
+      this.cleanupSignalHandlers();
       return status;
     });
   }
@@ -427,13 +431,16 @@ export class Launcher {
    */
   private installSignalHandlers(): void {
     const signals: Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP', 'SIGBREAK'];
-    signals.forEach((signal: Signals) =>
-      process.on(signal, () => {
-        this.logger.info(`Received ${signal} - stopping services...`);
-        this.walletService.stop(0).catch(passthroughErrorLogger);
-        this.nodeService.stop(0).catch(passthroughErrorLogger);
-      })
-    );
+    const handler = (signal: Signals): void => {
+      this.logger.info(`Received ${signal} - stopping services...`);
+      this.walletService.stop(0).catch(passthroughErrorLogger);
+      this.nodeService.stop(0).catch(passthroughErrorLogger);
+    };
+    signals.forEach(signal => process.on(signal, handler));
+    this.cleanupSignalHandlers = (): void => {
+      signals.forEach(signal => process.off(signal, handler));
+      this.cleanupSignalHandlers = noop;
+    };
   }
 
   private static makeServiceCommands(
@@ -499,17 +506,24 @@ export class Launcher {
           '--node-port',
           '' + config.nodeConfig.restPort,
         ]);
-      case 'byron':
+      default:
         if (
           config.networkName !== 'mainnet' &&
           !config.nodeConfig.network.genesisFile
         ) {
-          throw new Error('ByronNetwork.genesisFile must be configured');
+          throw new Error('genesisFile must be configured');
         }
         const networkArg =
           config.networkName === 'mainnet'
             ? ['--mainnet']
-            : ['--testnet', '' + config.nodeConfig.network.genesisFile];
+            : [
+                '--testnet',
+                '' +
+                  path.join(
+                    config.nodeConfig.configurationDir,
+                    config.nodeConfig.network.genesisFile as string
+                  ),
+              ];
 
         return addArgs(
           networkArg.concat(
@@ -518,8 +532,6 @@ export class Launcher {
               : []
           )
         );
-      case 'shelley':
-        return base;
     }
   }
 
@@ -531,13 +543,17 @@ export class Launcher {
       case 'jormungandr':
         return jormungandr.startJormungandr(baseDir, config.nodeConfig);
       case 'byron':
-        return byron.startByronNode(
+        return cardanoNode.startCardanoNode(
           baseDir,
           config.nodeConfig,
           config.networkName
         );
       case 'shelley':
-        return shelley.startShelleyNode(config.nodeConfig);
+        return cardanoNode.startCardanoNode(
+          baseDir,
+          config.nodeConfig,
+          config.networkName
+        );
     }
   }
 }

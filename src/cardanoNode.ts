@@ -2,7 +2,7 @@
 // License: Apache-2.0
 
 /**
- * Configuration for `cardano-node` (Byron)
+ * Configuration for `cardano-node`
  *
  * @packageDocumentation
  */
@@ -13,18 +13,10 @@ import getPort from 'get-port';
 import { StartService, ShutdownMethod, cleanShutdownFD } from './service';
 import { FilePath, DirPath } from './common';
 
-/** Predefined networks. */
-export const networks: { [propName: string]: ByronNetwork } = {
-  mainnet: {
-    configFile: 'configuration.yaml',
-    topologyFile: 'topology.json',
-  },
-};
-
 /**
- * Definition of a `cardano-node` (Byron) network.
+ * Definition of a `cardano-node` network.
  */
-export interface ByronNetwork {
+export interface CardanoNetwork {
   /**
    * The YAML configuration file for cardano-node.
    */
@@ -42,39 +34,28 @@ export interface ByronNetwork {
   genesisFile?: FilePath;
 }
 
-/**
- * Configuration parameters for starting the rewritten version of
- * cardano-node (Byron).
- */
-export interface ByronNodeConfig {
-  kind: 'byron';
-
-  /** Directory containing configurations for all networks. */
-  configurationDir: DirPath;
-
-  /** Path to the delegation certificate. The delegation certificate allows the delegator
-   * (the issuer of said certificate) to give his/her own block signing rights to somebody
-   * else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.
-   * */
-  delegationCertificate?: string;
-
-  /** Network parameters */
-  network: ByronNetwork;
-
-  /** Path to the signing key. */
-  signingKey?: string;
-
-  /**
-   * Filename for the socket to use for communicating with the
-   * node. Optional -- will be set automatically if not provided.
-   */
-  socketFile?: FilePath;
-}
+/** Predefined networks. */
+export const networks: { [propName: string]: CardanoNetwork } = {
+  ff: {
+    configFile: 'configuration.json',
+    topologyFile: 'topology.json',
+    genesisFile: 'genesis.json',
+  },
+  mainnet: {
+    configFile: 'configuration.yaml',
+    topologyFile: 'topology.json',
+  },
+  testnet: {
+    configFile: 'configuration.json',
+    topologyFile: 'topology.json',
+    genesisFile: 'genesis.json',
+  },
+};
 
 /**
- * The command-line arguments which can be supplied to `cardano-node` (Byron).
+ * The command-line arguments which can be supplied to `cardano-node`.
  */
-export interface ByronNodeArgs {
+export interface CardanoNodeArgs {
   /**
    * Filename for the socket file to use for communicating with the
    * node.
@@ -96,6 +77,15 @@ export interface ByronNodeArgs {
   /** Path to the signing key. */
   signingKey?: string;
 
+  /** Path to the KES signing key. */
+  kesKey?: string;
+
+  /** Path to the VRF signing key. */
+  vrfKey?: string;
+
+  /** Path to the delegation certificate */
+  operationalCertificate?: string;
+
   /** Configures the address to bind for P2P communication. */
   listen: {
     /** The TCP port for node P2P. */
@@ -104,7 +94,7 @@ export interface ByronNodeArgs {
     address?: string;
   };
 
-  /** Configuration file for the cardano-node. */
+  /** Configuration file for cardano-node. */
   configFile: FilePath;
 
   /** Validate all on-disk database files. */
@@ -117,19 +107,75 @@ export interface ByronNodeArgs {
 }
 
 /**
- * Convert a [[ByronNodeConfig]] into command-line arguments
- * ([[ByronNodeArgs]]) for `cardano-node`.
+ * Configuration parameters for starting cardano-node.
+ */
+export interface CardanoNodeConfig {
+  kind: 'byron' | 'shelley';
+
+  /** Directory containing configurations for all networks. */
+  configurationDir: DirPath;
+
+  /** Path to the delegation certificate. The delegation certificate allows the delegator
+   * (the issuer of said certificate) to give his/her own block signing rights to somebody
+   * else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.
+   * */
+  delegationCertificate?: string;
+
+  /** Network parameters */
+  network: CardanoNetwork;
+
+  /** Path to the KES signing key. */
+  kesKey?: string;
+
+  /** Path to the VRF signing key. */
+  vrfKey?: string;
+
+  /** Path to the delegation certificate */
+  operationalCertificate?: string;
+
+  /** Path to the signing key. */
+  signingKey?: string;
+
+  /**
+   * Filename for the socket to use for communicating with the
+   * node. Optional -- will be set automatically if not provided.
+   */
+  socketFile?: FilePath;
+}
+
+let pipeCounter = 0;
+
+/**
+ * Allocate a name for the pipe used to communicate with the node on
+ * Windows. The network name and PID are used to ensure different
+ * applications do not cross their streams.
+ *
+ * The name also includes a per-process counter, mostly so that
+ * integration tests do not conflict with each other.
+ *
+ * @networkName: which network to put in the pipe name.
+ * @return a [Pipe Name](https://docs.microsoft.com/en-us/windows/win32/ipc/pipe-names)
+ */
+function windowsPipeName(networkName: string): string {
+  return `\\\\.\\pipe\\cardano-node-${networkName}.${
+    process.pid
+  }.${pipeCounter++}`;
+}
+
+/**
+ * Convert a [[CardanoNodeConfig]] into command-line arguments
+ * ([[CardanoNodeArgs]]) for `cardano-node`.
  */
 function makeArgs(
   stateDir: DirPath,
-  config: ByronNodeConfig,
+  config: CardanoNodeConfig,
   networkName: string,
   listenPort: number
-): ByronNodeArgs {
+): CardanoNodeArgs {
   let socketFile = config.socketFile;
   if (!socketFile) {
     if (process.platform === 'win32') {
-      config.socketFile = socketFile = `\\\\.\\pipe\\cardano-node-${networkName}`;
+      config.socketFile = socketFile = windowsPipeName(networkName);
     } else {
       socketFile = 'cardano-node.socket'; // relative to working directory
       config.socketFile = path.join(stateDir, socketFile);
@@ -148,6 +194,8 @@ function makeArgs(
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
     signingKey: config.signingKey,
+    kesKey: config.kesKey,
+    vrfKey: config.vrfKey,
   };
 }
 
@@ -158,9 +206,9 @@ function makeArgs(
  * @param config - parameters for starting the node.
  * @return the command-line for starting this node.
  */
-export async function startByronNode(
+export async function startCardanoNode(
   stateDir: DirPath,
-  config: ByronNodeConfig,
+  config: CardanoNodeConfig,
   networkName: string
 ): Promise<StartService> {
   const listenPort = await getPort();
@@ -188,6 +236,13 @@ export async function startByronNode(
       .concat(
         args.delegationCertificate
           ? ['--delegation-certificate', args.delegationCertificate]
+          : []
+      )
+      .concat(args.kesKey ? ['--shelley-kes-key', args.kesKey] : [])
+      .concat(args.vrfKey ? ['--shelley-vrf-key', args.vrfKey] : [])
+      .concat(
+        args.operationalCertificate
+          ? ['--shelley-operational-certificate', args.operationalCertificate]
           : []
       )
       .concat(args.extra || []),

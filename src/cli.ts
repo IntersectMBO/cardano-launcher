@@ -19,12 +19,12 @@ import { Launcher, ExitStatus } from './cardanoLauncher';
 
 import { ignorePromiseRejection } from './common';
 import { ServiceExitStatus, serviceExitStatusMessage } from './service';
-import * as byron from './byron';
+import * as cardanoNode from './cardanoNode';
 import * as jormungandr from './jormungandr';
 
 function usage(): void {
   console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR');
-  console.log('  BACKEND    - either jormungandr or byron');
+  console.log('  BACKEND    - either jormungandr, byron, or shelley');
   console.log(
     '  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1'
   );
@@ -80,12 +80,12 @@ export function cli(argv: Process['argv']): void {
 
   let nodeConfig: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  if (backend === 'byron') {
-    if (!(networkName in byron.networks)) {
+  if (backend === 'byron' || backend === 'shelley') {
+    if (!(networkName in cardanoNode.networks)) {
       console.error(`unknown network: ${networkName}`);
       process.exit(2);
     }
-    const network = byron.networks[networkName];
+    const network = cardanoNode.networks[networkName];
     nodeConfig = {
       kind: backend,
       configurationDir,

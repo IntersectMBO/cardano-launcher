@@ -155,7 +155,7 @@ export async function withByronConfigDir<T>(
         },
         (f: string) => {
           return {
-            src: path.join(base, 'defaults', 'mainnet', f),
+            src: path.join(base, 'defaults', 'byron-mainnet', f),
             dst: path.join(o.path, f),
           };
         }
@@ -179,4 +179,16 @@ export async function withByronConfigDir<T>(
       prefix: 'launcher-test-config-',
     }
   );
+}
+
+export function getShelleyConfigDir(networkName: string): string {
+  const base = process.env.CARDANO_NODE_CONFIGS;
+  if (!base) {
+    const msg =
+      'CARDANO_NODE_CONFIGS environment variable is not set. The tests will not work.';
+    console.error(msg);
+    throw new Error(msg);
+  }
+
+  return path.resolve(base, networkName);
 }
