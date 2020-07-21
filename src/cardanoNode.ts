@@ -50,6 +50,11 @@ export const networks: { [propName: string]: CardanoNetwork } = {
     topologyFile: 'topology.json',
     genesisFile: 'genesis.json',
   },
+  staging: {
+    configFile: 'configuration.json',
+    topologyFile: 'topology.json',
+    genesisFile: 'genesis.json',
+  },
 };
 
 /**

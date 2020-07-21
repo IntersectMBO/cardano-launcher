@@ -513,17 +513,29 @@ export class Launcher {
         ) {
           throw new Error('genesisFile must be configured');
         }
-        const networkArg =
-          config.networkName === 'mainnet'
-            ? ['--mainnet']
-            : [
-                '--testnet',
-                '' +
-                  path.join(
-                    config.nodeConfig.configurationDir,
-                    config.nodeConfig.network.genesisFile as string
-                  ),
-              ];
+
+        const genesisArg =
+          config.networkName == 'mainnet'
+            ? ''
+            : path.join(
+                config.nodeConfig.configurationDir,
+                config.nodeConfig.network.genesisFile as string
+              );
+
+        let networkArg;
+        switch (config.networkName) {
+          case 'mainnet':
+            networkArg = ['--mainnet'];
+            break;
+
+          case 'staging':
+            networkArg = ['--staging', genesisArg];
+            break;
+
+          default:
+            networkArg = ['--testnet', genesisArg];
+            break;
+        }
 
         return addArgs(
           networkArg.concat(
