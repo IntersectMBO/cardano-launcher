@@ -225,7 +225,7 @@ function noop(): void {
  *   networkName: "mainnet",
  *   stateDir: "/tmp/state-launcher",
  *   nodeConfig: {
- *     kind: "byron",
+ *     kind: "shelley",
  *     configurationDir: "/home/user/cardano-node/configuration/defaults/mainnet",
  *     network: {
  *       configFile: "configuration.yaml",

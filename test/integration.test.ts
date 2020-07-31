@@ -243,11 +243,11 @@ describe('Starting cardano-wallet (and its node)', () => {
     launcherTest(stateDir => {
       return {
         stateDir,
-        networkName: 'ff',
+        networkName: 'testnet',
         nodeConfig: {
           kind: 'shelley',
-          configurationDir: getShelleyConfigDir('ff'),
-          network: cardanoNode.networks.ff,
+          configurationDir: getShelleyConfigDir('testnet'),
+          network: cardanoNode.networks.testnet,
         },
         tlsConfiguration: {
           caCert: path.join(tlsDir, 'ca.crt'),

@@ -123,9 +123,21 @@ export function setupExecPath(): void {
   }
 }
 
+export function getShelleyConfigDir(networkName: string): string {
+  const base = process.env.CARDANO_NODE_CONFIGS;
+  if (!base) {
+    const msg =
+      'CARDANO_NODE_CONFIGS environment variable is not set. The tests will not work.';
+    console.error(msg);
+    throw new Error(msg);
+  }
+
+  return path.resolve(base, networkName);
+}
+
 /**
  * Set up a temporary directory containing configuration files for
- * Byron mainnet.
+ * Shelley mainnet.
  *
  * This is needed because files in the cardano-node configuration file
  * are resolved relative to the current working directory, rather than
@@ -156,8 +168,14 @@ export async function withMainnetConfigDir<T>(
         }
       );
 
-      await fs.promises.copyFile(configs.genesisByron.src, configs.genesisByron.dst);
-      await fs.promises.copyFile(configs.genesisShelley.src, configs.genesisShelley.dst);
+      await fs.promises.copyFile(
+        configs.genesisByron.src,
+        configs.genesisByron.dst
+      );
+      await fs.promises.copyFile(
+        configs.genesisShelley.src,
+        configs.genesisShelley.dst
+      );
       await fs.promises.copyFile(configs.topology.src, configs.topology.dst);
 
       const config = await fs.promises.readFile(
@@ -175,16 +193,4 @@ export async function withMainnetConfigDir<T>(
       prefix: 'launcher-test-config-',
     }
   );
-}
-
-export function getShelleyConfigDir(networkName: string): string {
-  const base = process.env.CARDANO_NODE_CONFIGS;
-  if (!base) {
-    const msg =
-      'CARDANO_NODE_CONFIGS environment variable is not set. The tests will not work.';
-    console.error(msg);
-    throw new Error(msg);
-  }
-
-  return path.resolve(base, networkName);
 }
