@@ -19,14 +19,6 @@ jobs:
           $output = "cardano-wallet-jormungandr-win64.zip"
           Invoke-WebRequest -Uri $url -OutFile $output
           Expand-Archive -Force -LiteralPath $output -DestinationPath .
-      - name: Fetch cardano-wallet-byron
-        shell: powershell
-        run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/1"
-          $output = "cardano-wallet-byron-win64.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath .
-          Get-ChildItem
       - name: Fetch cardano-wallet-shelley
         shell: powershell
         run: |
@@ -35,15 +27,6 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $output
           Expand-Archive -Force -LiteralPath $output -DestinationPath .
           Get-ChildItem
-      - name: Fetch cardano-node configuration
-        shell: powershell
-        run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/2"
-          $output = "cardano-wallet-byron-configuration.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath byron_configs
-          Get-ChildItem
-          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
       - name: Fetch cardano-node deployment configuration
         shell: powershell
         run: |
