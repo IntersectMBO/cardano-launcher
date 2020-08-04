@@ -168,6 +168,12 @@ export interface LaunchConfig {
   stakePoolRegistryUrl?: string;
 
   /**
+   * The API base URL of the Stake Pool Metadata Aggregation Server (SMASH)
+   * which is used by cardano-wallet.
+   */
+  smashUrl?: string;
+
+  /**
    * Maximum time difference (in seconds) between the tip slot and the
    * latest applied block within which we consider a wallet being
    * synced with the network. Defaults to 300 seconds.
@@ -219,7 +225,7 @@ function noop(): void {
  *   networkName: "mainnet",
  *   stateDir: "/tmp/state-launcher",
  *   nodeConfig: {
- *     kind: "byron",
+ *     kind: "shelley",
  *     configurationDir: "/home/user/cardano-node/configuration/defaults/mainnet",
  *     network: {
  *       configFile: "configuration.yaml",
@@ -483,6 +489,7 @@ export class Launcher {
               config.tlsConfiguration.svKey,
             ]
           : [],
+        config.smashUrl ? ['--smash-url', config.smashUrl] : [],
         config.syncToleranceSeconds
           ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
           : []

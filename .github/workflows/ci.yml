@@ -12,48 +12,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 10
-      - name: Fetch cardano-wallet-jormungandr
+      - run: npm install
+      - name: Fetch cardano-wallet
         shell: powershell
         run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-jormungandr-win64/latest/download/1"
-          $output = "cardano-wallet-jormungandr-win64.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath .
-      - name: Fetch cardano-wallet-byron
-        shell: powershell
-        run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/1"
-          $output = "cardano-wallet-byron-win64.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath .
+          node scripts\download-hydra.js
           Get-ChildItem
-      - name: Fetch cardano-wallet-shelley
-        shell: powershell
-        run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-shelley-win64/latest/download/1"
-          $output = "cardano-wallet-shelley-win64.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath .
-          Get-ChildItem
-      - name: Fetch cardano-node configuration
-        shell: powershell
-        run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-byron-win64/latest/download/2"
-          $output = "cardano-wallet-byron-configuration.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath byron_configs
-          Get-ChildItem
-          echo "::set-env name=BYRON_CONFIGS::$Env:GITHUB_WORKSPACE\byron_configs"
-      - name: Fetch cardano-node deployment configuration
-        shell: powershell
-        run: |
-          $url = "https://hydra.iohk.io/job/Cardano/cardano-wallet/cardano-wallet-shelley-win64/latest/download/3"
-          $output = "cardano-wallet-shelley-deployments.zip"
-          Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Force -LiteralPath $output -DestinationPath shelley_deployments
+          Expand-Archive -Force -Path "cardano-wallet-jormungandr-*-win64.zip" -DestinationPath .
+          Expand-Archive -Force -Path "cardano-wallet-shelley-*-win64.zip" -DestinationPath .
+          Expand-Archive -Force -Path "cardano-wallet-shelley-*-deployments.zip" -DestinationPath shelley_deployments
           Get-ChildItem
           echo "::set-env name=CARDANO_NODE_CONFIGS::$Env:GITHUB_WORKSPACE\shelley_deployments"
-      - run: npm install
       - run: npm test unit
       - run: npm test integration
       - run: npm test cli

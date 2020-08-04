@@ -128,8 +128,11 @@ library code from your shell.
 npm run build
 
 # cardano-node mainnet
-./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
+./bin/cardano-launcher shelley mainnet $CARDANO_NODE_CONFIGS/mainnet ./state-mainnet
+
+# cardano-node testnet
+./bin/cardano-launcher shelley testnet $CARDANO_NODE_CONFIGS/testnet ./state-testnet
 
 # Jormungandr self-node
-./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher
+./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-jormungandr
 ```

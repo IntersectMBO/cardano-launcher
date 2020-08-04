@@ -17,13 +17,17 @@ import { passthroughErrorLogger } from '../src/common';
 import {
   makeRequest,
   setupExecPath,
-  withByronConfigDir,
+  withMainnetConfigDir,
   getShelleyConfigDir,
 } from './utils';
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
 const tlsDir = path.resolve(__dirname, 'data', 'tls');
+
+// Increase time available for tests to run to work around bug
+// https://github.com/input-output-hk/cardano-node/issues/1086
+const veryLongTestTimeoutMs = 70000;
 
 setupExecPath();
 
@@ -135,57 +139,39 @@ describe('Starting cardano-wallet (and its node)', () => {
 
   // eslint-disable-next-line jest/expect-expect
   it(
-    'cardano-wallet-byron responds to requests',
-    () =>
-      withByronConfigDir(configurationDir => {
-        return launcherTest(stateDir => {
-          return {
-            stateDir,
-            networkName: 'mainnet',
-            nodeConfig: {
-              kind: 'byron',
-              configurationDir,
-              network: cardanoNode.networks.mainnet,
-            },
-          };
-        });
-      }),
-    longTestTimeoutMs
-  );
-
-  // eslint-disable-next-line jest/expect-expect
-  it(
     'cardano-wallet-shelley responds to requests',
     () =>
       launcherTest(stateDir => {
         return {
           stateDir,
-          networkName: 'ff',
+          networkName: 'testnet',
           nodeConfig: {
             kind: 'shelley',
-            configurationDir: getShelleyConfigDir('ff'),
-            network: cardanoNode.networks.ff,
+            configurationDir: getShelleyConfigDir('testnet'),
+            network: cardanoNode.networks.testnet,
           },
         };
       }),
     longTestTimeoutMs
   );
 
-  it('emits one and only one exit event - Byron', () =>
-    withByronConfigDir(async configurationDir => {
+  it(
+    'emits one and only one exit event - Shelley',
+    async () => {
       const { launcher, cleanupLauncher } = await setupTestLauncher(
         stateDir => {
           return {
             stateDir,
-            networkName: 'mainnet',
+            networkName: 'testnet',
             nodeConfig: {
-              kind: 'byron',
-              configurationDir,
-              network: cardanoNode.networks.mainnet,
+              kind: 'shelley',
+              configurationDir: getShelleyConfigDir('testnet'),
+              network: cardanoNode.networks.testnet,
             },
           };
         }
       );
+
       const events: ExitStatus[] = [];
       launcher.walletBackend.events.on('exit', st => events.push(st));
 
@@ -196,106 +182,94 @@ describe('Starting cardano-wallet (and its node)', () => {
       expect(events).toHaveLength(1);
 
       await cleanupLauncher();
-    }));
+    },
+    veryLongTestTimeoutMs
+  );
 
-  it('emits one and only one exit event - Shelley', async () => {
-    const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
-      return {
-        stateDir,
-        networkName: 'ff',
-        nodeConfig: {
-          kind: 'shelley',
-          configurationDir: getShelleyConfigDir('ff'),
-          network: cardanoNode.networks.ff,
-        },
-      };
-    });
+  it(
+    'accepts WriteStreams to pipe each child process stdout and stderr streams',
+    () =>
+      withMainnetConfigDir(async configurationDir => {
+        const walletLogFile = await tmp.file();
+        const nodeLogFile = await tmp.file();
+        const launcher = new Launcher({
+          stateDir: (
+            await tmp.dir({
+              unsafeCleanup: true,
+              prefix: 'launcher-integration-test-',
+            })
+          ).path,
+          networkName: 'testnet',
+          nodeConfig: {
+            kind: 'shelley',
+            configurationDir,
+            network: cardanoNode.networks.testnet,
+          },
+          childProcessLogWriteStreams: {
+            node: fs.createWriteStream(nodeLogFile.path, {
+              fd: nodeLogFile.fd,
+            }),
+            wallet: fs.createWriteStream(walletLogFile.path, {
+              fd: walletLogFile.fd,
+            }),
+          },
+        });
+        await launcher.start();
+        const nodeLogFileStats = await stat(nodeLogFile.path);
+        const walletLogFileStats = await stat(walletLogFile.path);
+        expect(nodeLogFileStats.size).toBeGreaterThan(0);
+        expect(walletLogFileStats.size).toBeGreaterThan(0);
+        await launcher.stop();
+      }),
+    veryLongTestTimeoutMs
+  );
 
-    const events: ExitStatus[] = [];
-    launcher.walletBackend.events.on('exit', st => events.push(st));
-
-    await launcher.start();
-    await Promise.all([launcher.stop(), launcher.stop(), launcher.stop()]);
-    await launcher.stop();
-
-    expect(events).toHaveLength(1);
-
-    await cleanupLauncher();
-  });
-
-  it('accepts WriteStreams to pipe each child process stdout and stderr streams', () =>
-    withByronConfigDir(async configurationDir => {
-      const walletLogFile = await tmp.file();
-      const nodeLogFile = await tmp.file();
-      const launcher = new Launcher({
-        stateDir: (
-          await tmp.dir({
-            unsafeCleanup: true,
-            prefix: 'launcher-integration-test-',
-          })
-        ).path,
-        networkName: 'mainnet',
-        nodeConfig: {
-          kind: 'byron',
-          configurationDir,
-          network: cardanoNode.networks.mainnet,
-        },
-        childProcessLogWriteStreams: {
-          node: fs.createWriteStream(nodeLogFile.path, { fd: nodeLogFile.fd }),
-          wallet: fs.createWriteStream(walletLogFile.path, {
-            fd: walletLogFile.fd,
-          }),
-        },
-      });
-      await launcher.start();
-      const nodeLogFileStats = await stat(nodeLogFile.path);
-      const walletLogFileStats = await stat(walletLogFile.path);
-      expect(nodeLogFileStats.size).toBeGreaterThan(0);
-      expect(walletLogFileStats.size).toBeGreaterThan(0);
-      await launcher.stop();
-    }));
-
-  it('accepts the same WriteStream for both the wallet and node to produce a combined stream', async () =>
-    withByronConfigDir(async configurationDir => {
-      const logFile = await tmp.file();
-      const writeStream = fs.createWriteStream(logFile.path, {
-        fd: logFile.fd,
-      });
-      const launcher = new Launcher({
-        stateDir: (
-          await tmp.dir({
-            unsafeCleanup: true,
-            prefix: 'launcher-integration-test-',
-          })
-        ).path,
-        networkName: 'mainnet',
-        nodeConfig: {
-          kind: 'byron',
-          configurationDir,
-          network: cardanoNode.networks.mainnet,
-        },
-        childProcessLogWriteStreams: {
-          node: writeStream,
-          wallet: writeStream,
-        },
-      });
-      await launcher.start();
-      const logFileStats = await stat(writeStream.path);
-      expect(logFileStats.size).toBeGreaterThan(0);
-      await launcher.stop();
-    }));
+  it(
+    'accepts the same WriteStream for both the wallet and node to produce a combined stream',
+    async () =>
+      withMainnetConfigDir(async configurationDir => {
+        const logFile = await tmp.file();
+        const writeStream = fs.createWriteStream(logFile.path, {
+          fd: logFile.fd,
+        });
+        const launcher = new Launcher({
+          stateDir: (
+            await tmp.dir({
+              unsafeCleanup: true,
+              prefix: 'launcher-integration-test-',
+            })
+          ).path,
+          networkName: 'mainnet',
+          nodeConfig: {
+            kind: 'shelley',
+            configurationDir,
+            network: cardanoNode.networks.testnet,
+          },
+          childProcessLogWriteStreams: {
+            node: writeStream,
+            wallet: writeStream,
+          },
+        });
+        await launcher.start();
+        const logFileStats = await stat(writeStream.path);
+        expect(logFileStats.size).toBeGreaterThan(0);
+        await launcher.stop();
+      }),
+    veryLongTestTimeoutMs
+  );
 
   // eslint-disable-next-line jest/expect-expect
-  it('can configure the cardano-wallet-byron to serve the API with TLS', async () =>
-    withByronConfigDir(configurationDir =>
+  it(
+    'can configure the cardano-wallet-shelley to serve the API with TLS',
+    async () =>
       launcherTest(stateDir => {
         return {
           stateDir,
-          networkName: 'mainnet',
+          networkName: 'testnet',
           nodeConfig: {
-            kind: 'byron',
-            configurationDir,
-            network: cardanoNode.networks.mainnet,
+            kind: 'shelley',
+            configurationDir: getShelleyConfigDir('testnet'),
+            network: cardanoNode.networks.testnet,
           },
           tlsConfiguration: {
             caCert: path.join(tlsDir, 'ca.crt'),
@@ -303,27 +277,9 @@ describe('Starting cardano-wallet (and its node)', () => {
             svKey: path.join(tlsDir, 'server.key'),
           },
         };
-      }, true)
-    ));
-
-  // eslint-disable-next-line jest/expect-expect
-  it('can configure the cardano-wallet-shelley to serve the API with TLS', async () =>
-    launcherTest(stateDir => {
-      return {
-        stateDir,
-        networkName: 'ff',
-        nodeConfig: {
-          kind: 'shelley',
-          configurationDir: getShelleyConfigDir('ff'),
-          network: cardanoNode.networks.ff,
-        },
-        tlsConfiguration: {
-          caCert: path.join(tlsDir, 'ca.crt'),
-          svCert: path.join(tlsDir, 'server.crt'),
-          svKey: path.join(tlsDir, 'server.key'),
-        },
-      };
-    }, true));
+      }, true),
+    veryLongTestTimeoutMs
+  );
 
   it('handles case where (jormungandr) node fails to start', async () => {
     const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
@@ -350,7 +306,7 @@ describe('Starting cardano-wallet (and its node)', () => {
   it('handles case where cardano-node fails during initialisation', () => {
     return new Promise((done, fail) => {
       expect.assertions(3);
-      withByronConfigDir(
+      withMainnetConfigDir(
         configurationDir =>
           new Promise(resolve => {
             setupTestLauncher(stateDir => {
@@ -359,11 +315,11 @@ describe('Starting cardano-wallet (and its node)', () => {
 
               return {
                 stateDir,
-                networkName: 'mainnet',
+                networkName: 'testnet',
                 nodeConfig: {
-                  kind: 'byron',
+                  kind: 'shelley',
                   configurationDir,
-                  network: cardanoNode.networks.mainnet,
+                  network: cardanoNode.networks.testnet,
                 },
               };
             })

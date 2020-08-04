@@ -1,14 +1,14 @@
 {
     "cardano-wallet": {
-        "branch": "master",
+        "branch": "rvl/adp-289/bench-restore-ff",
         "description": "Official Wallet Backend & API for Cardano decentralized",
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "cardano-wallet",
-        "rev": "8fc88148835587ec91b1749af5c7f6f9a113c89b",
-        "sha256": "0rv8j547d5w4fgi7x970117dl0r6m1asyyj0kyff6yfh5ciipkr6",
+        "rev": "a307242736f964f3a793941ae45616b2e4aa1e96",
+        "sha256": "00h4pq8d7zbhdwyhiz40qz9qpv954k3kkjfb0vm5sad0gpnjr5ba",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-wallet/archive/8fc88148835587ec91b1749af5c7f6f9a113c89b.tar.gz",
+        "url": "https://github.com/input-output-hk/cardano-wallet/archive/a307242736f964f3a793941ae45616b2e4aa1e96.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "iohk-nix": {
@@ -17,10 +17,10 @@
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "iohk-nix",
-        "rev": "d2cf1f0a452e14a38706ae4655483d679bbddf3a",
-        "sha256": "1ja29zv6mfc40mfgvqfsvm9llavv734illc55410y4nabdfyiyw7",
+        "rev": "f345d26508966e434d8db57d6c3b4ce4202c9fb5",
+        "sha256": "1xcar2r6jm68dp5s8kc2rii0rcg47w41qc1akazbngkj1x6hf1r2",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/iohk-nix/archive/d2cf1f0a452e14a38706ae4655483d679bbddf3a.tar.gz",
+        "url": "https://github.com/input-output-hk/iohk-nix/archive/f345d26508966e434d8db57d6c3b4ce4202c9fb5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {

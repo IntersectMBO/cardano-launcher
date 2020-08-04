@@ -26,34 +26,31 @@ export interface CardanoNetwork {
    */
   topologyFile: FilePath;
   /**
-   * Path to the genesis file in JSON format.
-   * This is required for testnet but not mainnet.
+   * Path to the Byron genesis file in JSON format.
+   * This is required for testnet and staging but not mainnet.
    * It is used to configure the parameters of cardano-wallet.
-   * It should match the genesis file configured in the cardano-node YAML file.
+   * It should match the ByronGenesisFile configured in the cardano-node YAML file.
+   * Note that the Byron-era genesis file is always required,
+   * even if currently in Shelley era.
    */
   genesisFile?: FilePath;
 }
 
 /** Predefined networks. */
 export const networks: { [propName: string]: CardanoNetwork } = {
-  ff: {
-    configFile: 'configuration.json',
-    topologyFile: 'topology.json',
-    genesisFile: 'genesis.json',
-  },
   mainnet: {
-    configFile: 'configuration.yaml',
+    configFile: 'configuration.json',
     topologyFile: 'topology.json',
   },
   testnet: {
     configFile: 'configuration.json',
     topologyFile: 'topology.json',
-    genesisFile: 'genesis.json',
+    genesisFile: 'genesis-byron.json',
   },
   staging: {
     configFile: 'configuration.json',
     topologyFile: 'topology.json',
-    genesisFile: 'genesis.json',
+    genesisFile: 'genesis-byron.json',
   },
 };
 
