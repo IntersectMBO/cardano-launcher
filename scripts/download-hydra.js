@@ -19,7 +19,7 @@ function makeHydraApi(hydraURL) {
 
 function makeGitHubApi() {
   const api = axios.create({
-    baseURL: "http://api.github.com/",
+    baseURL: "https://api.github.com/",
     headers: { "Content-Type": "application/json" },
   });
   api.interceptors.request.use(request => {
@@ -56,13 +56,33 @@ function findCardanoWalletEval(api, job, rev) {
   return loadEval(api, "Cardano", "cardano-wallet", job, rev);
 }
 
-async function findEvalFromGitHub(hydra, github, owner, repo, ref)  {
-  const r = await github.get(`repos/${owner}/${repo}/commits/${ref}/statuses`);
+function sleep(ms = 0) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+async function findEvalFromGitHub(hydra, github, owner, repo, ref, page) {
+  const q = page ? ("?page=" + page) : "";
+  const r = await github.get(`repos/${owner}/${repo}/commits/${ref}/statuses${q}`);
 
   const status = _.find(r.data, { context: "ci/hydra-eval" });
 
-  const eval = await hydra.get(status.target_url, { headers: { "Content-Type": "application/json" } });
-  return eval.data;
+  if (status) {
+    if (status.state === "success") {
+      const eval = await hydra.get(status.target_url);
+      return eval.data;
+    } else if (status.state === "pending") {
+       console.log("Eval is pending - trying again...");
+       await sleep(1000);
+       return await findEvalFromGitHub(hydra, github, owner, repo, ref);
+    } else {
+      console.error("Can't get eval - it was not successful.");
+      return null;
+    }
+  } else {
+    const next = (page || 0) + 1;
+    console.log(`Eval not found - trying page ${next}`);
+    return await findEvalFromGitHub(hydra, github, owner, repo, ref, next);
+  }
 }
 
 async function findBuildsInEval(api, eval, jobs) {
