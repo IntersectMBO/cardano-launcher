@@ -1,14 +1,14 @@
 {
     "cardano-wallet": {
-        "branch": "rvl/adp-289/bench-restore-ff",
+        "branch": "master",
         "description": "Official Wallet Backend & API for Cardano decentralized",
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "cardano-wallet",
-        "rev": "a307242736f964f3a793941ae45616b2e4aa1e96",
-        "sha256": "00h4pq8d7zbhdwyhiz40qz9qpv954k3kkjfb0vm5sad0gpnjr5ba",
+        "rev": "c93a28de4e4385da0b72ee989060f3dae71ee354",
+        "sha256": "1lf132by2hbjr5a8iamw5m8xcyqszcjvqbnh1na1m52chvx7145n",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-wallet/archive/a307242736f964f3a793941ae45616b2e4aa1e96.tar.gz",
+        "url": "https://github.com/input-output-hk/cardano-wallet/archive/c93a28de4e4385da0b72ee989060f3dae71ee354.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "iohk-nix": {
