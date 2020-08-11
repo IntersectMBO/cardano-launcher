@@ -91,6 +91,9 @@
 				<a href="#local-development" id="local-development" style="color: inherit; text-decoration: none;">
 					<h2>Local Development</h2>
 				</a>
+				<pre><code>nix-<span class="hljs-keyword">shell</span></code></pre><p>This runs a bash shell with project development dependencies
+					(e.g. <code>npm</code>, <code>cardano-wallet</code>) in the <code>PATH</code>. See <a href="https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md">nix.md</a>
+				for information on how to set up Nix.</p>
 				<a href="#build-the-code" id="build-the-code" style="color: inherit; text-decoration: none;">
 					<h3>Build the code</h3>
 				</a>
@@ -117,13 +120,6 @@
 				</a>
 				<p>Generates API documentation to the <code>site</code> folder.</p>
 				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> typedoc</span></code></pre>
-				<a href="#development-environment" id="development-environment" style="color: inherit; text-decoration: none;">
-					<h3>Development environment</h3>
-				</a>
-				<p>This runs a bash shell with project development dependencies
-				(e.g. <code>npm</code>, <code>cardano-wallet</code>) in the <code>PATH</code>.</p>
-				<pre><code>nix-<span class="hljs-keyword">shell</span></code></pre><p>See <a href="https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md">nix.md</a>
-				for information on how to set up Nix.</p>
 				<a href="#updating-cardano-wallet-version" id="updating-cardano-wallet-version" style="color: inherit; text-decoration: none;">
 					<h3>Updating cardano-wallet version</h3>
 				</a>
@@ -164,10 +160,13 @@
 npm run build
 <span class="hljs-meta">
 #</span><span class="bash"> cardano-node mainnet</span>
-./bin/cardano-launcher byron mainnet $BYRON_CONFIGS ./state-launcher
+./bin/cardano-launcher shelley mainnet $CARDANO_NODE_CONFIGS/mainnet ./state-mainnet
+<span class="hljs-meta">
+#</span><span class="bash"> cardano-node testnet</span>
+./bin/cardano-launcher shelley testnet $CARDANO_NODE_CONFIGS/testnet ./state-testnet
 <span class="hljs-meta">
 #</span><span class="bash"> Jormungandr self-node</span>
-./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-launcher</code></pre>
+./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-jormungandr</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -177,10 +176,13 @@ npm run build
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_byron_.html">&quot;byron&quot;</a>
+						<a href="modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+						<a href="modules/_cardanonode_.html">&quot;cardano<wbr>Node&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_cardanowallet_.html">&quot;cardano<wbr>Wallet&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_cli_.html">&quot;cli&quot;</a>
@@ -201,7 +203,7 @@ npm run build
 						<a href="modules/_service_.html">&quot;service&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_shelley_.html">&quot;shelley&quot;</a>
+						<a href="modules/_tls_.html">&quot;tls&quot;</a>
 					</li>
 				</ul>
 			</nav>

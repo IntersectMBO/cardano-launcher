@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ByronNodeConfig | cardano-launcher</title>
+	<title>CardanoNetwork | cardano-launcher</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_byron_.html">&quot;byron&quot;</a>
+					<a href="../modules/_cardanonode_.html">&quot;cardanoNode&quot;</a>
 				</li>
 				<li>
-					<a href="_byron_.byronnodeconfig.html">ByronNodeConfig</a>
+					<a href="_cardanonode_.cardanonetwork.html">CardanoNetwork</a>
 				</li>
 			</ul>
-			<h1>Interface ByronNodeConfig</h1>
+			<h1>Interface CardanoNetwork</h1>
 		</div>
 	</div>
 </header>
@@ -70,8 +70,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Configuration parameters for starting the rewritten version of
-						cardano-node (Byron).</p>
+						<p>Definition of a <code>cardano-node</code> network.</p>
 					</div>
 				</div>
 			</section>
@@ -79,7 +78,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ByronNodeConfig</span>
+						<span class="target">CardanoNetwork</span>
 					</li>
 				</ul>
 			</section>
@@ -90,12 +89,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeconfig.html#configurationdir" class="tsd-kind-icon">configuration<wbr>Dir</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeconfig.html#delegationcertificate" class="tsd-kind-icon">delegation<wbr>Certificate</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeconfig.html#kind" class="tsd-kind-icon">kind</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeconfig.html#network" class="tsd-kind-icon">network</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeconfig.html#signingkey" class="tsd-kind-icon">signing<wbr>Key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_byron_.byronnodeconfig.html#socketfile" class="tsd-kind-icon">socket<wbr>File</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonetwork.html#configfile" class="tsd-kind-icon">config<wbr>File</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonetwork.html#genesisfile" class="tsd-kind-icon">genesis<wbr>File</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonetwork.html#topologyfile" class="tsd-kind-icon">topology<wbr>File</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,90 +100,52 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="configurationdir" class="tsd-anchor"></a>
-					<h3>configuration<wbr>Dir</h3>
-					<div class="tsd-signature tsd-kind-icon">configuration<wbr>Dir<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a></div>
+					<a name="configfile" class="tsd-anchor"></a>
+					<h3>config<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">config<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L53">src/byron.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L23">src/cardanoNode.ts:23</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Directory containing configurations for all networks.</p>
+							<p>The YAML configuration file for cardano-node.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="delegationcertificate" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> delegation<wbr>Certificate</h3>
-					<div class="tsd-signature tsd-kind-icon">delegation<wbr>Certificate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="genesisfile" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> genesis<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">genesis<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L59">src/byron.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L36">src/cardanoNode.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Path to the delegation certificate. The delegation certificate allows the delegator
-								(the issuer of said certificate) to give his/her own block signing rights to somebody
-							else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.</p>
+							<p>Path to the Byron genesis file in JSON format.
+								This is required for testnet and staging but not mainnet.
+								It is used to configure the parameters of cardano-wallet.
+								It should match the ByronGenesisFile configured in the cardano-node YAML file.
+								Note that the Byron-era genesis file is always required,
+							even if currently in Shelley era.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="kind" class="tsd-anchor"></a>
-					<h3>kind</h3>
-					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"byron"</span></div>
+					<a name="topologyfile" class="tsd-anchor"></a>
+					<h3>topology<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">topology<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L50">src/byron.ts:50</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="network" class="tsd-anchor"></a>
-					<h3>network</h3>
-					<div class="tsd-signature tsd-kind-icon">network<span class="tsd-signature-symbol">:</span> <a href="_byron_.byronnetwork.html" class="tsd-signature-type">ByronNetwork</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L62">src/byron.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L27">src/cardanoNode.ts:27</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Network parameters</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="signingkey" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> signing<wbr>Key</h3>
-					<div class="tsd-signature tsd-kind-icon">signing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L65">src/byron.ts:65</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Path to the signing key.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="socketfile" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> socket<wbr>File</h3>
-					<div class="tsd-signature tsd-kind-icon">socket<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/byron.ts#L71">src/byron.ts:71</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Filename for the socket to use for communicating with the
-							node. Optional -- will be set automatically if not provided.</p>
+							<p>Network topology data to pass to cardano-node.</p>
 						</div>
 					</div>
 				</section>
@@ -199,11 +157,14 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/_byron_.html">&quot;byron&quot;</a>
-					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_cardanonode_.html">&quot;cardano<wbr>Node&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_cardanowallet_.html">&quot;cardano<wbr>Wallet&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_cli_.html">&quot;cli&quot;</a>
@@ -224,53 +185,50 @@
 						<a href="../modules/_service_.html">&quot;service&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_shelley_.html">&quot;shelley&quot;</a>
+						<a href="../modules/_tls_.html">&quot;tls&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_byron_.byronnetwork.html" class="tsd-kind-icon">Byron<wbr>Network</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_byron_.byronnodeargs.html" class="tsd-kind-icon">Byron<wbr>Node<wbr>Args</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_byron_.byronnodeconfig.html" class="tsd-kind-icon">Byron<wbr>Node<wbr>Config</a>
+						<a href="_cardanonode_.cardanonetwork.html" class="tsd-kind-icon">Cardano<wbr>Network</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeconfig.html#configurationdir" class="tsd-kind-icon">configuration<wbr>Dir</a>
+								<a href="_cardanonode_.cardanonetwork.html#configfile" class="tsd-kind-icon">config<wbr>File</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeconfig.html#delegationcertificate" class="tsd-kind-icon">delegation<wbr>Certificate</a>
+								<a href="_cardanonode_.cardanonetwork.html#genesisfile" class="tsd-kind-icon">genesis<wbr>File</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeconfig.html#kind" class="tsd-kind-icon">kind</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeconfig.html#network" class="tsd-kind-icon">network</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeconfig.html#signingkey" class="tsd-kind-icon">signing<wbr>Key</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_byron_.byronnodeconfig.html#socketfile" class="tsd-kind-icon">socket<wbr>File</a>
+								<a href="_cardanonode_.cardanonetwork.html#topologyfile" class="tsd-kind-icon">topology<wbr>File</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_cardanonode_.cardanonodeargs.html" class="tsd-kind-icon">Cardano<wbr>Node<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_cardanonode_.cardanonodeconfig.html" class="tsd-kind-icon">Cardano<wbr>Node<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanonode_.html#pipecounter" class="tsd-kind-icon">pipe<wbr>Counter</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_byron_.html#makeargs" class="tsd-kind-icon">make<wbr>Args</a>
+						<a href="../modules/_cardanonode_.html#makeargs" class="tsd-kind-icon">make<wbr>Args</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_byron_.html#startbyronnode" class="tsd-kind-icon">start<wbr>Byron<wbr>Node</a>
+						<a href="../modules/_cardanonode_.html#startcardanonode" class="tsd-kind-icon">start<wbr>Cardano<wbr>Node</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanonode_.html#windowspipename" class="tsd-kind-icon">windows<wbr>Pipe<wbr>Name</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module">
-						<a href="../modules/_byron_.html#networks" class="tsd-kind-icon">networks</a>
+						<a href="../modules/_cardanonode_.html#networks" class="tsd-kind-icon">networks</a>
 					</li>
 				</ul>
 			</nav>

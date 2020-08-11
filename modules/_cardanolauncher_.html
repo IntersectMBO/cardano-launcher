@@ -79,6 +79,7 @@
 						<section class="tsd-index-section ">
 							<h3>References</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-reference tsd-parent-kind-external-module"><a href="_cardanolauncher_.html#launchconfig" class="tsd-kind-icon">Launch<wbr>Config</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-external-module"><a href="_cardanolauncher_.html#service" class="tsd-kind-icon">Service</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-external-module"><a href="_cardanolauncher_.html#serviceexitstatus" class="tsd-kind-icon">Service<wbr>Exit<wbr>Status</a></li>
 								<li class="tsd-kind-reference tsd-parent-kind-external-module"><a href="_cardanolauncher_.html#servicestatus" class="tsd-kind-icon">Service<wbr>Status</a></li>
@@ -98,10 +99,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_cardanolauncher_.api.html" class="tsd-kind-icon">Api</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_cardanolauncher_.exitstatus.html" class="tsd-kind-icon">Exit<wbr>Status</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_cardanolauncher_.requestparams.html" class="tsd-kind-icon">Request<wbr>Params</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_cardanolauncher_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-kind-icon">Wallet<wbr>Start<wbr>Service</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
@@ -120,6 +119,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_cardanolauncher_.html#exitstatusmessage" class="tsd-kind-icon">exit<wbr>Status<wbr>Message</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_cardanolauncher_.html#noop" class="tsd-kind-icon">noop</a></li>
 							</ul>
 						</section>
 					</div>
@@ -127,6 +127,11 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>References</h2>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-external-module">
+					<a name="launchconfig" class="tsd-anchor"></a>
+					<h3>Launch<wbr>Config</h3>
+					Re-exports <a href="../interfaces/_cardanowallet_.launchconfig.html">LaunchConfig</a>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-external-module">
 					<a name="service" class="tsd-anchor"></a>
 					<h3>Service</h3>
@@ -156,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">Wallet<wbr>Backend<wbr>Events<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>exit<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>status<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanolauncher_.exitstatus.html" class="tsd-signature-type">ExitStatus</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>ready<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanolauncher_.api.html" class="tsd-signature-type">Api</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L540">src/cardanoLauncher.ts:540</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoLauncher.ts#L436">src/cardanoLauncher.ts:436</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -174,7 +179,7 @@
 					<div class="tsd-signature tsd-kind-icon">Signals<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L41">src/cardanoLauncher.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoLauncher.ts#L41">src/cardanoLauncher.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/67eb26b/src/cardanoLauncher.ts#L107">src/cardanoLauncher.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoLauncher.ts#L109">src/cardanoLauncher.ts:109</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -209,6 +214,23 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="noop" class="tsd-anchor"></a>
+					<h3>noop</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">noop<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoLauncher.ts#L126">src/cardanoLauncher.ts:126</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -217,11 +239,14 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_byron_.html">&quot;byron&quot;</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_cardanonode_.html">&quot;cardano<wbr>Node&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_cardanowallet_.html">&quot;cardano<wbr>Wallet&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="_cli_.html">&quot;cli&quot;</a>
@@ -242,12 +267,15 @@
 						<a href="_service_.html">&quot;service&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_shelley_.html">&quot;shelley&quot;</a>
+						<a href="_tls_.html">&quot;tls&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
+						<a href="_cardanolauncher_.html#launchconfig" class="tsd-kind-icon">Launch<wbr>Config</a>
+					</li>
 					<li class=" tsd-kind-reference tsd-parent-kind-external-module">
 						<a href="_cardanolauncher_.html#service" class="tsd-kind-icon">Service</a>
 					</li>
@@ -275,17 +303,11 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_cardanolauncher_.exitstatus.html" class="tsd-kind-icon">Exit<wbr>Status</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_cardanolauncher_.launchconfig.html" class="tsd-kind-icon">Launch<wbr>Config</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_cardanolauncher_.requestparams.html" class="tsd-kind-icon">Request<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_cardanolauncher_.walletbackend.html" class="tsd-kind-icon">Wallet<wbr>Backend</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_cardanolauncher_.walletstartservice.html" class="tsd-kind-icon">Wallet<wbr>Start<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_cardanolauncher_.html#walletbackendevents" class="tsd-kind-icon">Wallet<wbr>Backend<wbr>Events</a>
@@ -295,6 +317,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_cardanolauncher_.html#exitstatusmessage" class="tsd-kind-icon">exit<wbr>Status<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_cardanolauncher_.html#noop" class="tsd-kind-icon">noop</a>
 					</li>
 				</ul>
 			</nav>

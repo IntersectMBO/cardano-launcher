@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>StartService | cardano-launcher</title>
+	<title>CardanoNodeConfig | cardano-launcher</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,13 +54,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_service_.html">&quot;service&quot;</a>
+					<a href="../modules/_cardanonode_.html">&quot;cardanoNode&quot;</a>
 				</li>
 				<li>
-					<a href="_service_.startservice.html">StartService</a>
+					<a href="_cardanonode_.cardanonodeconfig.html">CardanoNodeConfig</a>
 				</li>
 			</ul>
-			<h1>Interface StartService</h1>
+			<h1>Interface CardanoNodeConfig</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Describes the command to run for the service.</p>
+						<p>Configuration parameters for starting cardano-node.</p>
 					</div>
 				</div>
 			</section>
@@ -78,12 +78,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">StartService</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="_cardanowallet_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a>
-							</li>
-						</ul>
+						<span class="target">CardanoNodeConfig</span>
 					</li>
 				</ul>
 			</section>
@@ -94,11 +89,15 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#args" class="tsd-kind-icon">args</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#command" class="tsd-kind-icon">command</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#cwd" class="tsd-kind-icon">cwd</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#extraenv" class="tsd-kind-icon">extra<wbr>Env</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_service_.startservice.html#shutdownmethod" class="tsd-kind-icon">shutdown<wbr>Method</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#configurationdir" class="tsd-kind-icon">configuration<wbr>Dir</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#delegationcertificate" class="tsd-kind-icon">delegation<wbr>Certificate</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#keskey" class="tsd-kind-icon">kes<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#kind" class="tsd-kind-icon">kind</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#network" class="tsd-kind-icon">network</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#operationalcertificate" class="tsd-kind-icon">operational<wbr>Certificate</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#signingkey" class="tsd-kind-icon">signing<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#socketfile" class="tsd-kind-icon">socket<wbr>File</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cardanonode_.cardanonodeconfig.html#vrfkey" class="tsd-kind-icon">vrf<wbr>Key</a></li>
 							</ul>
 						</section>
 					</div>
@@ -107,78 +106,135 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="args" class="tsd-anchor"></a>
-					<h3>args</h3>
-					<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="configurationdir" class="tsd-anchor"></a>
+					<h3>configuration<wbr>Dir</h3>
+					<div class="tsd-signature tsd-kind-icon">configuration<wbr>Dir<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#dirpath" class="tsd-signature-type">DirPath</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/service.ts#L395">src/service.ts:395</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L118">src/cardanoNode.ts:118</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Command-line arguments.</p>
+							<p>Directory containing configurations for all networks.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="command" class="tsd-anchor"></a>
-					<h3>command</h3>
-					<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="delegationcertificate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> delegation<wbr>Certificate</h3>
+					<div class="tsd-signature tsd-kind-icon">delegation<wbr>Certificate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/service.ts#L393">src/service.ts:393</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L124">src/cardanoNode.ts:124</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Program name. Will be searched for in <code>PATH</code>.</p>
+							<p>Path to the delegation certificate. The delegation certificate allows the delegator
+								(the issuer of said certificate) to give his/her own block signing rights to somebody
+							else (the delegatee). The delegatee can then sign blocks on behalf of the delegator.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="cwd" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> cwd</h3>
-					<div class="tsd-signature tsd-kind-icon">cwd<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="keskey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> kes<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">kes<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/service.ts#L397">src/service.ts:397</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L130">src/cardanoNode.ts:130</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Directory to start program in. Helpful if it outputs files.</p>
+							<p>Path to the KES signing key.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="extraenv" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> extra<wbr>Env</h3>
-					<div class="tsd-signature tsd-kind-icon">extra<wbr>Env<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<a name="kind" class="tsd-anchor"></a>
+					<h3>kind</h3>
+					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"byron"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"shelley"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/service.ts#L399">src/service.ts:399</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L115">src/cardanoNode.ts:115</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="network" class="tsd-anchor"></a>
+					<h3>network</h3>
+					<div class="tsd-signature tsd-kind-icon">network<span class="tsd-signature-symbol">:</span> <a href="_cardanonode_.cardanonetwork.html" class="tsd-signature-type">CardanoNetwork</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L127">src/cardanoNode.ts:127</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Additional environment variables to set, on top of the current process environment.</p>
+							<p>Network parameters</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="shutdownmethod" class="tsd-anchor"></a>
-					<h3>shutdown<wbr>Method</h3>
-					<div class="tsd-signature tsd-kind-icon">shutdown<wbr>Method<span class="tsd-signature-symbol">:</span> <a href="../enums/_service_.shutdownmethod.html" class="tsd-signature-type">ShutdownMethod</a></div>
+					<a name="operationalcertificate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> operational<wbr>Certificate</h3>
+					<div class="tsd-signature tsd-kind-icon">operational<wbr>Certificate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/service.ts#L404">src/service.ts:404</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L136">src/cardanoNode.ts:136</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Whether this service supports the clean shutdown method documented in
-							<code>docs/windows-clean-shutdown.md</code>.</p>
+							<p>Path to the delegation certificate</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="signingkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> signing<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">signing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L139">src/cardanoNode.ts:139</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Path to the signing key.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="socketfile" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> socket<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">socket<wbr>File<span class="tsd-signature-symbol">:</span> <a href="../modules/_common_.html#filepath" class="tsd-signature-type">FilePath</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L145">src/cardanoNode.ts:145</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Filename for the socket to use for communicating with the
+							node. Optional -- will be set automatically if not provided.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="vrfkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> vrf<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">vrf<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/2f679f8/src/cardanoNode.ts#L133">src/cardanoNode.ts:133</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Path to the VRF signing key.</p>
 						</div>
 					</div>
 				</section>
@@ -193,7 +249,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_cardanonode_.html">&quot;cardano<wbr>Node&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -214,7 +270,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_logging_.html">&quot;logging&quot;</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_service_.html">&quot;service&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -224,56 +280,62 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_service_.servicestatus.html" class="tsd-kind-icon">Service<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_service_.shutdownmethod.html" class="tsd-kind-icon">Shutdown<wbr>Method</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_cardanonode_.cardanonetwork.html" class="tsd-kind-icon">Cardano<wbr>Network</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_service_.service.html" class="tsd-kind-icon">Service</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_service_.serviceexitstatus.html" class="tsd-kind-icon">Service<wbr>Exit<wbr>Status</a>
+						<a href="_cardanonode_.cardanonodeargs.html" class="tsd-kind-icon">Cardano<wbr>Node<wbr>Args</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_service_.startservice.html" class="tsd-kind-icon">Start<wbr>Service</a>
+						<a href="_cardanonode_.cardanonodeconfig.html" class="tsd-kind-icon">Cardano<wbr>Node<wbr>Config</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.startservice.html#args" class="tsd-kind-icon">args</a>
+								<a href="_cardanonode_.cardanonodeconfig.html#configurationdir" class="tsd-kind-icon">configuration<wbr>Dir</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.startservice.html#command" class="tsd-kind-icon">command</a>
+								<a href="_cardanonode_.cardanonodeconfig.html#delegationcertificate" class="tsd-kind-icon">delegation<wbr>Certificate</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.startservice.html#cwd" class="tsd-kind-icon">cwd</a>
+								<a href="_cardanonode_.cardanonodeconfig.html#keskey" class="tsd-kind-icon">kes<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.startservice.html#extraenv" class="tsd-kind-icon">extra<wbr>Env</a>
+								<a href="_cardanonode_.cardanonodeconfig.html#kind" class="tsd-kind-icon">kind</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_service_.startservice.html#shutdownmethod" class="tsd-kind-icon">shutdown<wbr>Method</a>
+								<a href="_cardanonode_.cardanonodeconfig.html#network" class="tsd-kind-icon">network</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_cardanonode_.cardanonodeconfig.html#operationalcertificate" class="tsd-kind-icon">operational<wbr>Certificate</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_cardanonode_.cardanonodeconfig.html#signingkey" class="tsd-kind-icon">signing<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_cardanonode_.cardanonodeconfig.html#socketfile" class="tsd-kind-icon">socket<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_cardanonode_.cardanonodeconfig.html#vrfkey" class="tsd-kind-icon">vrf<wbr>Key</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_service_.html#pid" class="tsd-kind-icon">Pid</a>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanonode_.html#pipecounter" class="tsd-kind-icon">pipe<wbr>Counter</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_service_.html#serviceevents" class="tsd-kind-icon">Service<wbr>Events</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
-						<a href="../modules/_service_.html#cleanshutdownfd" class="tsd-kind-icon">clean<wbr>ShutdownFD</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanonode_.html#makeargs" class="tsd-kind-icon">make<wbr>Args</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_service_.html#serviceexitstatusmessage" class="tsd-kind-icon">service<wbr>Exit<wbr>Status<wbr>Message</a>
+						<a href="../modules/_cardanonode_.html#startcardanonode" class="tsd-kind-icon">start<wbr>Cardano<wbr>Node</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_service_.html#setupservice" class="tsd-kind-icon">setup<wbr>Service</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_cardanonode_.html#windowspipename" class="tsd-kind-icon">windows<wbr>Pipe<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module">
+						<a href="../modules/_cardanonode_.html#networks" class="tsd-kind-icon">networks</a>
 					</li>
 				</ul>
 			</nav>
