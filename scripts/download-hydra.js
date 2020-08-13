@@ -157,7 +157,7 @@ async function download(sourceName, downloads) {
 }
 
 download("cardano-wallet", [{
-  job: "cardano-wallet-shelley-win64",
+  job: "cardano-wallet-win64",
   buildProducts: [1, 3]
 }, {
   job: "cardano-wallet-jormungandr-win64",

@@ -139,7 +139,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
   // eslint-disable-next-line jest/expect-expect
   it(
-    'cardano-wallet-shelley responds to requests',
+    'cardano-wallet responds to requests',
     () =>
       launcherTest(stateDir => {
         return {
@@ -260,7 +260,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
   // eslint-disable-next-line jest/expect-expect
   it(
-    'can configure the cardano-wallet-shelley to serve the API with TLS',
+    'can configure the cardano-wallet to serve the API with TLS',
     async () =>
       launcherTest(stateDir => {
         return {

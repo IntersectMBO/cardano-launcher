@@ -121,8 +121,10 @@ export async function startCardanoWallet(
   config: LaunchConfig
 ): Promise<WalletStartService> {
   const apiPort = config.apiPort || (await getPort());
+  const commandSuffix =
+    config.nodeConfig.kind === 'shelley' ? '' : '-' + config.nodeConfig.kind;
   const base: WalletStartService = {
-    command: `cardano-wallet-${config.nodeConfig.kind}`,
+    command: 'cardano-wallet' + commandSuffix,
     args: [
       'serve',
       '--shutdown-handler',
