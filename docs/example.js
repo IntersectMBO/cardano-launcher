@@ -1,5 +1,4 @@
 // Example of launching the wallet for mainnet.
-// (Byron rewrite of cardano-node)
 
 var cardanoLauncher = require("cardanoLauncher");
 
@@ -7,12 +6,7 @@ var launcher = new cardanoLauncher.Launcher({
   networkName: "mainnet",
   stateDir: "/tmp/state-launcher",
   nodeConfig: {
-    kind: "byron",
-    configurationDir: "/home/rodney/iohk/cardano-node/configuration/defaults/mainnet",
-    network: {
-      configFile: "configuration.yaml",
-      topologyFile: "topology.json"
-    }
+    kind: "shelley"
   }
 });
 
