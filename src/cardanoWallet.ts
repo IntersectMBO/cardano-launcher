@@ -81,7 +81,6 @@ export interface LaunchConfig {
 
   /**
    * Configuration for starting `cardano-node`. The `kind` property will be one of
-   *  * `"byron"` - [[ByronNodeConfig]]
    *  * `"shelley"` - [[ShelleyNodeConfig]]
    *  * `"jormungandr"` - [[JormungandrConfig]]
    */
