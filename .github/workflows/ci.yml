@@ -18,11 +18,11 @@ jobs:
         run: |
           node scripts\download-hydra.js
           Get-ChildItem
-          Expand-Archive -Force -Path "cardano-wallet-jormungandr-*-win64.zip" -DestinationPath .
-          Expand-Archive -Force -Path "cardano-wallet-shelley-*-win64.zip" -DestinationPath .
-          Expand-Archive -Force -Path "cardano-wallet-shelley-*-deployments.zip" -DestinationPath shelley_deployments
+          Expand-Archive -Force -Path "cardano-wallet-jormungandr-20*-win64.zip" -DestinationPath .
+          Expand-Archive -Force -Path "cardano-wallet-20*-win64.zip" -DestinationPath .
+          Expand-Archive -Force -Path "cardano-wallet-*-deployments.zip" -DestinationPath deployments
           Get-ChildItem
-          echo "::set-env name=CARDANO_NODE_CONFIGS::$Env:GITHUB_WORKSPACE\shelley_deployments"
+          echo "::set-env name=CARDANO_NODE_CONFIGS::$Env:GITHUB_WORKSPACE\deployments"
       - run: npm test unit
       - run: npm test integration
       - run: npm test cli

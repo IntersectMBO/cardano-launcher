@@ -16,7 +16,7 @@ mkShell {
     cardanoWalletPackages.cardano-wallet-jormungandr
     # cardano-node
     cardano-node
-    cardanoWalletPackages.cardano-wallet-shelley
+    cardanoWalletPackages.cardano-wallet
   ];
 
   # Test data from cardano-wallet repo used in their integration tests.
