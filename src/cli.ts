@@ -24,7 +24,7 @@ import * as jormungandr from './jormungandr';
 
 function usage(): void {
   console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR');
-  console.log('  BACKEND    - either jormungandr, byron, or shelley');
+  console.log('  BACKEND    - either jormungandr or shelley');
   console.log(
     '  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1'
   );
@@ -80,7 +80,7 @@ export function cli(argv: Process['argv']): void {
 
   let nodeConfig: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  if (backend === 'byron' || backend === 'shelley') {
+  if (backend === 'shelley') {
     if (!(networkName in cardanoNode.networks)) {
       console.error(`unknown network: ${networkName}`);
       process.exit(2);

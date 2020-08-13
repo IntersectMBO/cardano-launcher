@@ -394,12 +394,6 @@ export class Launcher {
     switch (config.nodeConfig.kind) {
       case 'jormungandr':
         return jormungandr.startJormungandr(baseDir, config.nodeConfig);
-      case 'byron':
-        return cardanoNode.startCardanoNode(
-          baseDir,
-          config.nodeConfig,
-          config.networkName
-        );
       case 'shelley':
         return cardanoNode.startCardanoNode(
           baseDir,

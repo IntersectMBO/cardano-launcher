@@ -112,9 +112,12 @@ export interface CardanoNodeArgs {
  * Configuration parameters for starting cardano-node.
  */
 export interface CardanoNodeConfig {
-  kind: 'byron' | 'shelley';
+  kind: 'shelley';
 
-  /** Directory containing configurations for all networks. */
+  /** Directory containing configurations for all networks.
+   * Defaults to the using the `$CARDANO_NODE_CONFIGS`
+   * environment variable if not supplied.
+   */
   configurationDir: DirPath;
 
   /** Path to the delegation certificate. The delegation certificate allows the delegator
@@ -123,7 +126,7 @@ export interface CardanoNodeConfig {
    * */
   delegationCertificate?: string;
 
-  /** Network parameters */
+  /** Network parameters. */
   network: CardanoNetwork;
 
   /** Path to the KES signing key. */
@@ -174,6 +177,7 @@ function makeArgs(
   networkName: string,
   listenPort: number
 ): CardanoNodeArgs {
+  // Set default value for socketFile, and update config.
   let socketFile = config.socketFile;
   if (!socketFile) {
     if (process.platform === 'win32') {
@@ -183,6 +187,27 @@ function makeArgs(
       config.socketFile = path.join(stateDir, socketFile);
     }
   }
+
+  // Update config with predefined network if none provided.
+  if (!config.network) {
+    if (networks[networkName]) {
+      config.network = networks[networkName];
+    } else {
+      throw new Error(
+        `CardanoNodeConfig does not have a network defined, and ${networkName} is not a recognised network name.`
+      );
+    }
+  }
+
+  // Use $CARDANO_NODE_CONFIGS/networkName if no configuration
+  // directory provided.
+  if (!config.configurationDir) {
+    const def = process.env.CARDANO_NODE_CONFIGS;
+    if (def) {
+      config.configurationDir = path.join(def as string, networkName);
+    }
+  }
+
   return {
     socketFile,
     topologyFile: path.join(
