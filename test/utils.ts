@@ -10,7 +10,7 @@ import { Service, ServiceStatus, Api } from '../src';
 import { StartService, ShutdownMethod } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
 import { ServerOptions } from 'http';
-import { ServerOptions as HttpsServerOptions } from 'https';
+import { ServerOptions as HttpsServerOptions, RequestOptions } from 'https';
 
 /*******************************************************************************
  * Utils
@@ -90,7 +90,7 @@ export function makeRequest(
   api: Api,
   path: string,
   options?: ServerOptions | HttpsServerOptions
-): unknown {
+): RequestOptions {
   return Object.assign(
     {},
     api.requestParams,
