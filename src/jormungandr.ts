@@ -24,7 +24,6 @@ import { FilePath, DirPath } from './common';
  *
  */
 export const networks: { [propName: string]: JormungandrNetwork } = {
-  // eslint-disable-next-line @typescript-eslint/camelcase
   itn_rewards_v1: {
     configFile: 'itn_rewards_v1-config.yaml',
     genesisBlock: {

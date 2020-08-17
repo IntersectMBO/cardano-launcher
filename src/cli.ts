@@ -51,7 +51,7 @@ function combineStatus(statuses: ServiceExitStatus[]): number {
   return code === null ? (signal === null ? 0 : 127) : code;
 }
 
-function sendMaybe(message: object): void {
+function sendMaybe(message: Record<string, unknown>): void {
   if (process.send) {
     process.send(message);
   }
