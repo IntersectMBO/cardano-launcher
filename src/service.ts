@@ -9,7 +9,7 @@
  * @packageDocumentation
  */
 
-import { spawn, ChildProcess } from 'child_process';
+import { spawn, ChildProcess, StdioOptions } from 'child_process';
 import { WriteStream } from 'fs';
 import { Writable } from 'stream';
 import _ from 'lodash';
@@ -218,7 +218,9 @@ export function setupService(
       cfg.shutdownMethod === ShutdownMethod.CloseStdin ? 'pipe' : 'ignore',
       stdOuts,
       stdOuts,
-    ].concat(cfg.shutdownMethod === ShutdownMethod.CloseFD ? ['pipe'] : []);
+    ].concat(
+      cfg.shutdownMethod === ShutdownMethod.CloseFD ? ['pipe'] : []
+    ) as StdioOptions;
     const cwd = cfg.cwd ? { cwd: cfg.cwd } : {};
     const env = cfg.extraEnv
       ? Object.assign({}, process.env, cfg.extraEnv)

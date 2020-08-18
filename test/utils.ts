@@ -10,7 +10,7 @@ import { Service, ServiceStatus, Api } from '../src';
 import { StartService, ShutdownMethod } from '../src/service';
 import { Logger, LogFunc } from '../src/logging';
 import { ServerOptions } from 'http';
-import { ServerOptions as HttpsServerOptions } from 'https';
+import { ServerOptions as HttpsServerOptions, RequestOptions } from 'https';
 
 /*******************************************************************************
  * Utils
@@ -44,7 +44,7 @@ export const collectEvents = (service: Service): ServiceStatus[] => {
 export interface MockLog {
   severity: 'debug' | 'info' | 'error';
   msg: string;
-  param: object | undefined;
+  param: unknown;
 }
 
 export interface MockLogger extends Logger {
@@ -55,7 +55,7 @@ export function mockLogger(echo = false): MockLogger {
   const logs: MockLog[] = [];
 
   const mockLog = (severity: 'debug' | 'info' | 'error'): LogFunc => {
-    return (msg: string, param?: object): void => {
+    return (msg: string, param?: unknown): void => {
       if (echo) {
         if (param) {
           console[severity](msg, param);
@@ -90,7 +90,7 @@ export function makeRequest(
   api: Api,
   path: string,
   options?: ServerOptions | HttpsServerOptions
-): object {
+): RequestOptions {
   return Object.assign(
     {},
     api.requestParams,
