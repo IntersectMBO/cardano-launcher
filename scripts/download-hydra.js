@@ -4,12 +4,13 @@
 const axios = require('axios');
 const _ = require('lodash');
 const fs = require('fs');
+const path = require('path');
 
-function makeHydraApi(hydraURL) {
-  const api = axios.create({
+function makeHydraApi(hydraURL, options = {}) {
+  const api = axios.create(_.merge({
     baseURL: hydraURL,
     headers: { "Content-Type": "application/json" },
-  });
+  }, options));
   api.interceptors.request.use(request => {
     console.debug("Hydra " + request.url);
     return request;
@@ -17,24 +18,16 @@ function makeHydraApi(hydraURL) {
   return api;
 }
 
-function makeGitHubApi() {
-  const api = axios.create({
+function makeGitHubApi(options = {}) {
+  const api = axios.create(_.merge({
     baseURL: "https://api.github.com/",
     headers: { "Content-Type": "application/json" },
-  });
+  }, options));
   api.interceptors.request.use(request => {
     console.debug(`${request.method} ${request.baseURL}${request.url}`);
     return request;
   });
   return api;
-}
-
-async function loadEval(api, project, jobset, job, rev) {
-  const eval = await findEvalByCommit(api, project, jobset, rev);
-
-  console.log(eval);
-
-  return eval;
 }
 
 async function findEvalByCommit(api, project, jobset, rev, page)  {
@@ -52,12 +45,8 @@ async function findEvalByCommit(api, project, jobset, rev, page)  {
   }
 }
 
-function findCardanoWalletEval(api, job, rev) {
-  return loadEval(api, "Cardano", "cardano-wallet", job, rev);
-}
-
-function sleep(ms = 0) {
-  return new Promise(r => setTimeout(r, ms));
+function findCardanoWalletEval(api, rev) {
+  return findEvalByCommit(apiapi, "Cardano", "cardano-wallet", rev);
 }
 
 async function findEvalFromGitHub(hydra, github, owner, repo, ref, page) {
@@ -79,7 +68,7 @@ async function findEvalFromGitHub(hydra, github, owner, repo, ref, page) {
       return null;
     }
   } else {
-    const next = (page || 0) + 1;
+    const next = (page || 1) + 1;
     console.log(`Eval not found - trying page ${next}`);
     return await findEvalFromGitHub(hydra, github, owner, repo, ref, next);
   }
@@ -100,10 +89,10 @@ async function findBuildsInEval(api, eval, jobs) {
   return builds;
 }
 
-async function downloadBuildProduct(hydraUrl, build, number) {
+async function downloadBuildProduct(outDir, hydraUrl, build, number) {
   const buildProduct = build.buildproducts[number];
   const filename = buildProduct.name;
-  const writer = fs.createWriteStream(filename);
+  const writer = fs.createWriteStream(path.join(outDir, filename));
   const url = `${hydraUrl}build/${build.id}/download/${number}/${filename}`;
 
   console.log(`Downloading ${url}`);
@@ -130,36 +119,90 @@ async function downloadBuildProduct(hydraUrl, build, number) {
   });
 }
 
-function getNiv(sourceName) {
-  const sources = JSON.parse(fs.readFileSync("nix/sources.json", "utf8"));
-  return sources[sourceName]
-}
-
-async function download(sourceName, downloads) {
+async function download(outDir, downloadSpec, options = {}) {
   const hydraUrl = "https://hydra.iohk.io/";
-  const hydraApi = makeHydraApi(hydraUrl);
-  const github = makeGitHubApi();
+  const hydraApi = makeHydraApi(hydraUrl, options);
+  const github = makeGitHubApi(options);
 
-  const source = getNiv(sourceName);
-
-  const eval = await findEvalFromGitHub(hydraApi, github, source.owner, source.repo, source.rev);
-
-  console.log(eval);
+  const eval = await findEvalFromGitHub(hydraApi, github, downloadSpec.owner, downloadSpec.repo, downloadSpec.rev);
+  console.log(`Eval has ${eval.builds.length} builds`);
+  const downloads = downloadSpec.jobs;
 
   const builds = await findBuildsInEval(hydraApi, eval, _.map(downloads, "job"));
 
   for (let i = 0; i < downloads.length; i++) {
     const build = builds[downloads[i].job];
     for (let j = 0; j < downloads[i].buildProducts.length; j++) {
-      await downloadBuildProduct(hydraUrl, build, "" + downloads[i].buildProducts[j]);
+      await downloadBuildProduct(outDir, hydraUrl, build, "" + downloads[i].buildProducts[j]);
     }
   }
 }
 
-download("cardano-wallet", [{
-  job: "cardano-wallet-win64",
-  buildProducts: [1, 3]
-}, {
-  job: "cardano-wallet-jormungandr-win64",
-  buildProducts: [1],
-}]);
+function getTargetPlatform() {
+  return process.env.CARDANO_LAUNCHER_PLATFORM || process.platform
+}
+
+function getTargetArch () {
+  return process.env.CARDANO_LAUNCHER_ARCH || process.arch
+}
+
+function sleep(ms = 0) {
+  return new Promise(r => setTimeout(r, ms));
+};
+
+function getNiv(sourceName) {
+  const sources = JSON.parse(fs.readFileSync("nix/sources.json", "utf8"));
+  return sources[sourceName];
+};
+
+function getDownloadSpec() {
+  const arch = getTargetArch();
+  const platform = getTargetPlatform();
+  const source = getNiv("cardano-wallet");
+  source.jobs = [];
+
+  if (arch === 'x64') {
+    if (platform === 'linux') {
+      source.jobs =  [{
+        job: "cardano-wallet-linux64",
+        buildProducts: [1]
+      }, {
+        job: "cardano-wallet-jormungandr-linux64",
+        buildProducts: [1],
+      }];
+    } else if (platform === 'win32') {
+      source.jobs =  [{
+        job: "cardano-wallet-win64",
+        buildProducts: [1, 3]
+      }, {
+        job: "cardano-wallet-jormungandr-win64",
+        buildProducts: [1],
+      }];
+    } else if (platform === 'darwin') {
+      source.jobs =  [{
+        job: "cardano-wallet-macos64",
+        buildProducts: [1]
+      }, {
+        job: "cardano-wallet-jormungandr-macos64",
+        buildProducts: [1],
+      }];
+    }
+  }
+
+  if (source.jobs.length === 0) {
+    console.warning(`cardano-wallet binaries for ${platform} ${arch} are not available.\nYou will need to install them yourself.`);
+  }
+
+  return source;
+}
+
+module.exports = {
+  getDownloadSpec: getDownloadSpec,
+  getTargetPlatform: getTargetPlatform,
+  getTargetArch: getTargetArch,
+  download: download,
+}
+
+if (require.main === module) {
+  download(".", getDownloadSpec());
+}
