@@ -19,7 +19,7 @@ import * as cardanoNode from './cardanoNode';
 import * as jormungandr from './jormungandr';
 import { ServerTlsConfiguration } from './tls';
 import { StartService, ShutdownMethod } from './service';
-import { DirPath } from './common';
+import { DirPath, PoolMetadataSource } from './common';
 
 /*******************************************************************************
  * Configuration
@@ -70,7 +70,7 @@ export interface LaunchConfig {
    * The API base URL of the Stake Pool Metadata Aggregation Server (SMASH)
    * which is used by cardano-wallet.
    */
-  smashUrl?: string;
+  poolMetadataSource?: PoolMetadataSource;
 
   /**
    * Maximum time difference (in seconds) between the tip slot and the
@@ -144,7 +144,14 @@ export async function startCardanoWallet(
             config.tlsConfiguration.svKey,
           ]
         : [],
-      config.smashUrl ? ['--smash-url', config.smashUrl] : [],
+      config.poolMetadataSource
+        ? [
+            '--pool-metadata-fetching',
+            typeof config.poolMetadataSource === 'string'
+              ? config.poolMetadataSource
+              : config.poolMetadataSource.smashUrl,
+          ]
+        : [],
       config.syncToleranceSeconds
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
         : []
