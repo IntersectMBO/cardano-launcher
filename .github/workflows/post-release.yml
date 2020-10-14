@@ -18,3 +18,22 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  publish-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: npm install --ci --logevel=error
+      - name: Install extra doc tools
+        run: sudo apt-get install -yu mscgen librsvg2-bin pandoc
+      - name: Build typedocs
+        run: |
+          git config user.name "William King Noel Bot"
+          git config user.email "adrestia@iohk.io"
+          ./scripts/update-gh-pages.sh
+      - name: Deploy to gh-pages
+        run: git push origin gh-pages
