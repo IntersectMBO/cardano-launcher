@@ -26,6 +26,16 @@ import { DirPath } from './common';
  ******************************************************************************/
 
 /**
+ * How to fetch stake pool metadata.
+ *   - `'none'` - disables stake pool metadata.
+ *   - `'direct'` - enables fetching stake pool metadata from
+ *     the registered pool URL.
+ *   - otherwise, the URL of a SMASH metadata proxy server
+ *     can be supplied.
+ */
+export type PoolMetadataSource = 'none' | 'direct' | { smashUrl: string };
+
+/**
  * Configuration parameters for starting the wallet backend and node.
  */
 export interface LaunchConfig {
@@ -67,10 +77,9 @@ export interface LaunchConfig {
   stakePoolRegistryUrl?: string;
 
   /**
-   * The API base URL of the Stake Pool Metadata Aggregation Server (SMASH)
-   * which is used by cardano-wallet.
+   * Stake pool metadata fetching strategy.
    */
-  smashUrl?: string;
+  poolMetadataSource?: PoolMetadataSource;
 
   /**
    * Maximum time difference (in seconds) between the tip slot and the
@@ -144,7 +153,14 @@ export async function startCardanoWallet(
             config.tlsConfiguration.svKey,
           ]
         : [],
-      config.smashUrl ? ['--smash-url', config.smashUrl] : [],
+      config.poolMetadataSource
+        ? [
+            '--pool-metadata-fetching',
+            typeof config.poolMetadataSource === 'string'
+              ? config.poolMetadataSource
+              : config.poolMetadataSource.smashUrl,
+          ]
+        : [],
       config.syncToleranceSeconds
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
         : []
