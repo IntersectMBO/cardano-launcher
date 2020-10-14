@@ -19,11 +19,21 @@ import * as cardanoNode from './cardanoNode';
 import * as jormungandr from './jormungandr';
 import { ServerTlsConfiguration } from './tls';
 import { StartService, ShutdownMethod } from './service';
-import { DirPath, PoolMetadataSource } from './common';
+import { DirPath } from './common';
 
 /*******************************************************************************
  * Configuration
  ******************************************************************************/
+
+/**
+ * How to fetch stake pool metadata.
+ *   - `'none'` - disables stake pool metadata.
+ *   - `'direct'` - enables fetching stake pool metadata from
+ *     the registered pool URL.
+ *   - otherwise, the URL of a SMASH metadata proxy server
+ *     can be supplied.
+ */
+export type PoolMetadataSource = 'none' | 'direct' | { smashUrl: string };
 
 /**
  * Configuration parameters for starting the wallet backend and node.
@@ -67,8 +77,7 @@ export interface LaunchConfig {
   stakePoolRegistryUrl?: string;
 
   /**
-   * The API base URL of the Stake Pool Metadata Aggregation Server (SMASH)
-   * which is used by cardano-wallet.
+   * Stake pool metadata fetching strategy.
    */
   poolMetadataSource?: PoolMetadataSource;
 

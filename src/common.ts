@@ -12,8 +12,6 @@ export type FilePath = string;
 /** Type alias to indicate the path of a directory. */
 export type DirPath = string;
 
-export type PoolMetadataSource = 'none' | 'direct' | { smashUrl: string };
-
 /**
  * Use this with `.catch()` on promises where the error condition is
  * already handled elsewhere (e.g. by an event or another promise).
