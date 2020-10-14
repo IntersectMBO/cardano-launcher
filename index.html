@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>cardano-launcher</title>
-	<meta name="description" content="">
+	<meta name="description" content="Documentation for cardano-launcher">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 </head>
@@ -13,7 +13,7 @@
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -91,30 +91,37 @@
 				<a href="#local-development" id="local-development" style="color: inherit; text-decoration: none;">
 					<h2>Local Development</h2>
 				</a>
-				<pre><code>nix-<span class="hljs-keyword">shell</span></code></pre><p>This runs a bash shell with project development dependencies
+				<pre><code>nix-<span class="hljs-keyword">shell</span></code></pre>
+				<p>This runs a bash shell with project development dependencies
 					(e.g. <code>npm</code>, <code>cardano-wallet</code>) in the <code>PATH</code>. See <a href="https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md">nix.md</a>
 				for information on how to set up Nix.</p>
 				<a href="#build-the-code" id="build-the-code" style="color: inherit; text-decoration: none;">
 					<h3>Build the code</h3>
 				</a>
 				<p>Transpile TypeScript to Javascript in the <code>dist</code> directory, checking for errors:</p>
-				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> build</span></code></pre><p>Do the compile as above, but automatically rebuild when a file changes</p>
+				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> build</span></code></pre>
+				<p>Do the compile as above, but automatically rebuild when a file changes</p>
 				<pre><code>npm <span class="hljs-built_in">run</span> build <span class="hljs-comment">-- --watch</span></code></pre>
 				<a href="#run-the-tests" id="run-the-tests" style="color: inherit; text-decoration: none;">
 					<h3>Run the tests</h3>
 				</a>
 				<p>Runs all tests:</p>
-				<pre><code>npm <span class="hljs-built_in">test</span></code></pre><p>To run only <code>unit</code> tests matching <code>idempotent</code> (for example):</p>
-				<pre><code>npm test unit <span class="hljs-comment">-- -t idempotent</span></code></pre><p>Run the test watcher (<a href="https://jestjs.io/docs/en/getting-started">Jest</a>) and prompt for usage:</p>
-				<pre><code><span class="hljs-comment">npm</span> <span class="hljs-comment">test</span> -- --<span class="hljs-comment">watch</span></code></pre><p>See the <a href="https://jestjs.io/docs/en/cli">Jest command-line reference</a> for all the options.</p>
+				<pre><code>npm <span class="hljs-built_in">test</span></code></pre>
+				<p>To run only <code>unit</code> tests matching <code>idempotent</code> (for example):</p>
+				<pre><code>npm test unit <span class="hljs-comment">-- -t idempotent</span></code></pre>
+				<p>Run the test watcher (<a href="https://jestjs.io/docs/en/getting-started">Jest</a>) and prompt for usage:</p>
+				<pre><code><span class="hljs-comment">npm</span> <span class="hljs-comment">test</span> -- --<span class="hljs-comment">watch</span></code></pre>
+				<p>See the <a href="https://jestjs.io/docs/en/cli">Jest command-line reference</a> for all the options.</p>
 				<p>Note that the <code>cli</code> tests require the code to already have been built
 				with <code>npm run build</code>.</p>
 				<a href="#linting-and-formatting-the-code" id="linting-and-formatting-the-code" style="color: inherit; text-decoration: none;">
 					<h3>Linting and formatting the code</h3>
 				</a>
 				<p>To check linter rules defined in <code>.eslintrc.json</code>:</p>
-				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> lint</span></code></pre><p>To automatically fix lint and formatting errors, where possible:</p>
-				<pre><code>npm <span class="hljs-built_in">run</span> lint <span class="hljs-comment">-- --fix</span></code></pre><p><a href="https://standardjs.com/">JavaScript Standard Style</a></p>
+				<pre><code>npm <span class="hljs-keyword">run</span><span class="bash"> lint</span></code></pre>
+				<p>To automatically fix lint and formatting errors, where possible:</p>
+				<pre><code>npm <span class="hljs-built_in">run</span> lint <span class="hljs-comment">-- --fix</span></code></pre>
+				<p><a href="https://standardjs.com/">JavaScript Standard Style</a></p>
 				<a href="#generate-api-documentation" id="generate-api-documentation" style="color: inherit; text-decoration: none;">
 					<h3>Generate API Documentation</h3>
 				</a>
@@ -124,8 +131,10 @@
 					<h3>Updating cardano-wallet version</h3>
 				</a>
 				<p>To modify the cardano-wallet version, use <a href="https://github.com/nmattia/niv#update"><code>niv update</code></a>.</p>
-				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-wallet -a rev={GIT_TAG}"</span></span></code></pre><p>or, to use the latest <code>master</code> branch revsion:</p>
-				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">"niv update cardano-wallet --branch master"</span></span></code></pre><p>The version of <code>cardano-node</code> and <code>jormungandr</code> are defined by
+				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">&quot;niv update cardano-wallet -a rev={GIT_TAG}&quot;</span></span></code></pre>
+				<p>or, to use the latest <code>master</code> branch revsion:</p>
+				<pre><code>nix-<span class="hljs-keyword">shell</span><span class="bash"> --run <span class="hljs-string">&quot;niv update cardano-wallet --branch master&quot;</span></span></code></pre>
+				<p>The version of <code>cardano-node</code> and <code>jormungandr</code> are defined by
 					cardano-wallet because it has specific version requirements for its
 				backends.</p>
 				<a href="#overriding-node-backend-versions" id="overriding-node-backend-versions" style="color: inherit; text-decoration: none;">
@@ -175,34 +184,34 @@ npm run build
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_cardanolauncher_.html">&quot;cardano<wbr>Launcher&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_cardanonode_.html">&quot;cardano<wbr>Node&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_cardanowallet_.html">&quot;cardano<wbr>Wallet&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_cli_.html">&quot;cli&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_common_.html">&quot;common&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_index_.html">&quot;index&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_jormungandr_.html">&quot;jormungandr&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_logging_.html">&quot;logging&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_service_.html">&quot;service&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class=" tsd-kind-module">
 						<a href="modules/_tls_.html">&quot;tls&quot;</a>
 					</li>
 				</ul>
@@ -219,57 +228,19 @@ npm run build
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
 				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>
@@ -279,6 +250,5 @@ npm run build
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>

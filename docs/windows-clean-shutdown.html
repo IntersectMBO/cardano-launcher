@@ -1,29 +1,36 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
-  <title></title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>windows-clean-shutdown</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
 <h1 id="windows---clean-shutdown">Windows - clean shutdown</h1>
 <p>On Windows, the only way to stop a non-gui program is by using <a href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminateprocess">TerminateProcess</a>.</p>
 <blockquote>
 <h3 id="remarks">Remarks</h3>
-<p>The <code>TerminateProcess</code> function is used to unconditionally cause a process to exit. ... This function stops execution of all threads within the process and requests cancellation of all pending I/O. ... A process cannot prevent itself from being terminated.</p>
+<p>The <code>TerminateProcess</code> function is used to unconditionally cause a process to exit. … This function stops execution of all threads within the process and requests cancellation of all pending I/O. … A process cannot prevent itself from being terminated.</p>
 </blockquote>
 <p>The problem is that if <code>cardano-wallet</code> or <code>cardano-node</code> is stopped like this, it will be unable to nicely close its database, flush logs, or end any child processes. The effect is basically the same as <code>kill -9</code> on POSIX.</p>
 <h2 id="solution">Solution</h2>
 <p>The only way to work around this is by implementing a method of signalling to the child process that it should exit.</p>
 <p>In the previous codebase, this was achieved (indirectly) with <code>NodeIPC</code>. The <code>NodeIPC</code> thread in the child process reads a named pipe, waiting for messages. If the parent process end of the named pipe is close, the read function returns an error, and the program shuts down.</p>
-<p>We can achieve the same behaviour in the child process, without <code>NodeIPC</code>, by continuously reading standard input. If there is an error reading standard input, such as &quot;end of file&quot; or &quot;broken pipe&quot;, then the child process knows that it's time to exit. The parent process can trigger this condition by closing the file descriptor that it has passed as the <code>stdin</code> of the child process.</p>
-<p>If <code>stdin</code> can't be used for clean shutdown, then a supplementary inherited pipe file descriptor can be used instead. In this case the parent process will also need to provide the fd number to the child process via command-line option or environment variable.</p>
-<div class="figure">
-<img src="./launch.png" alt="Launch message sequence diagram" />
-<p class="caption">Launch message sequence diagram</p>
-</div>
+<p>We can achieve the same behaviour in the child process, without <code>NodeIPC</code>, by continuously reading standard input. If there is an error reading standard input, such as “end of file” or “broken pipe”, then the child process knows that it’s time to exit. The parent process can trigger this condition by closing the file descriptor that it has passed as the <code>stdin</code> of the child process.</p>
+<p>If <code>stdin</code> can’t be used for clean shutdown, then a supplementary inherited pipe file descriptor can be used instead. In this case the parent process will also need to provide the fd number to the child process via command-line option or environment variable.</p>
+<figure>
+<img src="./launch.png" alt="" /><figcaption>Launch message sequence diagram</figcaption>
+</figure>
 <h2 id="posix">POSIX</h2>
 <p>On POSIX platforms, <code>cardano-wallet</code> can shutdown cleanly after being killed with <code>SIGTERM</code>.</p>
 <p>However, when running under <code>cardano-launcher</code>, we use identical shutdown methods on both Windows and POSIX in an attempt to avoid platform-specific bugs.</p>
@@ -31,7 +38,7 @@
 <p>Since the child process is requested to shut itself down, it may defectively fail to do so. This means that open files will still be locked, etc, and will cause problems for users.</p>
 <p>To guarantee that the child process exits, the child process ID should be checked after a timeout period has elapsed. If it is still running then it should be killed with <code>TerminateProcess</code>/<code>SIGKILL</code>.</p>
 <h2 id="if-the-cardano-launcher-process-is-killed">If the <code>cardano-launcher</code> process is killed</h2>
-<p>If the <code>cardano-launcher</code> (i.e. Daedalus) process itself is killed, then it should ensure that its own child processes are killed.</p>
+<p>If the <code>cardano-launcher</code> (i.e. Daedalus) process itself is killed, then it should ensure that its own child processes are killed.</p>
 <p>In this case <code>stdin</code> of the child process will be automatically closed, and it will exit.</p>
 <h2 id="command-line-options">Command-line options</h2>
 <p>This cross-platform clean shutdown method is only necessary in situations where the code will be running on Windows as a child process of an application. In other circumstances, the process can be killed with <a href="https://docs.microsoft.com/en-us/windows/console/generateconsolectrlevent">Control-C</a> (Windows) or <code>SIGTERM</code> (POSIX). Therefore, an optional command-line parameter such as <code>--shutdown-ipc=FD</code> should be used to enable the clean shutdown handler.</p>
