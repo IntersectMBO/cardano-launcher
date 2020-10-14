@@ -158,7 +158,7 @@ let pipeCounter = 0;
  * The name also includes a per-process counter, mostly so that
  * integration tests do not conflict with each other.
  *
- * @networkName: which network to put in the pipe name.
+ * @param networkName: which network to put in the pipe name.
  * @return a [Pipe Name](https://docs.microsoft.com/en-us/windows/win32/ipc/pipe-names)
  */
 function windowsPipeName(networkName: string): string {

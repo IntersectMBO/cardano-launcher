@@ -32,7 +32,7 @@ import {
 } from './common';
 import {
   LaunchConfig,
-  startCardanoWallet,
+  cardanoWalletStartService,
   WalletStartService,
 } from './cardanoWallet';
 
@@ -384,7 +384,7 @@ export class Launcher {
     baseDir: DirPath,
     config: LaunchConfig
   ): Promise<WalletStartService> {
-    return startCardanoWallet(baseDir, config);
+    return cardanoWalletStartService(baseDir, config);
   }
 
   private static nodeExe(
