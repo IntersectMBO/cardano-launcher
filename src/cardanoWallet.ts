@@ -4,7 +4,7 @@
 /**
  * Module for starting and managing the cardano-wallet process.
  *
- * The main function is [[startCardanoWallet]].
+ * The main function is [[cardanoWalletStartService]].
  *
  * @packageDocumentation
  */
@@ -90,7 +90,7 @@ export interface LaunchConfig {
 
   /**
    * Configuration for starting `cardano-node`. The `kind` property will be one of
-   *  * `"shelley"` - [[ShelleyNodeConfig]]
+   *  * `"shelley"` - [[CardanoNodeConfig]]
    *  * `"jormungandr"` - [[JormungandrConfig]]
    */
   nodeConfig: cardanoNode.CardanoNodeConfig | jormungandr.JormungandrConfig;
@@ -122,10 +122,23 @@ export interface LaunchConfig {
  ******************************************************************************/
 
 export interface WalletStartService extends StartService {
+  /** This will contain the port which the API is listening on,
+   *  after the service has started. */
   apiPort: number;
 }
 
-export async function startCardanoWallet(
+/**
+ * Produces a [[WalletStartService]] description of how to start
+ * `cardano-wallet` with a given [[LaunchConfig]].
+ *
+ * Does not actually start the wallet.
+ *
+ * @param baseDir - The state directory, under which `cardano-wallet`
+ *   shall store its databases.
+ * @param config - Parameters for starting the server.
+ * @return The launch instructions.
+ */
+export async function cardanoWalletStartService(
   baseDir: DirPath,
   config: LaunchConfig
 ): Promise<WalletStartService> {

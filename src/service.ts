@@ -67,16 +67,18 @@ export enum ServiceStatus {
  */
 export interface Service {
   /**
-   * @return a promise that will be fulfilled when the process has
-   *   started. The returned PID is not guaranteed to be running. It may
-   *   already have exited.
+   * @return - a promise that will be fulfilled when the process has
+   *   started. The returned PID is not guaranteed to be running. It
+   *   may already have exited.
    */
   start(): Promise<Pid>;
 
   /**
    * Stops the process.
-   * @param timeoutSeconds - how long to wait for the service to stop itself before killing it.
-   *   If `0`, any running timeout kill be cancelled and the process killed immediately.
+   *
+   * @param timeoutSeconds - How long to wait for the service to stop
+   *   itself before killing it. If `0`, any running timeout kill be
+   *   cancelled and the process killed immediately.
    * @return a promise that will be fulfilled when the process has stopped.
    */
   stop(timeoutSeconds?: number): Promise<ServiceExitStatus>;
@@ -95,7 +97,8 @@ export interface Service {
   getStatus(): ServiceStatus;
 
   /**
-   * @return the ChildProcess running the service, or null if the service has not been started yet.
+   * @return the ChildProcess running the service, or null if
+   *   the service has not been started yet.
    */
   getProcess(): ChildProcess | null;
 
