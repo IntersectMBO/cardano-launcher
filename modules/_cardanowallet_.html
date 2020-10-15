@@ -69,7 +69,7 @@
 					<div class="lead">
 						<p>Module for starting and managing the cardano-wallet process.</p>
 					</div>
-					<p>The main function is <a href="_cardanowallet_.html#startcardanowallet">startCardanoWallet</a>.</p>
+					<p>The main function is <a href="_cardanowallet_.html#cardanowalletstartservice">cardanoWalletStartService</a>.</p>
 				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -92,7 +92,7 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_cardanowallet_.html#startcardanowallet" class="tsd-kind-icon">start<wbr>Cardano<wbr>Wallet</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_cardanowallet_.html#cardanowalletstartservice" class="tsd-kind-icon">cardano<wbr>Wallet<wbr>Start<wbr>Service</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,7 +106,7 @@
 					<div class="tsd-signature tsd-kind-icon">Pool<wbr>Metadata<wbr>Source<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"direct"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>smashUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/1304c70/src/cardanoWallet.ts#L36">src/cardanoWallet.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/f076736/src/cardanoWallet.ts#L36">src/cardanoWallet.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -126,28 +126,43 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="startcardanowallet" class="tsd-anchor"></a>
-					<h3>start<wbr>Cardano<wbr>Wallet</h3>
+					<a name="cardanowalletstartservice" class="tsd-anchor"></a>
+					<h3>cardano<wbr>Wallet<wbr>Start<wbr>Service</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">start<wbr>Cardano<wbr>Wallet<span class="tsd-signature-symbol">(</span>baseDir<span class="tsd-signature-symbol">: </span><a href="_common_.html#dirpath" class="tsd-signature-type">DirPath</a>, config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanowallet_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanowallet_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">cardano<wbr>Wallet<wbr>Start<wbr>Service<span class="tsd-signature-symbol">(</span>baseDir<span class="tsd-signature-symbol">: </span><a href="_common_.html#dirpath" class="tsd-signature-type">DirPath</a>, config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cardanowallet_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanowallet_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/1304c70/src/cardanoWallet.ts#L128">src/cardanoWallet.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/input-output-hk/cardano-launcher/blob/f076736/src/cardanoWallet.ts#L141">src/cardanoWallet.ts:141</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Produces a <a href="../interfaces/_cardanowallet_.walletstartservice.html">WalletStartService</a> description of how to start
+									<code>cardano-wallet</code> with a given <a href="../interfaces/_cardanowallet_.launchconfig.html">LaunchConfig</a>.</p>
+								</div>
+								<p>Does not actually start the wallet.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>baseDir: <a href="_common_.html#dirpath" class="tsd-signature-type">DirPath</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The state directory, under which <code>cardano-wallet</code>
+										shall store its databases.</p>
+									</div>
 								</li>
 								<li>
 									<h5>config: <a href="../interfaces/_cardanowallet_.launchconfig.html" class="tsd-signature-type">LaunchConfig</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Parameters for starting the server.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_cardanowallet_.walletstartservice.html" class="tsd-signature-type">WalletStartService</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>The launch instructions.</p>
 						</li>
 					</ul>
 				</section>
@@ -203,7 +218,7 @@
 						<a href="_cardanowallet_.html#poolmetadatasource" class="tsd-kind-icon">Pool<wbr>Metadata<wbr>Source</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_cardanowallet_.html#startcardanowallet" class="tsd-kind-icon">start<wbr>Cardano<wbr>Wallet</a>
+						<a href="_cardanowallet_.html#cardanowalletstartservice" class="tsd-kind-icon">cardano<wbr>Wallet<wbr>Start<wbr>Service</a>
 					</li>
 				</ul>
 			</nav>
