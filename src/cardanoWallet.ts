@@ -31,7 +31,7 @@ import { DirPath } from './common';
  *   - `'direct'` - enables fetching stake pool metadata from
  *     the registered pool URL.
  *   - otherwise, the URL of a SMASH metadata proxy server
- *     can be supplied.
+ *     can be supplied. This must not contain the endpoint path.
  */
 export type PoolMetadataSource = 'none' | 'direct' | { smashUrl: string };
 
