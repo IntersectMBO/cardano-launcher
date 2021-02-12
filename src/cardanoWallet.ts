@@ -81,6 +81,11 @@ export interface LaunchConfig {
   poolMetadataSource?: PoolMetadataSource;
 
   /**
+   * Token metadata server URL.
+   */
+  tokenMetadataServer?: string;
+
+  /**
    * Maximum time difference (in seconds) between the tip slot and the
    * latest applied block within which we consider a wallet being
    * synced with the network. Defaults to 300 seconds.
@@ -170,6 +175,9 @@ export async function cardanoWalletStartService(
               ? config.poolMetadataSource
               : config.poolMetadataSource.smashUrl,
           ]
+        : [],
+      config.tokenMetadataServer
+        ? ['--token-metadata-server', config.tokenMetadataServer]
         : [],
       config.syncToleranceSeconds
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
