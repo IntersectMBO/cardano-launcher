@@ -11,10 +11,7 @@ mkShell {
   ] ++ lib.optional stdenv.isLinux mscgen ++ [
     # util to update nixpkgs pins
     niv.niv
-    # jormungandr
-    cardanoWalletPackages.jormungandr
-    cardanoWalletPackages.cardano-wallet-jormungandr
-    # cardano-node
+    # cardano-wallet shelley
     cardano-node
     cardanoWalletPackages.cardano-wallet
   ];

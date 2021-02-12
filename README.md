@@ -15,9 +15,7 @@ could be used by any Javascript application. Tagged versions are published to th
 
 See the generated API docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
 
-See [docs/example.js](./docs/example.js)
-and [docs/example-jormungandr.js](./docs/example-jormungandr.js)
-for example code.
+See [docs/example.js](./docs/example.js) for example code.
 
 ## Component diagram
 
@@ -94,15 +92,14 @@ or, to use the latest `master` branch revsion:
 
     nix-shell --run "niv update cardano-wallet --branch master"
 
-The version of `cardano-node` and `jormungandr` are defined by
-cardano-wallet because it has specific version requirements for its
-backends.
+The version of `cardano-node` is defined by cardano-wallet because it
+has specific version requirements for its backends.
 
 #### Overriding node backend versions
 
-To use your own build of `cardano-node` or `jormungandr`, export your
-`PATH` environment variable so that your build is ahead of those set
-by the `nix-shell`.
+To use your own build of `cardano-node`, export your `PATH`
+environment variable so that your build is ahead of those set by the
+`nix-shell`.
 
 ## Design docs
 
@@ -132,7 +129,4 @@ npm run build
 
 # cardano-node testnet
 ./bin/cardano-launcher shelley testnet $CARDANO_NODE_CONFIGS/testnet ./state-testnet
-
-# Jormungandr self-node
-./bin/cardano-launcher jormungandr self test/data/jormungandr ./state-jormungandr
 ```

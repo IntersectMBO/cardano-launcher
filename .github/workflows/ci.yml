@@ -18,7 +18,6 @@ jobs:
         run: |
           node scripts\download-hydra.js
           Get-ChildItem
-          Expand-Archive -Force -Path "cardano-wallet-jormungandr-20*-win64.zip" -DestinationPath .
           Expand-Archive -Force -Path "cardano-wallet-20*-win64.zip" -DestinationPath .
           Expand-Archive -Force -Path "cardano-wallet-*-deployments.zip" -DestinationPath deployments
           Get-ChildItem

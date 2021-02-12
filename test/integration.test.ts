@@ -10,7 +10,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { stat } from 'fs-extra';
 
-import * as jormungandr from '../src/jormungandr';
 import * as cardanoNode from '../src/cardanoNode';
 import { ExitStatus } from '../src/cardanoLauncher';
 import { passthroughErrorLogger } from '../src/common';
@@ -118,24 +117,6 @@ describe('Starting cardano-wallet (and its node)', () => {
 
     await cleanupLauncher();
   };
-
-  // eslint-disable-next-line jest/expect-expect
-  it(
-    'cardano-wallet-jormungandr responds to requests',
-    () =>
-      launcherTest(stateDir => {
-        return {
-          stateDir,
-          networkName: 'self',
-          nodeConfig: {
-            kind: 'jormungandr',
-            configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-            network: jormungandr.networks.self,
-          },
-        };
-      }),
-    longTestTimeoutMs
-  );
 
   // eslint-disable-next-line jest/expect-expect
   it(
@@ -280,28 +261,6 @@ describe('Starting cardano-wallet (and its node)', () => {
       }, true),
     veryLongTestTimeoutMs
   );
-
-  it('handles case where (jormungandr) node fails to start', async () => {
-    const { launcher, cleanupLauncher } = await setupTestLauncher(stateDir => {
-      return {
-        stateDir,
-        networkName: 'self',
-        nodeConfig: {
-          kind: 'jormungandr',
-          configurationDir: path.resolve(__dirname, 'data', 'jormungandr'),
-          network: jormungandr.networks.self,
-          extraArgs: ['--yolo'], // not a jormungandr arg
-        },
-      };
-    });
-
-    await expect(launcher.start().finally(cleanupLauncher)).rejects.toThrow(
-      [
-        'cardano-wallet-jormungandr exited with status 0',
-        'jormungandr exited with status 1',
-      ].join('\n')
-    );
-  });
 
   it('handles case where cardano-node fails during initialisation', () => {
     return new Promise((done, fail) => {
