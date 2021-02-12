@@ -22,9 +22,6 @@ mkShell {
   # Test data from cardano-wallet repo used in their integration tests.
   TEST_CONFIG_SHELLEY = cardanoWalletPackages.src + /lib/shelley/test/data/cardano-node-shelley;
 
-  # Contents of configuration subdirectory of cardano-node repo.
-  SRC_CONFIGS = cardanoWalletPackages.cardano-node.configs;
-
   # Corresponds to
   # https://hydra.iohk.io/job/Cardano/iohk-nix/cardano-deployment/latest/download/1/index.html
   CARDANO_NODE_CONFIGS = cardanoWalletPackages.cardano-node.deployments;
