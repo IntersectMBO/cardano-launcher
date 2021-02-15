@@ -196,11 +196,11 @@ describe('Starting cardano-wallet (and its node)', () => {
           },
         });
         await launcher.start();
+        await launcher.stop();
         const nodeLogFileStats = await stat(nodeLogFile.path);
         const walletLogFileStats = await stat(walletLogFile.path);
         expect(nodeLogFileStats.size).toBeGreaterThan(0);
         expect(walletLogFileStats.size).toBeGreaterThan(0);
-        await launcher.stop();
       }),
     veryLongTestTimeoutMs
   );
