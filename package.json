@@ -48,7 +48,7 @@
     "shx": "0.3.2",
     "tmp-promise": "3.0.2",
     "ts-jest": "26.2.0",
-    "typedoc": "0.18.0",
+    "typedoc": "0.20.25",
     "typescript": "3.9.7"
   },
   "dependencies": {
