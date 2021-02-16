@@ -1,7 +1,7 @@
 { sources ? import ./sources.nix }:
 with
   { overlay = self: pkgs:
-      { niv = import sources.niv {};
+      {
         cardanoWalletPackages = import sources.cardano-wallet { gitrev = sources.cardano-wallet.rev; };
       } // (if (sources ? cardano-node) then {
         # Use cardano-node override.

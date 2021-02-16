@@ -10,7 +10,7 @@ mkShell {
     pandoc librsvg gnumake
   ] ++ lib.optional stdenv.isLinux mscgen ++ [
     # util to update nixpkgs pins
-    niv.niv
+    niv
     # cardano-wallet shelley
     cardano-node
     cardanoWalletPackages.cardano-wallet
