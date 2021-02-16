@@ -37,7 +37,6 @@ import {
 } from './cardanoWallet';
 
 import * as cardanoNode from './cardanoNode';
-import * as jormungandr from './jormungandr';
 import Signals = NodeJS.Signals;
 
 export {
@@ -392,8 +391,6 @@ export class Launcher {
     config: LaunchConfig
   ): Promise<StartService> {
     switch (config.nodeConfig.kind) {
-      case 'jormungandr':
-        return jormungandr.startJormungandr(baseDir, config.nodeConfig);
       case 'shelley':
         return cardanoNode.startCardanoNode(
           baseDir,

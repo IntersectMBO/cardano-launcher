@@ -20,11 +20,10 @@ import { Launcher, ExitStatus } from './cardanoLauncher';
 import { ignorePromiseRejection } from './common';
 import { ServiceExitStatus, serviceExitStatusMessage } from './service';
 import * as cardanoNode from './cardanoNode';
-import * as jormungandr from './jormungandr';
 
 function usage(): void {
   console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR');
-  console.log('  BACKEND    - either jormungandr or shelley');
+  console.log('  BACKEND    - shelley');
   console.log(
     '  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1'
   );
@@ -86,17 +85,6 @@ export function cli(argv: Process['argv']): void {
       process.exit(2);
     }
     const network = cardanoNode.networks[networkName];
-    nodeConfig = {
-      kind: backend,
-      configurationDir,
-      network,
-    };
-  } else if (backend === 'jormungandr') {
-    if (!(networkName in jormungandr.networks)) {
-      console.error(`unknown network: ${networkName}`);
-      process.exit(2);
-    }
-    const network = jormungandr.networks[networkName];
     nodeConfig = {
       kind: backend,
       configurationDir,

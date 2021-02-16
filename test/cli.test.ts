@@ -68,15 +68,6 @@ describe('CLI tests', () => {
   };
 
   it(
-    'when the parent process is killed, child jormungandr gets stopped',
-    killTest([
-      'jormungandr',
-      'self',
-      path.resolve(__dirname, 'data', 'jormungandr'),
-    ])
-  );
-
-  it(
     'when the parent process is killed, cardano-node gets stopped - Shelley',
     killTest(['shelley', 'testnet', getShelleyConfigDir('testnet')])
   );

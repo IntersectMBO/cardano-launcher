@@ -166,25 +166,16 @@ function getDownloadSpec() {
       source.jobs =  [{
         job: "cardano-wallet-linux64",
         buildProducts: [1]
-      }, {
-        job: "cardano-wallet-jormungandr-linux64",
-        buildProducts: [1],
       }];
     } else if (platform === 'win32') {
       source.jobs =  [{
         job: "cardano-wallet-win64",
         buildProducts: [1, 3]
-      }, {
-        job: "cardano-wallet-jormungandr-win64",
-        buildProducts: [1],
       }];
     } else if (platform === 'darwin') {
       source.jobs =  [{
         job: "cardano-wallet-macos64",
         buildProducts: [1]
-      }, {
-        job: "cardano-wallet-jormungandr-macos64",
-        buildProducts: [1],
       }];
     }
   }

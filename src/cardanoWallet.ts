@@ -16,7 +16,6 @@ import _ from 'lodash';
 
 import { WriteStream } from 'fs';
 import * as cardanoNode from './cardanoNode';
-import * as jormungandr from './jormungandr';
 import { ServerTlsConfiguration } from './tls';
 import { StartService, ShutdownMethod } from './service';
 import { DirPath } from './common';
@@ -82,6 +81,11 @@ export interface LaunchConfig {
   poolMetadataSource?: PoolMetadataSource;
 
   /**
+   * Token metadata server URL.
+   */
+  tokenMetadataServer?: string;
+
+  /**
    * Maximum time difference (in seconds) between the tip slot and the
    * latest applied block within which we consider a wallet being
    * synced with the network. Defaults to 300 seconds.
@@ -89,11 +93,9 @@ export interface LaunchConfig {
   syncToleranceSeconds?: number;
 
   /**
-   * Configuration for starting `cardano-node`. The `kind` property will be one of
-   *  * `"shelley"` - [[CardanoNodeConfig]]
-   *  * `"jormungandr"` - [[JormungandrConfig]]
+   * Configuration for starting `cardano-node`.
    */
-  nodeConfig: cardanoNode.CardanoNodeConfig | jormungandr.JormungandrConfig;
+  nodeConfig: cardanoNode.CardanoNodeConfig;
 
   /**
    *  WriteStreams for the child process data events from stdout and stderr
@@ -174,6 +176,9 @@ export async function cardanoWalletStartService(
               : config.poolMetadataSource.smashUrl,
           ]
         : [],
+      config.tokenMetadataServer
+        ? ['--token-metadata-server', config.tokenMetadataServer]
+        : [],
       config.syncToleranceSeconds
         ? ['--sync-tolerance', `${config.syncToleranceSeconds}s`]
         : []
@@ -190,13 +195,6 @@ export async function cardanoWalletStartService(
     _.assign(base, { args: base.args.concat(args) });
 
   switch (config.nodeConfig.kind) {
-    case 'jormungandr':
-      return addArgs([
-        '--genesis-block-hash',
-        config.nodeConfig.network.genesisBlock.hash,
-        '--node-port',
-        '' + config.nodeConfig.restPort,
-      ]);
     default:
       if (
         config.networkName !== 'mainnet' &&
