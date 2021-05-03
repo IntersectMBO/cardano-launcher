@@ -24,8 +24,10 @@ export function testService(
   command: string,
   args: string[],
   shutdownMethod = ShutdownMethod.CloseStdin
-): Promise<StartService> {
-  return new Promise(resolve => resolve({ command, args, shutdownMethod }));
+): Promise<StartService<unknown>> {
+  return new Promise(resolve =>
+    resolve({ command, args, shutdownMethod, status: { info: {} } })
+  );
 }
 
 /**
@@ -38,7 +40,7 @@ export const expectProcessToBeGone = (pid: number, signal = 0): void => {
 /**
  * @return mutable array which will contain events as they occur.
  */
-export const collectEvents = (service: Service): ServiceStatus[] => {
+export const collectEvents = (service: Service<unknown>): ServiceStatus[] => {
   const events: ServiceStatus[] = [];
   service.events.on('statusChanged', status => events.push(status));
   return events;

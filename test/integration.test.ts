@@ -1,7 +1,14 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-import { Launcher, LaunchConfig, ServiceStatus, Api } from '../src';
+import {
+  Launcher,
+  LaunchConfig,
+  ServiceStatus,
+  Service,
+  Api,
+  serviceInfo,
+} from '../src';
 
 import * as http from 'http';
 import * as https from 'https';
@@ -253,15 +260,16 @@ describe('Starting cardano-wallet (and its node)', () => {
       });
 
       await launcher.start();
-      const walletApi = launcher.walletBackend.api;
-      const nodeConfig =
-        launcher.nodeService.getConfig() as cardanoNode.NodeStartService;
+
+      const walletPort: number = serviceInfo(launcher.walletService)?.port as number;
+      const nodePort: number = serviceInfo(launcher.nodeService)?.listenPort as number;
+      expect(nodePort).not.toBeNull();
+      expect(walletPort).not.toBeNull();
+
       for (const host of listExternalAddresses()) {
         loggers.test.log(`Testing ${host}`);
-        expect(
-          await testPort(host, walletApi.requestParams.port, loggers.test)
-        ).toBe(false);
-        expect(await testPort(host, nodeConfig.listenPort, loggers.test)).toBe(
+        expect(await testPort(host, walletPort, loggers.test)).toBe(false);
+        expect(await testPort(host, nodePort, loggers.test)).toBe(
           false
         );
       }
@@ -274,9 +282,7 @@ describe('Starting cardano-wallet (and its node)', () => {
   it(
     'applies RTS options to cardano-node',
     async () => {
-      let hp = 'cardano-node.hp';
       const launcher = await setupTestLauncher(stateDir => {
-        hp = path.join(stateDir, hp);
         return {
           stateDir,
           networkName: 'testnet',
@@ -290,11 +296,50 @@ describe('Starting cardano-wallet (and its node)', () => {
       });
 
       await launcher.start();
+      const hp = path.join(launcher.config.stateDir, 'cardano-node.hp');
       expect(await pathExists(hp)).toBe(true);
       await launcher.stop(testsStopTimeout);
     },
     veryLongTestTimeoutMs
   );
+
+  it('writes the status file', async () => {
+    const launcher = await setupTestLauncher(stateDir => {
+        return {
+          stateDir,
+          networkName: 'testnet',
+          nodeConfig: {
+            kind: 'shelley',
+            configurationDir: getShelleyConfigDir('testnet'),
+            network: cardanoNode.networks.testnet,
+            rtsOpts: ['-h'], // generates a basic heap profile
+          },
+        };
+      });
+
+    function checkFile<S, R>(service: Service<S>, assertions: (file: string) => R): R {
+      const file = service.getConfig()?.status.filePath as string;
+      expect(file).toBeTruthy();
+      return assertions(file);
+    };
+    const expectExists = (exists: boolean) => (async (file: string) => {
+      expect(await pathExists(file)).toBe(exists);
+    });
+
+    async function checkJSON<S, R>(service: Service<S>, assertions: (json: unknown) => R): Promise<R> {
+      return await checkFile(service, async file => assertions(JSON.parse(await fs.promises.readFile(file, 'utf8'))));
+    }
+
+    await launcher.start();
+
+    checkFile(launcher.walletService, expectExists(true));
+    checkFile(launcher.nodeService, expectExists(true));
+
+    checkJSON(launcher.walletService, (entry: any) => {
+      expect(entry.pid).toBeTruthy();
+    });
+  },
+    veryLongTestTimeoutMs);
 });
 
 async function setupTestLauncher(

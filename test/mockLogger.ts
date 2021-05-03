@@ -29,6 +29,7 @@ export function mockLogger(echo = false): MockLogger {
   return {
     debug: mockLog('debug'),
     info: mockLog('info'),
+    warn: mockLog('warn'),
     error: mockLog('error'),
     log: mockLog('log'),
     getLogs: (): MockLog[] => logs,
