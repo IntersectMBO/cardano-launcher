@@ -92,8 +92,10 @@ export interface CardanoNodeArgs {
   listen: {
     /** The TCP port for node P2P. */
     port: number;
-    /** Optionally limit node P2P to one ipv6 or ipv4 address. */
+    /** Optionally limit node P2P to one ipv4 address. */
     address?: string;
+    /** Optionally limit node P2P to one ipv6 address. */
+    address6?: string;
   };
 
   /** Configuration file for cardano-node. */
@@ -218,6 +220,8 @@ function makeArgs(
     delegationCertificate: config.delegationCertificate,
     listen: {
       port: listenPort,
+      address: "127.0.0.1",
+      address6: "::1",
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
     signingKey: config.signingKey,
@@ -258,6 +262,7 @@ export async function startCardanoNode(
       args.configFile,
     ]
       .concat(args.listen.address ? ['--host-addr', args.listen.address] : [])
+      .concat(args.listen.address6 ? ['--host-ipv6-addr', args.listen.address6] : [])
       .concat(args.validateDb || false ? ['--validate-db'] : [])
       .concat(args.signingKey ? ['--signing-key', args.signingKey] : [])
       .concat(
