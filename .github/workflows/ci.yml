@@ -21,7 +21,7 @@ jobs:
           Expand-Archive -Force -Path "cardano-wallet-20*-win64.zip" -DestinationPath .
           Expand-Archive -Force -Path "cardano-wallet-*-deployments.zip" -DestinationPath deployments
           Get-ChildItem
-          echo "::set-env name=CARDANO_NODE_CONFIGS::$Env:GITHUB_WORKSPACE\deployments"
+          echo "CARDANO_NODE_CONFIGS=$Env:GITHUB_WORKSPACE\deployments" >> $Env:GITHUB_ENV
       - run: npm test unit
       - run: npm test integration
       - run: npm test cli
