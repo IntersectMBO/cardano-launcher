@@ -88,8 +88,10 @@ describe('Starting cardano-wallet (and its node)', () => {
           tls
             ? {
                 ca: fs.readFileSync(path.join(tlsDir, 'ca.crt')),
-                cert: fs.readFileSync(path.join(tlsDir, 'client.crt')),
-                key: fs.readFileSync(path.join(tlsDir, 'client.key')),
+                cert: fs.readFileSync(
+                  path.join(tlsDir, 'client', 'client.crt')
+                ),
+                key: fs.readFileSync(path.join(tlsDir, 'client', 'client.key')),
               }
             : {}
         ),
@@ -252,8 +254,8 @@ describe('Starting cardano-wallet (and its node)', () => {
           },
           tlsConfiguration: {
             caCert: path.join(tlsDir, 'ca.crt'),
-            svCert: path.join(tlsDir, 'server.crt'),
-            svKey: path.join(tlsDir, 'server.key'),
+            svCert: path.join(tlsDir, 'server', 'server.crt'),
+            svKey: path.join(tlsDir, 'server', 'server.key'),
           },
         };
       }, true),
