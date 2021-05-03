@@ -18,6 +18,8 @@ import {
   setupExecPath,
   withMainnetConfigDir,
   getShelleyConfigDir,
+  listExternalAddresses,
+  testPort,
 } from './utils';
 
 // increase time available for tests to run
@@ -300,4 +302,41 @@ describe('Starting cardano-wallet (and its node)', () => {
         .catch(fail);
     });
   });
+
+  it(
+    'services listen only on a private address',
+    async () => {
+      const { launcher, cleanupLauncher } = await setupTestLauncher(
+        stateDir => {
+          return {
+            stateDir,
+            networkName: 'testnet',
+            nodeConfig: {
+              kind: 'shelley',
+              configurationDir: getShelleyConfigDir('testnet'),
+              network: cardanoNode.networks.testnet,
+            },
+          };
+        }
+      );
+
+      await launcher.start();
+      const walletApi = launcher.walletBackend.getApi();
+      const nodeConfig = launcher.nodeService.getConfig() as cardanoNode.NodeStartService;
+      for (const host of listExternalAddresses()) {
+        console.log(`Testing ${host}`);
+        expect(
+          await testPort(host, walletApi.requestParams.port, console)
+        ).toBe(false);
+        expect(await testPort(host, nodeConfig.listenPort, console)).toBe(
+          false
+        );
+      }
+
+      await launcher.stop();
+
+      await cleanupLauncher();
+    },
+    longTestTimeoutMs
+  );
 });
