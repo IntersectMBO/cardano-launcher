@@ -102,6 +102,11 @@ export interface Service {
    */
   getProcess(): ChildProcess | null;
 
+  /** @return the 'StartService' configuration, or null if the service
+   *   has not been configured yet.
+   */
+  getConfig(): StartService | null;
+
   /**
    * An [[EventEmitter]] that can be used to register handlers when
    * the process changes status.
@@ -386,6 +391,7 @@ export function setupService(
     waitForExit,
     getStatus: (): ServiceStatus => status,
     getProcess: (): ChildProcess | null => proc,
+    getConfig: (): StartService | null => cfg,
     events,
   };
 }

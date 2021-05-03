@@ -220,14 +220,22 @@ function makeArgs(
     delegationCertificate: config.delegationCertificate,
     listen: {
       port: listenPort,
-      address: "127.0.0.1",
-      address6: "::1",
+      address: '127.0.0.1',
+      address6: '::1',
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
     signingKey: config.signingKey,
     kesKey: config.kesKey,
     vrfKey: config.vrfKey,
   };
+}
+
+export interface NodeStartService extends StartService {
+  /** This will contain the cardano-node socket file path. */
+  socketPath: string;
+
+  /** This will contain the TCP port which the cardano-node is listening on. */
+  listenPort: number;
 }
 
 /**
@@ -241,7 +249,7 @@ export async function startCardanoNode(
   stateDir: DirPath,
   config: CardanoNodeConfig,
   networkName: string
-): Promise<StartService> {
+): Promise<NodeStartService> {
   const listenPort = await getPort();
   const args = makeArgs(stateDir, config, networkName, listenPort);
   return {
@@ -262,7 +270,9 @@ export async function startCardanoNode(
       args.configFile,
     ]
       .concat(args.listen.address ? ['--host-addr', args.listen.address] : [])
-      .concat(args.listen.address6 ? ['--host-ipv6-addr', args.listen.address6] : [])
+      .concat(
+        args.listen.address6 ? ['--host-ipv6-addr', args.listen.address6] : []
+      )
       .concat(args.validateDb || false ? ['--validate-db'] : [])
       .concat(args.signingKey ? ['--signing-key', args.signingKey] : [])
       .concat(
@@ -281,5 +291,7 @@ export async function startCardanoNode(
     shutdownMethod: ShutdownMethod.CloseFD,
     // set working directory to stateDir -- config file may have relative paths for logs.
     cwd: stateDir,
+    socketPath: args.socketFile,
+    listenPort: args.listen.port,
   };
 }
