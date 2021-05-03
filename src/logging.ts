@@ -15,11 +15,12 @@
 export interface Logger {
   debug: LogFunc;
   info: LogFunc;
+  warn: LogFunc;
   error: LogFunc;
   log: LogFunc;
 }
 
-export type Severity = 'debug' | 'log' | 'info' | 'error';
+export type Severity = 'debug' | 'log' | 'info' | 'warn' | 'error';
 
 /**
  * Function which logs a message and optional object.
@@ -48,6 +49,7 @@ export function prependName(logger: Logger, name: string): Logger {
     debug: (msg: string, param?: unknown): void => prefix('debug', msg, param),
     log: (msg: string, param?: unknown): void => prefix('log', msg, param),
     info: (msg: string, param?: unknown): void => prefix('info', msg, param),
+    warn: (msg: string, param?: unknown): void => prefix('warn', msg, param),
     error: (msg: string, param?: unknown): void => prefix('error', msg, param),
   };
 }

@@ -28,6 +28,9 @@ export class StdioLogger implements Logger {
   info(msg: string, param?: unknown) {
     this.write(chalk.whiteBright('INFO '), msg, param);
   }
+  warn(msg: string, param?: unknown) {
+    this.write(chalk.yellow('WARN '), msg, param);
+  }
   error(msg: string, param?: unknown) {
     this.write(chalk.red('ERROR'), msg, param);
   }
