@@ -26,6 +26,10 @@ import {
 const longTestTimeoutMs = 15000;
 const tlsDir = path.resolve(__dirname, 'data', 'tls');
 
+// Increase time available for tests to run to work around bug
+// https://github.com/input-output-hk/cardano-node/issues/1086
+const veryLongTestTimeoutMs = 70000;
+
 setupExecPath();
 
 describe('Starting cardano-wallet (and its node)', () => {
@@ -164,7 +168,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await cleanupLauncher();
     },
-    longTestTimeoutMs
+    veryLongTestTimeoutMs
   );
 
   it(
@@ -202,7 +206,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         expect(nodeLogFileStats.size).toBeGreaterThan(0);
         expect(walletLogFileStats.size).toBeGreaterThan(0);
       }),
-    longTestTimeoutMs
+    veryLongTestTimeoutMs
   );
 
   it(
@@ -236,7 +240,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         expect(logFileStats.size).toBeGreaterThan(0);
         await launcher.stop();
       }),
-    longTestTimeoutMs
+    veryLongTestTimeoutMs
   );
 
   // eslint-disable-next-line jest/expect-expect
@@ -259,7 +263,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           },
         };
       }, true),
-    longTestTimeoutMs
+    veryLongTestTimeoutMs
   );
 
   it('handles case where cardano-node fails during initialisation', () => {
