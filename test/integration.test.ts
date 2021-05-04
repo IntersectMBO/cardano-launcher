@@ -266,48 +266,52 @@ describe('Starting cardano-wallet (and its node)', () => {
     veryLongTestTimeoutMs
   );
 
-  it('handles case where cardano-node fails during initialisation', () => {
-    return new Promise((done, fail) => {
-      expect.assertions(3);
-      withMainnetConfigDir(
-        configurationDir =>
-          new Promise(resolve => {
-            setupTestLauncher(stateDir => {
-              // cardano-node will expect this to be a directory, and exit with an error
-              fs.writeFileSync(path.join(stateDir, 'chain'), 'bomb');
+  it(
+    'handles case where cardano-node fails during initialisation',
+    () => {
+      return new Promise((done, fail) => {
+        expect.assertions(3);
+        withMainnetConfigDir(
+          configurationDir =>
+            new Promise(resolve => {
+              setupTestLauncher(stateDir => {
+                // cardano-node will expect this to be a directory, and exit with an error
+                fs.writeFileSync(path.join(stateDir, 'chain'), 'bomb');
 
-              return {
-                stateDir,
-                networkName: 'testnet',
-                nodeConfig: {
-                  kind: 'shelley',
-                  configurationDir,
-                  network: cardanoNode.networks.testnet,
-                },
-              };
-            })
-              .then(({ launcher, cleanupLauncher }) => {
-                launcher.start().catch(passthroughErrorLogger);
-                launcher.walletBackend.events.on(
-                  'exit',
-                  (status: ExitStatus) => {
-                    expect(status.wallet.code).toBe(0);
-                    expect(status.node.code).not.toBe(0);
-                    expect(status.node.signal).toBeNull();
-
-                    cleanupLauncher()
-                      .then(resolve)
-                      .catch(passthroughErrorLogger);
-                  }
-                );
+                return {
+                  stateDir,
+                  networkName: 'testnet',
+                  nodeConfig: {
+                    kind: 'shelley',
+                    configurationDir,
+                    network: cardanoNode.networks.testnet,
+                  },
+                };
               })
-              .catch(fail);
-          })
-      )
-        .then(done)
-        .catch(fail);
-    });
-  });
+                .then(({ launcher, cleanupLauncher }) => {
+                  launcher.start().catch(passthroughErrorLogger);
+                  launcher.walletBackend.events.on(
+                    'exit',
+                    (status: ExitStatus) => {
+                      expect(status.wallet.code).toBe(0);
+                      expect(status.node.code).not.toBe(0);
+                      expect(status.node.signal).toBeNull();
+
+                      cleanupLauncher()
+                        .then(resolve)
+                        .catch(passthroughErrorLogger);
+                    }
+                  );
+                })
+                .catch(fail);
+            })
+        )
+          .then(done)
+          .catch(fail);
+      });
+    },
+    veryLongTestTimeoutMs
+  );
 
   it(
     'services listen only on a private address',
@@ -343,6 +347,6 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await cleanupLauncher();
     },
-    longTestTimeoutMs
+    veryLongTestTimeoutMs
   );
 });
