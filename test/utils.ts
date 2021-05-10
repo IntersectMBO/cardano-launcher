@@ -4,6 +4,8 @@
 import { withDir, DirectoryResult } from 'tmp-promise';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
+import * as net from 'net';
 import _ from 'lodash';
 
 import { Service, ServiceStatus, Api } from '../src';
@@ -193,4 +195,41 @@ export async function withMainnetConfigDir<T>(
       prefix: 'launcher-test-config-',
     }
   );
+}
+
+/** @returns a list of addresses for all non-internal network interfaces **/
+export function listExternalAddresses(family?: string): string[] {
+  const isExternal = (iface: os.NetworkInterfaceInfo): boolean =>
+    (!family || iface.family === family) &&
+    !iface.internal &&
+    iface.address != '0';
+
+  const externalAddrs = (iface: os.NetworkInterfaceInfo) =>
+    isExternal(iface) ? [iface.address] : [];
+  const ifaceAddrs = (ifaces: os.NetworkInterfaceInfo[] | undefined) =>
+    ifaces ? _.map(ifaces, externalAddrs) : [];
+
+  return _.flattenDeep(_.map(os.networkInterfaces(), ifaceAddrs));
+}
+
+/** Try to make a connection to a port and return whether this succeeded. */
+export function testPort(
+  host: string,
+  port: number,
+  logger: Logger
+): Promise<boolean> {
+  const addr = { host, port };
+  console.log(`Testing TCP port ${addr.host}:${addr.port}...`);
+
+  return new Promise(resolve => {
+    const client = new net.Socket();
+    client.connect(addr, () => {
+      logger.info(`... port accepted a connection`);
+      resolve(true);
+    });
+    client.on('error', err => {
+      logger.info(`... port refused a connection: ${err}`);
+      resolve(false);
+    });
+  });
 }
