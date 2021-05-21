@@ -8,6 +8,24 @@ To update https://input-output-hk.github.io/cardano-launcher/, run the
     ./scripts/update-gh-pages.sh
     git push origin gh-pages
 
+## How to make a release
+
+Release checklist:
+
+1. [ ] Bump version in `package.json` and `package-lock.json`, open PR, merge.
+2. [ ] Check that Buildkite and GitHub actions for `master` branch are green.
+3. [ ] Check that all PRs have labels (for release notes generation).
+4. [ ] Run `./scripts/tag-release.sh`.
+5. [ ] `git push origin VERSION`
+6. [ ] Create a new [draft release](https://github.com/input-output-hk/cardano-launcher/releases/new) containing the contents of `release-notes-VERSION.md`. Edit the text according to taste.
+7. [ ] Gather release approvals then publish the GitHub release.
+8. [ ] Check that the GitHub actions "release" workflow runs correctly.
+
+After publishing the GitHub release, there should be a new NPM version
+created, and the website should be updated with the latest docs from
+the released version.
+
+
 ## How to update the cardano-wallet and cardano-node versions
 
 Use the `niv` tool. To get it, run `nix-shell`. Then:
