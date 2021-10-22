@@ -34,3 +34,14 @@ export function passthroughErrorLogger(err: Error): void {
  * eslint warning from appearing.
  */
 export function ignorePromiseRejection(_: Error): void {} // eslint-disable-line
+
+/**
+ * Format GHC RTS options for the command line.
+ *
+ * See: https://downloads.haskell.org/ghc/8.10.7/docs/html/users_guide/runtime_control.html#setting-rts-options-on-the-command-line
+ */
+export function makeRtsArgs(rtsOpts?: string[]): string[] {
+  return Array.isArray(rtsOpts) && rtsOpts.length
+    ? ['+RTS'].concat(rtsOpts as string[]).concat(['-RTS'])
+    : [];
+}

@@ -11,7 +11,7 @@ import path from 'path';
 import getPort from 'get-port';
 
 import { StartService, ShutdownMethod, cleanShutdownFD } from './service';
-import { FilePath, DirPath } from './common';
+import { FilePath, DirPath, makeRtsArgs } from './common';
 
 /**
  * Definition of a `cardano-node` network.
@@ -104,6 +104,9 @@ export interface CardanoNodeArgs {
   /** Validate all on-disk database files. */
   validateDb?: boolean;
 
+  /** GHC runtime system options. */
+  rtsOpts?: string[];
+
   /**
    * Extra arguments to add to the `cardano-node` command line.
    */
@@ -148,6 +151,13 @@ export interface CardanoNodeConfig {
    * node. Optional -- will be set automatically if not provided.
    */
   socketFile?: FilePath;
+
+  /**
+   * GHC runtime system options for cardano-node.
+   * Can be used for debugging, tuning performance, etc.
+   * See: https://downloads.haskell.org/ghc/8.10.7/docs/html/users_guide/runtime_control.html#setting-rts-options-on-the-command-line
+   */
+  rtsOpts?: string[];
 }
 
 let pipeCounter = 0;
@@ -227,6 +237,7 @@ function makeArgs(
     signingKey: config.signingKey,
     kesKey: config.kesKey,
     vrfKey: config.vrfKey,
+    rtsOpts: config.rtsOpts,
   };
 }
 
@@ -287,6 +298,7 @@ export async function startCardanoNode(
           ? ['--shelley-operational-certificate', args.operationalCertificate]
           : []
       )
+      .concat(makeRtsArgs(args.rtsOpts))
       .concat(args.extra || []),
     shutdownMethod: ShutdownMethod.CloseFD,
     // set working directory to stateDir -- config file may have relative paths for logs.
