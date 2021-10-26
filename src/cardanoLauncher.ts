@@ -36,7 +36,7 @@ import {
   WalletStartService,
 } from './cardanoWallet';
 
-import * as cardanoNode from './cardanoNode';
+import { startCardanoNode } from './cardanoNode';
 import Signals = NodeJS.Signals;
 
 export {
@@ -51,7 +51,7 @@ export { LaunchConfig } from './cardanoWallet';
  * Api
  ******************************************************************************/
 
-interface RequestParams {
+export interface RequestParams {
   port: number;
   path: string;
   hostname: string;
@@ -208,21 +208,20 @@ export class Launcher {
       childProcessLogWriteStreams?.node
     );
 
-    this.walletBackend = {
-      getApi: (): V2Api =>
-        new V2Api(
-          this.apiPort,
-          config.tlsConfiguration !== undefined ? 'https:' : 'http:'
-        ),
-      events: new EventEmitter<{
-        ready: (api: Api) => void;
-        exit: (status: ExitStatus) => void;
-      }>(),
-    };
+    this.walletBackend = new WalletBackend(
+      new V2Api(
+        this.apiPort,
+        config.tlsConfiguration !== undefined ? 'https:' : 'http:'
+      )
+    );
 
     start.wallet
       .then((startService: WalletStartService) => {
         this.apiPort = startService.apiPort;
+        this.walletBackend.api = new V2Api(
+          this.apiPort,
+          config.tlsConfiguration !== undefined ? 'https:' : 'http:'
+        );
       })
       .catch(passthroughErrorLogger);
 
@@ -267,7 +266,7 @@ export class Launcher {
       this.walletService.start().catch(ignorePromiseRejection);
 
       this.waitForApi(stopWaiting, () => {
-        this.walletBackend.events.emit('ready', this.walletBackend.getApi());
+        this.walletBackend.events.ready(this.walletBackend.api);
       });
 
       this.walletBackend.events.on('ready', resolve);
@@ -340,7 +339,7 @@ export class Launcher {
       const status = { wallet, node };
       this.logger.debug(`Launcher.stop: both services are stopped.`, status);
       if (!this.exited) {
-        this.walletBackend.events.emit('exit', status);
+        this.walletBackend.events.exit(status);
         this.exited = true;
       }
       this.cleanupSignalHandlers();
@@ -392,7 +391,7 @@ export class Launcher {
   ): Promise<StartService> {
     switch (config.nodeConfig.kind) {
       case 'shelley':
-        return cardanoNode.startCardanoNode(
+        return startCardanoNode(
           baseDir,
           config.nodeConfig,
           config.networkName
@@ -404,18 +403,31 @@ export class Launcher {
 /**
  * Represents the API service of `cardano-wallet`.
  */
-export interface WalletBackend {
-  /**
-   * @return HTTP connection parameters for the `cardano-wallet` API server.
-   */
-  getApi(): Api;
+export class WalletBackend {
+  api: Api;
+
+  constructor(api: Api) {
+    this.api = api;
+    this.events = new WalletBackendEvents();
+  }
 
   /**
-   * An [[EventEmitter]] that can be used to register handlers when
+   * @deprecated
+   * @return HTTP connection parameters for the `cardano-wallet` API server.
+   */
+  getApi(): Api {
+    return this.api;
+  }
+
+  /**
+   * An [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter)
+   * that can be used to register handlers when
    * the process changes status.
    *
+   * ### Example
    * ```typescript
-   * launcher.walletBackend.events.on('ready', api => { ... });
+   * launcher.walletBackend.events.on('ready', (api: Api) => { ... });
+   * launcher.walletBackend.events.on('exit', (status: ExitStatus) => { ... });
    * ```
    */
   events: WalletBackendEvents;
@@ -424,16 +436,32 @@ export interface WalletBackend {
 /**
  * The type of events for [[WalletBackend]].
  */
-type WalletBackendEvents = EventEmitter<{
-  /**
-   * [[Launcher.walletBackend.events]] will emit this when the API
-   *  server is ready to accept requests.
-   * @event
-   */
+export class WalletBackendEvents extends EventEmitter<{
   ready: (api: Api) => void;
-  /** [[Launcher.walletBackend.events]] will emit this when the
-   *  wallet and node have both exited.
+  exit: (status: ExitStatus) => void;
+}> {
+  /**  @ignore */
+  constructor() {
+    super();
+  }
+
+  /**
+   * Event emitted when the API server is ready to accept requests.
+   *
+   * @param api the wallet API info.
    * @event
    */
-  exit: (status: ExitStatus) => void;
-}>;
+  ready(api: Api): void {
+    this.emit('ready', api);
+  }
+
+  /**
+   * Event emitted when both the wallet and node have both exited.
+   *
+   * @param stats the combined exit status.
+   * @event
+   */
+  exit(status: ExitStatus): void {
+    this.emit('exit', status);
+  }
+}

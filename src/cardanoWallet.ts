@@ -15,7 +15,7 @@ import getPort from 'get-port';
 import _ from 'lodash';
 
 import { WriteStream } from 'fs';
-import * as cardanoNode from './cardanoNode';
+import { CardanoNodeConfig } from './cardanoNode';
 import { ServerTlsConfiguration } from './tls';
 import { StartService, ShutdownMethod } from './service';
 import { DirPath } from './common';
@@ -95,7 +95,7 @@ export interface LaunchConfig {
   /**
    * Configuration for starting `cardano-node`.
    */
-  nodeConfig: cardanoNode.CardanoNodeConfig;
+  nodeConfig: CardanoNodeConfig;
 
   /**
    *  WriteStreams for the child process data events from stdout and stderr
