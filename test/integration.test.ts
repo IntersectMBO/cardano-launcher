@@ -29,7 +29,7 @@ const tlsDir = path.resolve(__dirname, 'data', 'tls');
 // Increase time available for tests to run to work around bug
 // https://github.com/input-output-hk/cardano-node/issues/1086
 const veryLongTestTimeoutMs = 70000;
-const defaultStopTimeout = 10;
+const testsStopTimeout = 10;
 
 setupExecPath();
 
@@ -75,11 +75,11 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await launcher.start();
       await Promise.all([
-        launcher.stop(defaultStopTimeout),
-        launcher.stop(defaultStopTimeout),
-        launcher.stop(defaultStopTimeout),
+        launcher.stop(testsStopTimeout),
+        launcher.stop(testsStopTimeout),
+        launcher.stop(testsStopTimeout),
       ]);
-      await launcher.stop(defaultStopTimeout);
+      await launcher.stop(testsStopTimeout);
 
       expect(events).toHaveLength(1);
     },
@@ -115,7 +115,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           },
         });
         await launcher.start();
-        await launcher.stop(defaultStopTimeout);
+        await launcher.stop(testsStopTimeout);
         const nodeLogFileStats = await stat(nodeLogFile.path);
         const walletLogFileStats = await stat(walletLogFile.path);
         expect(nodeLogFileStats.size).toBeGreaterThan(0);
@@ -153,7 +153,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         await launcher.start();
         const logFileStats = await stat(writeStream.path);
         expect(logFileStats.size).toBeGreaterThan(0);
-        await launcher.stop(defaultStopTimeout);
+        await launcher.stop(testsStopTimeout);
       }),
     veryLongTestTimeoutMs
   );
@@ -222,7 +222,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           })
         );
 
-        await launcher.stop(defaultStopTimeout);
+        await launcher.stop(testsStopTimeout);
 
         await expectations;
       });
@@ -258,7 +258,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         );
       }
 
-      await launcher.stop(defaultStopTimeout);
+      await launcher.stop(testsStopTimeout);
     },
     veryLongTestTimeoutMs
   );
@@ -283,7 +283,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await launcher.start();
       expect(await pathExists(hp)).toBe(true);
-      await launcher.stop(defaultStopTimeout);
+      await launcher.stop(testsStopTimeout);
     },
     veryLongTestTimeoutMs
   );
@@ -371,7 +371,7 @@ async function launcherTest(
 
   expect(info.node_tip).toBeTruthy();
 
-  await launcher.stop(defaultStopTimeout);
+  await launcher.stop(testsStopTimeout);
   console.log('stopped');
 }
 
