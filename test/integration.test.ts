@@ -184,11 +184,13 @@ describe('Starting cardano-wallet (and its node)', () => {
   it(
     'handles case where cardano-node fails during initialisation',
     async () => {
-      expect.assertions(4);
+      expect.assertions(5);
+      let chainDir: string;
       await withMainnetConfigDir(async configurationDir => {
         const launcher = await setupTestLauncher(stateDir => {
           // cardano-node will expect this to be a directory, and exit with an error
-          fs.writeFileSync(path.join(stateDir, 'chain'), 'bomb');
+          chainDir = path.join(stateDir, 'chain');
+          fs.writeFileSync(chainDir, 'bomb');
 
           return {
             stateDir,
@@ -202,6 +204,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         });
 
         await launcher.start().catch(passthroughErrorLogger);
+        expect((await fs.promises.stat(chainDir)).isFile()).toBe(true);
 
         const expectations = new Promise<void>((done, fail) =>
           launcher.walletBackend.events.on('exit', (status: ExitStatus) => {

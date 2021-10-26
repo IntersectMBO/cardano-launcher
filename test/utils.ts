@@ -160,6 +160,7 @@ export async function withMainnetConfigDir<T>(
           configuration: 'configuration.json',
           genesisByron: 'genesis-byron.json',
           genesisShelley: 'genesis-shelley.json',
+          genesisAlonzo: 'genesis-alonzo.json',
           topology: 'topology.json',
         },
         (f: string) => {
@@ -170,22 +171,18 @@ export async function withMainnetConfigDir<T>(
         }
       );
 
-      await fs.promises.copyFile(
-        configs.genesisByron.src,
-        configs.genesisByron.dst
-      );
-      await fs.promises.copyFile(
-        configs.genesisShelley.src,
-        configs.genesisShelley.dst
-      );
-      await fs.promises.copyFile(configs.topology.src, configs.topology.dst);
-
-      const config = await fs.promises.readFile(
-        configs.configuration.src,
-        'utf-8'
-      );
-      const configFixed = config.replace(/^.*SocketPath.*$/gm, '');
-      await fs.promises.writeFile(configs.configuration.dst, configFixed);
+      for (const [name, file] of _.toPairs(configs)) {
+        if (name === 'configuration') {
+          const config = await fs.promises.readFile(
+            configs.configuration.src,
+            'utf-8'
+          );
+          const configFixed = config.replace(/^.*SocketPath.*$/gm, '');
+          await fs.promises.writeFile(configs.configuration.dst, configFixed);
+        } else {
+          await fs.promises.copyFile(file.src, file.dst);
+        }
+      }
 
       return await cb(o.path);
     },
