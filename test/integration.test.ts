@@ -203,7 +203,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
         await launcher.start().catch(passthroughErrorLogger);
 
-        const expectations = new Promise((done, fail) =>
+        const expectations = new Promise<void>((done, fail) =>
           launcher.walletBackend.events.on('exit', (status: ExitStatus) => {
             try {
               expect(status.wallet.code).toBe(0);
