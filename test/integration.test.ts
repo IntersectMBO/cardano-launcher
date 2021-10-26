@@ -8,7 +8,7 @@ import * as https from 'https';
 import * as tmp from 'tmp-promise';
 import * as path from 'path';
 import * as fs from 'fs';
-import { stat } from 'fs-extra';
+import { stat, pathExists } from 'fs-extra';
 
 import * as cardanoNode from '../src/cardanoNode';
 import { ExitStatus } from '../src/cardanoLauncher';
@@ -258,6 +258,31 @@ describe('Starting cardano-wallet (and its node)', () => {
         );
       }
 
+      await launcher.stop(defaultStopTimeout);
+    },
+    veryLongTestTimeoutMs
+  );
+
+  it(
+    'applies RTS options to cardano-node',
+    async () => {
+      let hp = 'cardano-node.hp';
+      const launcher = await setupTestLauncher(stateDir => {
+        hp = path.join(stateDir, hp);
+        return {
+          stateDir,
+          networkName: 'testnet',
+          nodeConfig: {
+            kind: 'shelley',
+            configurationDir: getShelleyConfigDir('testnet'),
+            network: cardanoNode.networks.testnet,
+            rtsOpts: ['-h'], // generates a basic heap profile
+          },
+        };
+      });
+
+      await launcher.start();
+      expect(await pathExists(hp)).toBe(true);
       await launcher.stop(defaultStopTimeout);
     },
     veryLongTestTimeoutMs
