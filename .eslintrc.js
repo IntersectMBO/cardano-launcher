@@ -6,7 +6,7 @@ module.exports = {
     sourceType: 'module',  // Allows for the use of imports
   },
   extends: [
-    'prettier/@typescript-eslint',
+    'prettier',
     'plugin:prettier/recommended', // format sources with prettier.io
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     'plugin:@typescript-eslint/recommended',
@@ -36,7 +36,8 @@ module.exports = {
       "unix"
     ],
     "no-unused-expressions": 0,
-    "@typescript-eslint/no-floating-promises": "warn"
+    "@typescript-eslint/no-floating-promises": "warn",
+    "jest/no-conditional-expect": 0
   },
   env: {
     jest: true

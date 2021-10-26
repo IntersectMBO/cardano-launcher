@@ -190,10 +190,8 @@ export class Launcher {
    */
   constructor(config: LaunchConfig, logger: Logger = console) {
     logger.debug('Launcher init');
-    const {
-      childProcessLogWriteStreams,
-      installSignalHandlers = true,
-    } = config;
+    const { childProcessLogWriteStreams, installSignalHandlers = true } =
+      config;
     this.logger = logger;
 
     const start = Launcher.makeServiceCommands(config, logger);
@@ -391,11 +389,7 @@ export class Launcher {
   ): Promise<StartService> {
     switch (config.nodeConfig.kind) {
       case 'shelley':
-        return startCardanoNode(
-          baseDir,
-          config.nodeConfig,
-          config.networkName
-        );
+        return startCardanoNode(baseDir, config.nodeConfig, config.networkName);
     }
   }
 }

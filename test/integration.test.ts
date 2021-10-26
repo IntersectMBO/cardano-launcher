@@ -250,7 +250,8 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await launcher.start();
       const walletApi = launcher.walletBackend.api;
-      const nodeConfig = launcher.nodeService.getConfig() as cardanoNode.NodeStartService;
+      const nodeConfig =
+        launcher.nodeService.getConfig() as cardanoNode.NodeStartService;
       for (const host of listExternalAddresses()) {
         console.log(`Testing ${host}`);
         expect(
