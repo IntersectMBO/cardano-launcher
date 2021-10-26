@@ -24,6 +24,7 @@ import {
   StartService,
   setupService,
   serviceExitStatusMessage,
+  defaultTimeoutSeconds,
 } from './service';
 import {
   DirPath,
@@ -316,9 +317,11 @@ export class Launcher {
   }
 
   /**
-   * Stops the wallet backend. Attempts to cleanly shut down the
-   * processes. However, if they have not exited before the timeout,
-   * they will be killed.
+   * Stops the wallet and node backends.
+   *
+   * Attempts to cleanly shut down the processes. However, if they
+   * have not exited before the timeout, they will be killed. The
+   * default timeout is [[defaultTimeoutSeconds]].
    *
    * @param timeoutSeconds - how long to wait before killing the processes.
    * @return a [[Promise]] that is fulfilled at the timeout, or before.
@@ -327,7 +330,7 @@ export class Launcher {
    *   wallet and node have both exited.
    */
   stop(
-    timeoutSeconds = 60
+    timeoutSeconds = defaultTimeoutSeconds
   ): Promise<{ wallet: ServiceExitStatus; node: ServiceExitStatus }> {
     this.logger.debug(`Launcher.stop: stopping wallet and node`);
     return Promise.all([
