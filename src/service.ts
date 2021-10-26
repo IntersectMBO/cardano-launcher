@@ -269,7 +269,7 @@ export function setupService(
         childProcessLogWriteStream.write(data);
       });
     }
-    return proc.pid;
+    return proc.pid as number;
   };
 
   const doStop = (timeoutSeconds: number): void => {
@@ -354,7 +354,7 @@ export function setupService(
           return startPromise;
         case ServiceStatus.Started:
           logger.info(`Service.start: already started`);
-          return proc ? proc.pid : -1;
+          return proc?.pid || -1;
         case ServiceStatus.Stopping:
           logger.info(`Service.start: cannot start - already stopping`);
           return -1;
