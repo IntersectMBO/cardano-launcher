@@ -21,6 +21,7 @@
   },
   "typedocOptions": {
     "excludeExternals": true,
+    "cleanOutputDir": true,
     "out": "site"
   }
 }

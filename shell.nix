@@ -6,6 +6,7 @@ mkShell {
   buildInputs = [
     # javascript
     nodejs nodePackages.npm
+    jq
     # documentation tools
     pandoc librsvg gnumake
   ] ++ lib.optional stdenv.isLinux mscgen ++ [

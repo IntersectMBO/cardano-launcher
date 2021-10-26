@@ -13,7 +13,8 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "prepare": "npm run build",
-    "typedoc": "typedoc src"
+    "typedoc": "typedoc src",
+    "posttypedoc": "make -C docs install"
   },
   "name": "cardano-launcher",
   "author": "IOHK",

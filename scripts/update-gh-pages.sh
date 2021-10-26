@@ -2,37 +2,37 @@
 
 set -euo pipefail
 
-rev=$(git rev-parse --short HEAD)
-old_head=$(git symbolic-ref HEAD)
-cd $(git rev-parse --show-toplevel)
-out="$(pwd)/site"
-
-if ! git diff-index --quiet HEAD --; then
-    echo "There are uncommitted changes - aborting!"
+if [ -z "${1:-}" ]; then
+    echo "usage: $0 GIT_REF_NAME"
     exit 1
 fi
 
-echo "Fetching remote branches"
-git fetch origin || true
+site="$(jq -r .typedocOptions.out tsconfig.json)"
 
-echo "Building..."
-rm -rf "$out"
-npm run typedoc
-touch "$out/.nojekyll"
-mkdir -p "$out/docs"
-make -C docs
-cp docs/*.png docs/*.html docs/*.svg docs/*.js "$out/docs"
-
-echo "Updating git index..."
-git checkout gh-pages
-trap "git symbolic-ref HEAD $old_head && git reset --hard" EXIT
-git reset --hard origin/gh-pages
-GIT_WORK_TREE="$out" git add -A
-
-if git diff-index --cached --quiet HEAD --; then
-  echo "No changes to commit, exiting."
-  exit 0
+if [ ! -f "$site/modules.html" ]; then
+    echo "Doc file $site/modules.html does not exist. First build with:"
+    echo "  npm run typedoc"
+    exit 2
 fi
 
-echo "Committing changes..."
-GIT_WORK_TREE="$out" git commit --no-gpg-sign --message "Update gh-pages for $rev"
+if [[ "$1" =~ ^refs/tags/ ]]; then
+  tag="${1/refs\/tags\//}"
+  dir="$tag"
+else
+  dir="dev"
+  tag=""
+fi
+
+mkdir "$site.tmp"
+mv "$site" "$site.tmp/$dir"
+mv "$site.tmp" "$site"
+touch "$site/.nojekyll"
+
+if [ -n "$tag" ]; then
+    cat > $site/index.html <<EOF
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Redirecting to $tag</title>
+<meta http-equiv="refresh" content="0; url=./$tag/">
+EOF
+fi
