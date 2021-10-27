@@ -1,18 +1,19 @@
 {
   "version": "0.20211027.0",
   "license": "Apache-2.0",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts",
   "files": [
-    "dist/*",
+    "dist/src/*",
     "LICENSE",
     "LICENSE_NOTICE"
   ],
   "scripts": {
-    "build": "shx rm -rf dist && tsc",
+    "clean": "shx rm -rf dist",
+    "build": "tsc",
+    "pretest": "npm run build",
     "test": "jest",
     "lint": "eslint src/**/*.ts test/**/*.ts",
-    "prepare": "npm run build",
     "typedoc": "typedoc src",
     "posttypedoc": "make -C docs install"
   },

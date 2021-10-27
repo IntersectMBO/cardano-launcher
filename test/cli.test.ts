@@ -6,7 +6,7 @@
  * in another process via `src/cli.ts`.
  *
  * These tests require that the code has already been built, so that
- * `dist/cli.js` exists.
+ * `dist/src/cli.js` exists.
  *
  * @packageDocumentation
  */
@@ -36,7 +36,7 @@ describe('CLI tests', () => {
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
     const proc = fork(
-      path.resolve(__dirname, '..', 'dist', 'cli.js'),
+      path.resolve(__dirname, '..', '..', 'bin', 'cardano-launcher'),
       args.concat([stateDir]),
       {
         stdio: ['inherit', 'inherit', 'inherit', 'ipc'],

@@ -24,7 +24,7 @@ import {
 
 // increase time available for tests to run
 const longTestTimeoutMs = 15000;
-const tlsDir = path.resolve(__dirname, 'data', 'tls');
+const tlsDir = path.resolve(testDataDir, 'tls');
 
 // Increase time available for tests to run to work around bug
 // https://github.com/input-output-hk/cardano-node/issues/1086

@@ -125,6 +125,10 @@ export function setupExecPath(): void {
   }
 }
 
+/**
+ * Resolve the cardano-node configuration directory from the environment.
+ * This would usually be provided by nix-shell.
+ */
 export function getShelleyConfigDir(networkName: string): string {
   const base = process.env.CARDANO_NODE_CONFIGS;
   if (!base) {
@@ -136,6 +140,12 @@ export function getShelleyConfigDir(networkName: string): string {
 
   return path.resolve(base, networkName);
 }
+
+/**
+ * Get path of data files in the typescript sources.
+ * The __dirname variable points to the compiled .js file in dist/test/.
+ */
+export const testDataDir = path.resolve(__dirname, '..', '..', 'test', 'data')
 
 /**
  * Set up a temporary directory containing configuration files for
