@@ -76,6 +76,9 @@ export interface Service {
   /**
    * Stops the process.
    *
+   * If the process doesn't exit within `timeoutSeconds`, it will be
+   * killed. The default timeout is [[defaultTimeoutSeconds]].
+   *
    * @param timeoutSeconds - How long to wait for the service to stop
    *   itself before killing it. If `0`, any running timeout kill be
    *   cancelled and the process killed immediately.
@@ -156,6 +159,11 @@ export enum ShutdownMethod {
  * notification when [[ShutdownMethod.CloseFD]] is in use.
  */
 export const cleanShutdownFD = 3;
+
+/**
+ * The value for the `timeoutSeconds` argument of [[Service.stop]].
+ */
+export const defaultTimeoutSeconds = 300;
 
 /**
  * Initialise a [[Service]] which can control the lifetime of a
@@ -366,7 +374,9 @@ export function setupService(
           return -1;
       }
     },
-    stop: async (timeoutSeconds = 60): Promise<ServiceExitStatus> => {
+    stop: async (
+      timeoutSeconds = defaultTimeoutSeconds
+    ): Promise<ServiceExitStatus> => {
       switch (status) {
         case ServiceStatus.NotStarted:
         case ServiceStatus.Starting:
