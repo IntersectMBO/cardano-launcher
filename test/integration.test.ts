@@ -24,14 +24,11 @@ import {
 } from './utils';
 import { Logger, StdioLogger } from '../src/loggers';
 
-// increase time available for tests to run
+// Increase time available for tests to run.
 const longTestTimeoutMs = 25000;
-const tlsDir = path.resolve(testDataDir, 'tls');
-
-// Increase time available for tests to run to work around bug
-// https://github.com/input-output-hk/cardano-node/issues/1086
-const veryLongTestTimeoutMs = 70000;
 const testsStopTimeout = 20;
+// Path to self-signed certs and CA for HTTPS.
+const tlsDir = path.resolve(testDataDir, 'tls');
 
 setupExecPath();
 
@@ -85,7 +82,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       expect(events).toHaveLength(1);
     },
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 
   it(
@@ -123,7 +120,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         expect(nodeLogFileStats.size).toBeGreaterThan(0);
         expect(walletLogFileStats.size).toBeGreaterThan(0);
       }),
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 
   it(
@@ -157,7 +154,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         expect(logFileStats.size).toBeGreaterThan(0);
         await launcher.stop(testsStopTimeout);
       }),
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 
   // eslint-disable-next-line jest/expect-expect
@@ -180,7 +177,7 @@ describe('Starting cardano-wallet (and its node)', () => {
           },
         };
       }, true),
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 
   it(
@@ -213,15 +210,11 @@ describe('Starting cardano-wallet (and its node)', () => {
             try {
               expect(status.wallet.code).toBe(0);
               expect(status.node.code).not.toBe(0);
-              // cardano-node is sometimes not exiting properly on both linux
-              // and windows.
-              // fixme: This assertion is disabled until the node is fixed.
               if (status.node.signal !== null) {
+                // cardano-node is sometimes not exiting properly.
                 loggers.test.error("Flaky test - cardano-node did not exit properly.", status.node.signal);
               }
-              // expect(status.node.signal).toBeNull();
-              // Maintain same number of assertions...
-              expect(status.node).not.toBeNull();
+              expect(status.node.signal).toBeNull();
             } catch (e) {
               fail(e);
             }
@@ -234,7 +227,7 @@ describe('Starting cardano-wallet (and its node)', () => {
         await expectations;
       });
     },
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 
   it(
@@ -268,7 +261,7 @@ describe('Starting cardano-wallet (and its node)', () => {
 
       await launcher.stop(testsStopTimeout);
     },
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 
   it(
@@ -293,7 +286,7 @@ describe('Starting cardano-wallet (and its node)', () => {
       expect(await pathExists(hp)).toBe(true);
       await launcher.stop(testsStopTimeout);
     },
-    veryLongTestTimeoutMs
+    longTestTimeoutMs
   );
 });
 
