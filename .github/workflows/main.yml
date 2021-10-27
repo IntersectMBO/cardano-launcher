@@ -1,3 +1,5 @@
+name: CI
+
 on:
   pull_request:
   push:
@@ -8,41 +10,46 @@ on:
       - published
 
 jobs:
-  build:
+  linux:
+    name: Linux
     runs-on: ubuntu-20.04
     steps:
     - name: '📥 Checkout Code'
       uses: actions/checkout@v2.3.4
-    - uses: cachix/install-nix-action@v14.1
+    - name: '❄ Install Nix'
+      uses: cachix/install-nix-action@v14.1
       with:
         nix_path: nixpkgs=channel:nixos-21.05
         extra_nix_config: |
           trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
           substituters = https://hydra.iohk.io https://cache.nixos.org/
-    - name: 'Install nix-shell dependencies'
+
+    - name: '☃ Install nix-shell dependencies'
       run: 'nix-shell --pure --run "node --version"'
-    - name: 'Install NPM dependencies'
+    - name: '🤓 Install NPM dependencies'
       run: 'nix-shell --pure --run "npm install"'
-    - name: 'Build'
+    - name: '🧱 Build'
       id: build
       run: 'nix-shell --pure --run "npm run build"'
-    - name: 'Lint'
+    - name: '🕶 Lint'
       id: lint
       if: '${{ !github.event.release && (success() || failure()) }}'
       run: 'nix-shell --pure --run "npm run lint"'
-    - name: 'Tests'
+    - name: '🔨 Tests'
       id: tests
       if: '${{ !github.event.release && (success() || failure())  }}'
       run: 'nix-shell --pure --run "npm run test -- --collect-coverage"'
-    - name: 'Docs'
+
+    - name: '📘 Docs'
       id: docs
       if: 'success() || failure()'
       run: 'nix-shell --pure --run "npm run typedoc"'
-    - name: 'Prepare Documentation'
-      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/pull/125/merge' }}
+
+    - name: '📘 Prepare Documentation'
+      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}
       run: './scripts/update-gh-pages.sh "$GITHUB_REF"'
     - name: '📤 Publish Documentation'
-      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/pull/125/merge' }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}
       uses: peaceiris/actions-gh-pages@v3.8.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -52,15 +59,70 @@ jobs:
         user_name: 'William King Noel Bot'
         user_email: 'adrestia@iohk.io'
 
-    - name: 'Publish Dry Run'
-      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/pull/125/merge' }}
+    - name: '📦 NPM Package Publish Dry Run'
+      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}
       run: |
         tag="${GITHUB_REF/refs\/tags\//}"
         package_version="$(jq .version package.json)"
         echo "tag=$tag package_version=$package_version"
         nix-shell --pure --run "npm publish . --dry-run"
 
+  windows:
+    name: Windows - Tests only
+    if: ${{ github.event.pull_request || github.ref == 'refs/heads/master' }}
+    runs-on: windows-2016
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v2.3.4
+
+      - name: 'Configure cardano-wallet source'
+        shell: powershell
+        run: |
+          $sources = (Get-Content "nix/sources.json" -Raw) | ConvertFrom-Json | Select -expand "cardano-wallet" | Select owner, repo, rev
+          Write-Output $sources
+          echo "REPO_OWNER=$($sources.owner)" >> $Env:GITHUB_ENV
+          echo "REPO_NAME=$($sources.repo)" >> $Env:GITHUB_ENV
+          echo "COMMIT=$($sources.rev)" >> $Env:GITHUB_ENV
+
+      - name: 'Wait for Hydra build'
+        uses: rvl/hydra-build-products-action@master
+        id: hydra
+        with:
+          hydra: 'https://hydra.iohk.io'
+          jobs: 'cardano-wallet-win64'
+        timeout-minutes: 45
+
+      - name: 'Fetch cardano-wallet'
+        shell: powershell
+        run: |
+          echo "Build product URLs: ${{ steps.hydra.outputs.buildProducts }}"
+          "${{ steps.hydra.outputs.buildProducts }}".Split(" ") | ForEach {
+            $url = $_
+            $output = $url.Split("/")[-1]
+            Invoke-WebRequest -Uri $url -OutFile $output
+          }
+          Expand-Archive -Force -Path "cardano-wallet-v20*win64.zip" -DestinationPath .
+          Expand-Archive -Force -Path "cardano-wallet-*-deployments.zip" -DestinationPath deployments
+          Get-ChildItem
+          echo "CARDANO_NODE_CONFIGS=$Env:GITHUB_WORKSPACE\deployments" >> $Env:GITHUB_ENV
+
+      - name: 'Setup nodejs'
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - run: 'npm install'
+      - run: 'npm test unit'
+        timeout-minutes: 5
+        if: '${{ success() || failure() }}'
+      - run: 'npm test integration'
+        timeout-minutes: 5
+        if: '${{ success() || failure() }}'
+      - run: npm test cli
+        timeout-minutes: 5
+        if: '${{ success() || failure() }}'
+
   publish-npm-package:
+    name: 'Publish NPM Package'
     if: ${{ github.event.release }}
     runs-on: ubuntu-20.04
     steps:
