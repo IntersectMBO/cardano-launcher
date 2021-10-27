@@ -20,17 +20,22 @@ import { Launcher, ExitStatus } from './cardanoLauncher';
 import { ignorePromiseRejection } from './common';
 import { ServiceExitStatus, serviceExitStatusMessage } from './service';
 import * as cardanoNode from './cardanoNode';
+import { StdioLogger } from './loggers';
 
 function usage(): void {
-  console.log('usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR');
-  console.log('  BACKEND    - shelley');
-  console.log(
+  process.stdout.write(
+    'usage: cardano-launcher BACKEND NETWORK CONFIG-DIR STATE-DIR'
+  );
+  process.stdout.write('  BACKEND    - shelley');
+  process.stdout.write(
     '  NETWORK    - depends on backend, e.g. mainnet, itn_rewards_v1'
   );
-  console.log(
+  process.stdout.write(
     '  CONFIG-DIR - directory which contains config files for a backend'
   );
-  console.log('  STATE-DIR  - directory to put blockchains, databases, etc.');
+  process.stdout.write(
+    '  STATE-DIR  - directory to put blockchains, databases, etc.'
+  );
   process.exit(1);
 }
 
@@ -81,7 +86,7 @@ export function cli(argv: Process['argv']): void {
 
   if (backend === 'shelley') {
     if (!(networkName in cardanoNode.networks)) {
-      console.error(`unknown network: ${networkName}`);
+      process.stderr.write(`unknown network: ${networkName}\n`);
       process.exit(2);
     }
     const network = cardanoNode.networks[networkName];
@@ -94,7 +99,8 @@ export function cli(argv: Process['argv']): void {
     usage();
   }
 
-  const launcher = new Launcher({ stateDir, nodeConfig, networkName }, console);
+  const logger = new StdioLogger();
+  const launcher = new Launcher({ stateDir, nodeConfig, networkName }, logger);
 
   launcher.start().catch(ignorePromiseRejection);
 
@@ -109,8 +115,8 @@ export function cli(argv: Process['argv']): void {
     .catch(ignorePromiseRejection);
 
   launcher.walletBackend.events.on('exit', (status: ExitStatus) => {
-    console.log(serviceExitStatusMessage(status.wallet));
-    console.log(serviceExitStatusMessage(status.node));
+    logger.info(serviceExitStatusMessage(status.wallet));
+    logger.info(serviceExitStatusMessage(status.node));
     clearInterval(waitForExit);
     process.exit(combineStatus([status.wallet, status.node]));
   });

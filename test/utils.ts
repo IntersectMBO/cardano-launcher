@@ -1,16 +1,17 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-import { withDir, DirectoryResult } from 'tmp-promise';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as net from 'net';
+
+import { withDir, DirectoryResult } from 'tmp-promise';
 import _ from 'lodash';
 
+import { Logger } from '../src/logging';
 import { Service, ServiceStatus, Api } from '../src';
 import { StartService, ShutdownMethod } from '../src/service';
-import { Logger, LogFunc } from '../src/logging';
 import { ServerOptions } from 'http';
 import { ServerOptions as HttpsServerOptions, RequestOptions } from 'https';
 
@@ -42,40 +43,6 @@ export const collectEvents = (service: Service): ServiceStatus[] => {
   service.events.on('statusChanged', status => events.push(status));
   return events;
 };
-
-export interface MockLog {
-  severity: 'debug' | 'info' | 'error';
-  msg: string;
-  param: unknown;
-}
-
-export interface MockLogger extends Logger {
-  getLogs(): MockLog[];
-}
-
-export function mockLogger(echo = false): MockLogger {
-  const logs: MockLog[] = [];
-
-  const mockLog = (severity: 'debug' | 'info' | 'error'): LogFunc => {
-    return (msg: string, param?: unknown): void => {
-      if (echo) {
-        if (param) {
-          console[severity](msg, param);
-        } else {
-          console[severity](msg);
-        }
-      }
-      logs.push({ severity, msg, param: param || undefined });
-    };
-  };
-
-  return {
-    debug: mockLog('debug'),
-    info: mockLog('info'),
-    error: mockLog('error'),
-    getLogs: (): MockLog[] => logs,
-  };
-}
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -125,6 +92,10 @@ export function setupExecPath(): void {
   }
 }
 
+/**
+ * Resolve the cardano-node configuration directory from the environment.
+ * This would usually be provided by nix-shell.
+ */
 export function getShelleyConfigDir(networkName: string): string {
   const base = process.env.CARDANO_NODE_CONFIGS;
   if (!base) {
@@ -136,6 +107,12 @@ export function getShelleyConfigDir(networkName: string): string {
 
   return path.resolve(base, networkName);
 }
+
+/**
+ * Get path of data files in the typescript sources.
+ * The __dirname variable points to the compiled .js file in dist/test/.
+ */
+export const testDataDir = path.resolve(__dirname, '..', '..', 'test', 'data')
 
 /**
  * Set up a temporary directory containing configuration files for
@@ -160,6 +137,7 @@ export async function withMainnetConfigDir<T>(
           configuration: 'configuration.json',
           genesisByron: 'genesis-byron.json',
           genesisShelley: 'genesis-shelley.json',
+          genesisAlonzo: 'genesis-alonzo.json',
           topology: 'topology.json',
         },
         (f: string) => {
@@ -170,22 +148,18 @@ export async function withMainnetConfigDir<T>(
         }
       );
 
-      await fs.promises.copyFile(
-        configs.genesisByron.src,
-        configs.genesisByron.dst
-      );
-      await fs.promises.copyFile(
-        configs.genesisShelley.src,
-        configs.genesisShelley.dst
-      );
-      await fs.promises.copyFile(configs.topology.src, configs.topology.dst);
-
-      const config = await fs.promises.readFile(
-        configs.configuration.src,
-        'utf-8'
-      );
-      const configFixed = config.replace(/^.*SocketPath.*$/gm, '');
-      await fs.promises.writeFile(configs.configuration.dst, configFixed);
+      for (const [name, file] of _.toPairs(configs)) {
+        if (name === 'configuration') {
+          const config = await fs.promises.readFile(
+            configs.configuration.src,
+            'utf-8'
+          );
+          const configFixed = config.replace(/^.*SocketPath.*$/gm, '');
+          await fs.promises.writeFile(configs.configuration.dst, configFixed);
+        } else {
+          await fs.promises.copyFile(file.src, file.dst);
+        }
+      }
 
       return await cb(o.path);
     },
@@ -219,7 +193,7 @@ export function testPort(
   logger: Logger
 ): Promise<boolean> {
   const addr = { host, port };
-  console.log(`Testing TCP port ${addr.host}:${addr.port}...`);
+  logger.info(`Testing TCP port ${addr.host}:${addr.port}...`);
 
   return new Promise(resolve => {
     const client = new net.Socket();

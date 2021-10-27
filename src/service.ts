@@ -108,11 +108,12 @@ export interface Service {
   getConfig(): StartService | null;
 
   /**
-   * An [[EventEmitter]] that can be used to register handlers when
+   * An [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter)
+   * that can be used to register handlers when
    * the process changes status.
    *
    * ```typescript
-   * launcher.walletService.events.on('statusChanged', status => { ... });
+   * launcher.walletService.events.on('statusChanged', (status: ServiceStatus) => { ... });
    * ```
    */
   events: ServiceEvents;
@@ -124,15 +125,19 @@ export type Pid = number;
 /**
  * The type of events for [[Service]].
  */
-type ServiceEvents = EventEmitter<{
+export class ServiceEvents extends EventEmitter<{
+  statusChanged: (status: ServiceStatus) => void;
+}> {
   /**
    * [[Launcher.walletService.events]] and
    * [[Launcher.nodeService.events]] will emit this when their
    * processes start or stop.
    * @event
    */
-  statusChanged: (status: ServiceStatus) => void;
-}>;
+  statusChanged(status: ServiceStatus): void {
+    this.emit('statusChanged', status);
+  }
+}
 
 /**
  * How to stop a service.
@@ -168,9 +173,7 @@ export function setupService(
   logger: Logger = console,
   childProcessLogWriteStream?: WriteStream
 ): Service {
-  const events = new EventEmitter<{
-    statusChanged: (status: ServiceStatus) => void;
-  }>();
+  const events = new ServiceEvents();
   // What the current state is.
   let status = ServiceStatus.NotStarted;
   // Fulfilled promise of service command-line.
@@ -196,7 +199,7 @@ export function setupService(
     if (status === ServiceStatus.Started) {
       startTimeMs = Date.now();
     }
-    events.emit('statusChanged', status);
+    events.statusChanged(status);
   };
 
   const onStopped = (
@@ -269,7 +272,7 @@ export function setupService(
         childProcessLogWriteStream.write(data);
       });
     }
-    return proc.pid;
+    return proc.pid as number;
   };
 
   const doStop = (timeoutSeconds: number): void => {
@@ -284,7 +287,7 @@ export function setupService(
           stream.end();
         };
 
-        // Allow the service one second to start reading from its
+        // Allow the service one second after startup to begin reading from its
         // shutdownFD, before closing the shutdown FD.
         const shutdownFDGracePeriodMs = 1000;
         const grace = startTimeMs - Date.now() + shutdownFDGracePeriodMs;
@@ -354,7 +357,7 @@ export function setupService(
           return startPromise;
         case ServiceStatus.Started:
           logger.info(`Service.start: already started`);
-          return proc ? proc.pid : -1;
+          return proc?.pid || -1;
         case ServiceStatus.Stopping:
           logger.info(`Service.start: cannot start - already stopping`);
           return -1;

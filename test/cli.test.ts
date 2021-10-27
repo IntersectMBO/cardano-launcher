@@ -6,7 +6,7 @@
  * in another process via `src/cli.ts`.
  *
  * These tests require that the code has already been built, so that
- * `dist/cli.js` exists.
+ * `dist/src/cli.js` exists.
  *
  * @packageDocumentation
  */
@@ -23,11 +23,14 @@ import {
   getShelleyConfigDir,
 } from './utils';
 import { fork } from 'child_process';
+import { StdioLogger } from '../src/loggers';
 
 type Message = {
   node?: number;
   wallet?: number;
 };
+
+const testLogger = new StdioLogger({ fd: process.stdout.fd, prefix: "cli " });
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async (): Promise<void> => {
@@ -36,7 +39,7 @@ describe('CLI tests', () => {
       await tmp.dir({ unsafeCleanup: true, prefix: 'launcher-cli-test' })
     ).path;
     const proc = fork(
-      path.resolve(__dirname, '..', 'dist', 'cli.js'),
+      path.resolve(__dirname, '..', '..', 'bin', 'cardano-launcher'),
       args.concat([stateDir]),
       {
         stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
@@ -46,7 +49,7 @@ describe('CLI tests', () => {
     let nodePid: number | null = null;
     let walletPid: number | null = null;
     proc.on('message', (message: Message) => {
-      console.log('received message', message);
+      testLogger.info('received message', message);
       if (message.node) {
         nodePid = message.node;
       }

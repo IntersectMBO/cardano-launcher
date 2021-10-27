@@ -11,11 +11,14 @@ import {
   testService,
   collectEvents,
   expectProcessToBeGone,
-  mockLogger,
 } from './utils';
+import { StdioLogger } from '../src/loggers';
+import { mockLogger } from './mockLogger';
 
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
+
+const testLogger = new StdioLogger({ fd: process.stdout.fd, prefix: "unit ", timestamps: true });
 
 // Note: These tests use simple coreutils commands as mock services.
 // For example, `cat` will read its standard input and exit on EOF.
@@ -28,7 +31,7 @@ describe('setupService', () => {
     service.events.on('statusChanged', status => events.push(status));
     await service.start();
     expect(service.getProcess()).toHaveProperty('pid');
-    return new Promise(done => {
+    return new Promise<void>(done => {
       service.events.on('statusChanged', status => {
         if (status === ServiceStatus.Stopped) {
           expect(events).toEqual([
@@ -78,11 +81,11 @@ describe('setupService', () => {
       const events: ServiceStatus[] = [];
       service.events.on('statusChanged', status => events.push(status));
       const pidP = service.start();
-      return new Promise((done, reject) => {
+      return new Promise<void>((done, reject) => {
         setTimeout(
           () =>
             pidP.then(pid => {
-              console.log('Killing the process ' + pid);
+              testLogger.info('Killing the process ' + pid);
               process.kill(pid);
             }),
           1000
@@ -155,7 +158,7 @@ describe('setupService', () => {
   });
 
   it('stopping an already stopped command', () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const service = setupService(testService('echo', ['hello from tests']));
       const events = collectEvents(service);
       const pidP = service.start();
