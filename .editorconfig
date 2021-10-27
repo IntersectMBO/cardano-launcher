@@ -1,0 +1,17 @@
+root = true
+
+# https://prettier.io/docs/en/options.html
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.ts]
+max_line_length = 80
+
+[*.nix]
+max_line_length = 100

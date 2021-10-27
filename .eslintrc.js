@@ -36,6 +36,7 @@ module.exports = {
       "unix"
     ],
     "no-unused-expressions": 0,
+    "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_.*" }],
     "@typescript-eslint/no-floating-promises": "warn",
     "jest/no-conditional-expect": 0
   },
