@@ -19,21 +19,28 @@ jobs:
         extra_nix_config: |
           trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
           substituters = https://hydra.iohk.io https://cache.nixos.org/
-    - name: 'Install dependencies'
+    - name: 'Install nix-shell dependencies'
+      run: 'nix-shell --pure --run "node --version"'
+    - name: 'Install NPM dependencies'
       run: 'nix-shell --pure --run "npm install"'
     - name: 'Build'
+      id: build
       run: 'nix-shell --pure --run "npm run build"'
     - name: 'Lint'
-      if: '${{ !github.event.release }}'
+      id: lint
+      if: '${{ !github.event.release && (success() || failure()) }}'
       run: 'nix-shell --pure --run "npm run lint"'
-    - name: 'Test'
-      if: '${{ !github.event.release }}'
+    - name: 'Tests'
+      id: tests
+      if: '${{ !github.event.release && (success() || failure())  }}'
       run: 'nix-shell --pure --run "npm run test -- --collect-coverage"'
     - name: 'Docs'
+      id: docs
+      if: 'success() || failure()'
       run: 'nix-shell --pure --run "npm run typedoc"'
     - name: 'Prepare Documentation'
       if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/pull/125/merge' }}
-      run: './scripts/update-gh-pages.sh'
+      run: './scripts/update-gh-pages.sh "$GITHUB_REF"'
     - name: '📤 Publish Documentation'
       if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' || github.ref == 'refs/pull/125/merge' }}
       uses: peaceiris/actions-gh-pages@v3.8.0
