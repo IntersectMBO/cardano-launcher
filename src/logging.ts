@@ -1,8 +1,6 @@
 // Copyright © 2020 IOHK
 // License: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Cheap and cheerful logging functions.
  * Same as what is already in Daedalus.
@@ -18,13 +16,16 @@ export interface Logger {
   debug: LogFunc;
   info: LogFunc;
   error: LogFunc;
+  log: LogFunc;
 }
+
+export type Severity = 'debug' | 'log' | 'info' | 'error';
 
 /**
  * Function which logs a message and optional object.
  */
 export interface LogFunc {
-  (msg: string, param?: any): void;
+  (msg: string, param?: unknown): void;
 }
 
 /**
@@ -35,11 +36,7 @@ export interface LogFunc {
  * @return - a new logger.
  */
 export function prependName(logger: Logger, name: string): Logger {
-  const prefix = (
-    severity: 'debug' | 'info' | 'error',
-    msg: string,
-    param?: any
-  ): void => {
+  const prefix = (severity: Severity, msg: string, param?: unknown): void => {
     const prefixed = `${name}: ${msg}`;
     if (param) {
       logger[severity](prefixed, param);
@@ -48,8 +45,9 @@ export function prependName(logger: Logger, name: string): Logger {
     }
   };
   return {
-    debug: (msg: string, param?: any): void => prefix('debug', msg, param),
-    info: (msg: string, param?: any): void => prefix('info', msg, param),
-    error: (msg: string, param?: any): void => prefix('error', msg, param),
+    debug: (msg: string, param?: unknown): void => prefix('debug', msg, param),
+    log: (msg: string, param?: unknown): void => prefix('log', msg, param),
+    info: (msg: string, param?: unknown): void => prefix('info', msg, param),
+    error: (msg: string, param?: unknown): void => prefix('error', msg, param),
   };
 }

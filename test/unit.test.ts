@@ -11,11 +11,14 @@ import {
   testService,
   collectEvents,
   expectProcessToBeGone,
-  mockLogger,
 } from './utils';
+import { StdioLogger } from '../src/loggers';
+import { mockLogger } from './mockLogger';
 
 // increase time available for some tests to run
 const longTestTimeoutMs = 15000;
+
+const testLogger = new StdioLogger({ fd: process.stdout.fd, prefix: "unit ", timestamps: true });
 
 // Note: These tests use simple coreutils commands as mock services.
 // For example, `cat` will read its standard input and exit on EOF.
@@ -82,7 +85,7 @@ describe('setupService', () => {
         setTimeout(
           () =>
             pidP.then(pid => {
-              console.log('Killing the process ' + pid);
+              testLogger.info('Killing the process ' + pid);
               process.kill(pid);
             }),
           1000

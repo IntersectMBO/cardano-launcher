@@ -287,7 +287,7 @@ export function setupService(
           stream.end();
         };
 
-        // Allow the service one second to start reading from its
+        // Allow the service one second after startup to begin reading from its
         // shutdownFD, before closing the shutdown FD.
         const shutdownFDGracePeriodMs = 1000;
         const grace = startTimeMs - Date.now() + shutdownFDGracePeriodMs;

@@ -23,11 +23,14 @@ import {
   getShelleyConfigDir,
 } from './utils';
 import { fork } from 'child_process';
+import { StdioLogger } from '../src/loggers';
 
 type Message = {
   node?: number;
   wallet?: number;
 };
+
+const testLogger = new StdioLogger({ fd: process.stdout.fd, prefix: "cli " });
 
 describe('CLI tests', () => {
   const killTest = (args: string[]) => async (): Promise<void> => {
@@ -46,7 +49,7 @@ describe('CLI tests', () => {
     let nodePid: number | null = null;
     let walletPid: number | null = null;
     proc.on('message', (message: Message) => {
-      console.log('received message', message);
+      testLogger.info('received message', message);
       if (message.node) {
         nodePid = message.node;
       }
