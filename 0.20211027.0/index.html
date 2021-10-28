@@ -1,0 +1,127 @@
+<!DOCTYPE html><html class="default no-js"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>cardano-launcher</title><meta name="description" content="Documentation for cardano-launcher"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">cardano-launcher</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>cardano-launcher</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#cardano-launcher-shelley" id="cardano-launcher-shelley" style="color: inherit; text-decoration: none;">
+  <h1>cardano-launcher Shelley</h1>
+</a>
+<p><a href="https://buildkite.com/input-output-hk/cardano-launcher"><img src="https://badge.buildkite.com/98083d5651511146dab7911b99f20ff9b60b4f8be25298a82f.svg?branch=master" alt="Build status"></a> <a href="https://github.com/input-output-hk/cardano-launcher/actions?query=workflow%3A%22cardano-launcher+Windows+Tests%22+branch%3Amaster"><img src="https://github.com/input-output-hk/cardano-launcher/workflows/cardano-launcher%20Windows%20Tests/badge.svg?branch=master" alt="cardano-launcher Windows Tests"></a></p>
+<p><code>cardano-launcher</code> is a Node.js module for starting
+<a href="https://github.com/input-output-hk/cardano-wallet">cardano-wallet</a>
+and the Shelley
+<a href="https://github.com/input-output-hk/cardano-node">cardano-node</a>.</p>
+<p>Its primary user is
+<a href="https://github.com/input-output-hk/daedalus">Daedalus</a>; however it
+could be used by any Javascript application. Tagged versions are published to the <a href="https://www.npmjs.com/package/cardano-launcher">npm Registry</a> as <code>cardano-launcher</code>.</p>
+
+<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+  <h2>Documentation</h2>
+</a>
+<p>See the generated API docs at <a href="https://input-output-hk.github.io/cardano-launcher/latest/modules.html">https://input-output-hk.github.io/cardano-launcher/latest/modules.html</a>.</p>
+<p>See <a href="./docs/example.js">docs/example.js</a> for example code.</p>
+
+<a href="#component-diagram" id="component-diagram" style="color: inherit; text-decoration: none;">
+  <h2>Component diagram</h2>
+</a>
+<p><img src="./docs/component-diagram.png" alt="Component diagram"></p>
+
+<a href="#message-sequence-diagram---launch" id="message-sequence-diagram---launch" style="color: inherit; text-decoration: none;">
+  <h2>Message sequence diagram - launch</h2>
+</a>
+<p><img src="./docs/launch.png" alt="Component diagram"></p>
+
+<a href="#local-development" id="local-development" style="color: inherit; text-decoration: none;">
+  <h2>Local Development</h2>
+</a>
+<pre><code><span class="hl-0">nix</span><span class="hl-1">-</span><span class="hl-0">shell</span>
+</code></pre>
+<p>This runs a bash shell with project development dependencies
+(e.g. <code>npm</code>, <code>cardano-wallet</code>) in the <code>PATH</code>. See <a href="https://github.com/input-output-hk/iohk-nix/blob/master/docs/nix.md">nix.md</a>
+for information on how to set up Nix.</p>
+
+<a href="#build-the-code" id="build-the-code" style="color: inherit; text-decoration: none;">
+  <h3>Build the code</h3>
+</a>
+<p>Transpile TypeScript to Javascript in the <code>dist</code> directory, checking for errors:</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">build</span>
+</code></pre>
+<p>Do the compile as above, but automatically rebuild when a file changes</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">build</span><span class="hl-1"> -- --</span><span class="hl-0">watch</span>
+</code></pre>
+
+<a href="#run-the-tests" id="run-the-tests" style="color: inherit; text-decoration: none;">
+  <h3>Run the tests</h3>
+</a>
+<p>Runs all tests:</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">test</span>
+</code></pre>
+<p>To run only <code>unit</code> tests matching <code>idempotent</code> (for example):</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">test</span><span class="hl-1"> </span><span class="hl-0">unit</span><span class="hl-1"> -- -</span><span class="hl-0">t</span><span class="hl-1"> </span><span class="hl-0">idempotent</span>
+</code></pre>
+<p>Run the test watcher (<a href="https://jestjs.io/docs/en/getting-started">Jest</a>) and prompt for usage:</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">test</span><span class="hl-1"> -- --</span><span class="hl-0">watch</span>
+</code></pre>
+<p>See the <a href="https://jestjs.io/docs/en/cli">Jest command-line reference</a> for all the options.</p>
+<p>Note that the <code>cli</code> tests require the code to already have been built
+with <code>npm run build</code>.</p>
+
+<a href="#linting-and-formatting-the-code" id="linting-and-formatting-the-code" style="color: inherit; text-decoration: none;">
+  <h3>Linting and formatting the code</h3>
+</a>
+<p>To check linter rules defined in <code>.eslintrc.json</code>:</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">lint</span>
+</code></pre>
+<p>To automatically fix lint and formatting errors, where possible:</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">lint</span><span class="hl-1"> -- --</span><span class="hl-0">fix</span>
+</code></pre>
+<p><a href="https://standardjs.com/">JavaScript Standard Style</a></p>
+
+<a href="#generate-api-documentation" id="generate-api-documentation" style="color: inherit; text-decoration: none;">
+  <h3>Generate API Documentation</h3>
+</a>
+<p>Generates API documentation to the <code>site</code> folder.</p>
+<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">typedoc</span>
+</code></pre>
+
+<a href="#updating-cardano-wallet-version" id="updating-cardano-wallet-version" style="color: inherit; text-decoration: none;">
+  <h3>Updating cardano-wallet version</h3>
+</a>
+<p>To modify the cardano-wallet version, use <a href="https://github.com/nmattia/niv#update"><code>niv update</code></a>.</p>
+<pre><code><span class="hl-0">nix</span><span class="hl-1">-</span><span class="hl-0">shell</span><span class="hl-1"> --</span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-2">&quot;niv update cardano-wallet -a rev={GIT_TAG}&quot;</span>
+</code></pre>
+<p>or, to use the latest <code>master</code> branch revsion:</p>
+<pre><code><span class="hl-0">nix</span><span class="hl-1">-</span><span class="hl-0">shell</span><span class="hl-1"> --</span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-2">&quot;niv update cardano-wallet --branch master&quot;</span>
+</code></pre>
+<p>The version of <code>cardano-node</code> is defined by cardano-wallet because it
+has specific version requirements for its backends.</p>
+
+<a href="#overriding-node-backend-versions" id="overriding-node-backend-versions" style="color: inherit; text-decoration: none;">
+  <h4>Overriding node backend versions</h4>
+</a>
+<p>To use your own build of <code>cardano-node</code>, export your <code>PATH</code>
+environment variable so that your build is ahead of those set by the
+<code>nix-shell</code>.</p>
+
+<a href="#design-docs" id="design-docs" style="color: inherit; text-decoration: none;">
+  <h2>Design docs</h2>
+</a>
+<ul>
+<li><p><a href="https://jira.iohk.io/browse/ADP-92">ADP-92</a> - Jira ticket
+containing user stories and task acceptance criteria.</p>
+</li>
+<li><p><a href="./docs/update-system-byron.md"><code>update-system-byron.md</code></a> -
+Overview of how the update system works in the old codebase (Byron
+era).</p>
+</li>
+<li><p><a href="./docs/windows-clean-shutdown.md"><code>windows-clean-shutdown.md</code></a> -
+How to stop the wallet and node processes on Windows.</p>
+</li>
+<li><p><a href="./docs/dev.md"><code>dev.md</code></a> - Development information.</p>
+</li>
+</ul>
+
+<a href="#demo-cli" id="demo-cli" style="color: inherit; text-decoration: none;">
+  <h2>Demo CLI</h2>
+</a>
+<p>This is a very basic executable that lets you test the compiled
+library code from your shell.</p>
+<pre><code class="language-shell"><span class="hl-3"># Build the javascript first.</span><br/><span class="hl-1">npm run build</span><br/><br/><span class="hl-3"># cardano-node mainnet</span><br/><span class="hl-1">./bin/cardano-launcher shelley mainnet </span><span class="hl-0">$CARDANO_NODE_CONFIGS</span><span class="hl-1">/mainnet ./state-mainnet</span><br/><br/><span class="hl-3"># cardano-node testnet</span><br/><span class="hl-1">./bin/cardano-launcher shelley testnet </span><span class="hl-0">$CARDANO_NODE_CONFIGS</span><span class="hl-1">/testnet ./state-testnet</span>
+</code></pre>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-enum"><a href="enums/ServiceStatus.html" class="tsd-kind-icon">Service<wbr/>Status</a></li><li class="tsd-kind-enum"><a href="enums/ShutdownMethod.html" class="tsd-kind-icon">Shutdown<wbr/>Method</a></li><li class="tsd-kind-class"><a href="classes/BackendExitedError.html" class="tsd-kind-icon">Backend<wbr/>Exited<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/Launcher.html" class="tsd-kind-icon">Launcher</a></li><li class="tsd-kind-class"><a href="classes/ServiceEvents.html" class="tsd-kind-icon">Service<wbr/>Events</a></li><li class="tsd-kind-class"><a href="classes/StdioLogger.html" class="tsd-kind-icon">Stdio<wbr/>Logger</a></li><li class="tsd-kind-class"><a href="classes/WalletBackend.html" class="tsd-kind-icon">Wallet<wbr/>Backend</a></li><li class="tsd-kind-class"><a href="classes/WalletBackendEvents.html" class="tsd-kind-icon">Wallet<wbr/>Backend<wbr/>Events</a></li><li class="tsd-kind-interface"><a href="interfaces/Api.html" class="tsd-kind-icon">Api</a></li><li class="tsd-kind-interface"><a href="interfaces/CardanoNetwork.html" class="tsd-kind-icon">Cardano<wbr/>Network</a></li><li class="tsd-kind-interface"><a href="interfaces/CardanoNodeArgs.html" class="tsd-kind-icon">Cardano<wbr/>Node<wbr/>Args</a></li><li class="tsd-kind-interface"><a href="interfaces/CardanoNodeConfig.html" class="tsd-kind-icon">Cardano<wbr/>Node<wbr/>Config</a></li><li class="tsd-kind-interface"><a href="interfaces/ExitStatus.html" class="tsd-kind-icon">Exit<wbr/>Status</a></li><li class="tsd-kind-interface"><a href="interfaces/LaunchConfig.html" class="tsd-kind-icon">Launch<wbr/>Config</a></li><li class="tsd-kind-interface"><a href="interfaces/LogFunc.html" class="tsd-kind-icon">Log<wbr/>Func</a></li><li class="tsd-kind-interface"><a href="interfaces/Logger.html" class="tsd-kind-icon">Logger</a></li><li class="tsd-kind-interface"><a href="interfaces/NodeStartService.html" class="tsd-kind-icon">Node<wbr/>Start<wbr/>Service</a></li><li class="tsd-kind-interface"><a href="interfaces/RequestParams.html" class="tsd-kind-icon">Request<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/ServerTlsConfiguration.html" class="tsd-kind-icon">Server<wbr/>Tls<wbr/>Configuration</a></li><li class="tsd-kind-interface"><a href="interfaces/Service.html" class="tsd-kind-icon">Service</a></li><li class="tsd-kind-interface"><a href="interfaces/ServiceExitStatus.html" class="tsd-kind-icon">Service<wbr/>Exit<wbr/>Status</a></li><li class="tsd-kind-interface"><a href="interfaces/StartService.html" class="tsd-kind-icon">Start<wbr/>Service</a></li><li class="tsd-kind-interface"><a href="interfaces/WalletStartService.html" class="tsd-kind-icon">Wallet<wbr/>Start<wbr/>Service</a></li><li class="tsd-kind-type-alias"><a href="modules.html#Pid" class="tsd-kind-icon">Pid</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PoolMetadataSource" class="tsd-kind-icon">Pool<wbr/>Metadata<wbr/>Source</a></li><li class="tsd-kind-type-alias"><a href="modules.html#Severity" class="tsd-kind-icon">Severity</a></li><li class="tsd-kind-variable"><a href="modules.html#cleanShutdownFD" class="tsd-kind-icon">clean<wbr/>ShutdownFD</a></li><li class="tsd-kind-variable"><a href="modules.html#defaultTimeoutSeconds" class="tsd-kind-icon">default<wbr/>Timeout<wbr/>Seconds</a></li><li class="tsd-kind-variable"><a href="modules.html#networks" class="tsd-kind-icon">networks</a></li><li class="tsd-kind-function"><a href="modules.html#cardanoWalletStartService" class="tsd-kind-icon">cardano<wbr/>Wallet<wbr/>Start<wbr/>Service</a></li><li class="tsd-kind-function"><a href="modules.html#exitStatusMessage" class="tsd-kind-icon">exit<wbr/>Status<wbr/>Message</a></li><li class="tsd-kind-function"><a href="modules.html#prependName" class="tsd-kind-icon">prepend<wbr/>Name</a></li><li class="tsd-kind-function"><a href="modules.html#serviceExitStatusMessage" class="tsd-kind-icon">service<wbr/>Exit<wbr/>Status<wbr/>Message</a></li><li class="tsd-kind-function"><a href="modules.html#setupService" class="tsd-kind-icon">setup<wbr/>Service</a></li><li class="tsd-kind-function"><a href="modules.html#startCardanoNode" class="tsd-kind-icon">start<wbr/>Cardano<wbr/>Node</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
