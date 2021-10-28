@@ -13,6 +13,7 @@ jobs:
   linux:
     name: Linux
     runs-on: ubuntu-20.04
+    if: "${{ !github.event.release }}"
     steps:
     - name: '📥 Checkout Code'
       uses: actions/checkout@v2.3.4
@@ -33,11 +34,11 @@ jobs:
       run: 'nix-shell --pure --run "npm run build"'
     - name: '🕶 Lint'
       id: lint
-      if: '${{ !github.event.release && (success() || failure()) }}'
+      if: "${{ !startsWith(github.ref, 'refs/tags/') && (success() || failure()) }}"
       run: 'nix-shell --pure --run "npm run lint"'
     - name: '🔨 Tests'
       id: tests
-      if: '${{ !github.event.release && (success() || failure())  }}'
+      if: "${{ !startsWith(github.ref, 'refs/tags/') && (success() || failure()) }}"
       run: 'nix-shell --pure --run "npm run test -- --collect-coverage"'
 
     - name: '📘 Docs'
@@ -46,7 +47,7 @@ jobs:
       run: 'nix-shell --pure --run "npm run typedoc"'
 
     - name: '📘 Prepare Documentation'
-      if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}
+      if: "${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}"
       run: './scripts/update-gh-pages.sh "$GITHUB_REF"'
     - name: '📤 Publish Documentation'
       if: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }}

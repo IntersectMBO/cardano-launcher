@@ -7,6 +7,7 @@ if [ -z "${1:-}" ]; then
     exit 1
 fi
 
+version=$(jq -r .version package.json)
 site="$(jq -r .typedocOptions.out tsconfig.json)"
 
 if [ ! -f "$site/modules.html" ]; then
@@ -35,4 +36,5 @@ if [ -n "$tag" ]; then
 <title>Redirecting to $tag</title>
 <meta http-equiv="refresh" content="0; url=./$tag/">
 EOF
+    ln -sf "$version" $site/latest
 fi
