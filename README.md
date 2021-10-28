@@ -13,7 +13,7 @@ could be used by any Javascript application. Tagged versions are published to th
 
 ## Documentation
 
-See the generated API docs at https://input-output-hk.github.io/cardano-launcher/modules/_cardanolauncher_.html.
+See the generated API docs at https://input-output-hk.github.io/cardano-launcher/latest/modules.html.
 
 See [docs/example.js](./docs/example.js) for example code.
 
