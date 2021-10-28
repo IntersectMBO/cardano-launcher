@@ -56,6 +56,9 @@ export const networks: { [propName: string]: CardanoNetwork } = {
 
 /**
  * The command-line arguments which can be supplied to `cardano-node`.
+ * These values are derived from [[CardanoNodeConfig]].
+ *
+ * @internal
  */
 export interface CardanoNodeArgs {
   /**
@@ -115,6 +118,8 @@ export interface CardanoNodeArgs {
 
 /**
  * Configuration parameters for starting cardano-node.
+ *
+ * These parameters can be set in [[LaunchConfig.nodeConfig]].
  */
 export interface CardanoNodeConfig {
   kind: 'shelley';
