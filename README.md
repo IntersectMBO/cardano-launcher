@@ -1,6 +1,6 @@
 # cardano-launcher Shelley
 
-[![Build status](https://badge.buildkite.com/98083d5651511146dab7911b99f20ff9b60b4f8be25298a82f.svg?branch=master)](https://buildkite.com/input-output-hk/cardano-launcher) [![cardano-launcher Windows Tests](https://github.com/input-output-hk/cardano-launcher/workflows/cardano-launcher%20Windows%20Tests/badge.svg?branch=master)](https://github.com/input-output-hk/cardano-launcher/actions?query=workflow%3A%22cardano-launcher+Windows+Tests%22+branch%3Amaster)
+[![cardano-launcher CI](https://github.com/input-output-hk/cardano-launcher/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/input-output-hk/cardano-launcher/actions?query=branch%3Amaster)
 
 `cardano-launcher` is a Node.js module for starting
 [cardano-wallet](https://github.com/input-output-hk/cardano-wallet)
