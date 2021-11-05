@@ -5,7 +5,7 @@ with pkgs;
 mkShell {
   buildInputs = [
     # javascript
-    nodejs nodePackages.npm
+    nodejs-16_x
     jq
     # documentation tools
     pandoc librsvg gnumake
