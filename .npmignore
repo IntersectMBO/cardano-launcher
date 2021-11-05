@@ -1,0 +1,7 @@
+*.log
+.DS_Store
+node_modules
+/site/
+/docs/*.html
+/docs/*.png
+/coverage/
