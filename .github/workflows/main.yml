@@ -108,9 +108,9 @@ jobs:
           echo "CARDANO_NODE_CONFIGS=$Env:GITHUB_WORKSPACE\deployments" >> $Env:GITHUB_ENV
 
       - name: 'Setup nodejs'
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 10
+          node-version: 16
       - run: 'npm install'
       - run: 'npm test unit'
         timeout-minutes: 5
@@ -128,9 +128,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: npm install --ci --logevel=error
       - run: npm publish
