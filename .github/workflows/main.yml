@@ -7,7 +7,9 @@ on:
     tags: [ "*.*.*" ]
   release:
     types:
+      # Could maybe use "created" type here instead.
       - published
+  workflow_dispatch:
 
 jobs:
   linux:
@@ -28,7 +30,7 @@ jobs:
     - name: '☃ Install nix-shell dependencies'
       run: 'nix-shell --pure --run "node --version"'
     - name: '🤓 Install NPM dependencies'
-      run: 'nix-shell --pure --run "npm install"'
+      run: 'nix-shell --pure --run "npm ci"'
     - name: '🧱 Build'
       id: build
       run: 'nix-shell --pure --run "npm run build"'
@@ -108,10 +110,11 @@ jobs:
           echo "CARDANO_NODE_CONFIGS=$Env:GITHUB_WORKSPACE\deployments" >> $Env:GITHUB_ENV
 
       - name: 'Setup nodejs'
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 10
-      - run: 'npm install'
+          node-version: '12.x'
+
+      - run: 'npm ci'
       - run: 'npm test unit'
         timeout-minutes: 5
         if: '${{ success() || failure() }}'
@@ -124,15 +127,17 @@ jobs:
 
   publish-npm-package:
     name: 'Publish NPM Package'
-    if: ${{ github.event.release }}
+    if: '${{ github.event.release || github.event.workflow_dispatch }}'
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
-      - run: npm install --ci --logevel=error
-      - run: npm publish
+          node-version: '12.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm run build
+      # Publish to npm
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
