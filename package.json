@@ -1,5 +1,5 @@
 {
-  "version": "0.20211105.0",
+  "version": "0.20211105.1",
   "license": "Apache-2.0",
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
