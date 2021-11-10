@@ -213,15 +213,12 @@ describe('Starting cardano-wallet (and its node)', () => {
             try {
               expect(status.wallet.code).toBe(0);
               expect(status.node.code).not.toBe(0);
-              // cardano-node is sometimes not exiting properly on both linux
-              // and windows.
-              // fixme: This assertion is disabled until the node is fixed.
               if (status.node.signal !== null) {
+                // cardano-node is sometimes not exiting properly on both linux
+                // and windows. Highlight this in the test logs.
                 loggers.test.error("Flaky test - cardano-node did not exit properly.", status.node.signal);
               }
-              // expect(status.node.signal).toBeNull();
-              // Maintain same number of assertions...
-              expect(status.node).not.toBeNull();
+              expect(status.node.signal).toBeNull();
             } catch (e) {
               fail(e);
             }
