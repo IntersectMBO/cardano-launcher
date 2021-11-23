@@ -304,6 +304,7 @@ export function setupService(
         } else {
           closeFD();
         }
+        proc.kill('SIGTERM');
       }
     }
     killTimer = setTimeout(() => {
