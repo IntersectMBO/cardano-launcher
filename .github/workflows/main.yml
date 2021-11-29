@@ -87,6 +87,22 @@ jobs:
           echo "REPO_NAME=$($sources.repo)" >> $Env:GITHUB_ENV
           echo "COMMIT=$($sources.rev)" >> $Env:GITHUB_ENV
 
+      - name: 'Fetch cardano-node'
+        shell: powershell
+        run: |
+          # https://stackoverflow.com/a/41618979
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          # Fetch latest windows build for jobset
+          $output = "cardano-node-win64.zip"
+          $url = "https://hydra.iohk.io/job/Cardano/${Env:jobset}/cardano-node-win64/latest/download/1"
+          echo "Build product URL: ${url}"
+          Invoke-WebRequest -MaximumRedirection 5 -Uri $url -OutFile $output
+          # Unzip
+          Expand-Archive -Force -Path $output -DestinationPath .
+          Get-ChildItem
+        env:
+          jobset: cardano-node-pr-3320
+
       - name: 'Wait for Hydra build'
         uses: rvl/hydra-build-products-action@master
         id: hydra
@@ -108,6 +124,12 @@ jobs:
           Expand-Archive -Force -Path "cardano-wallet-*-deployments.zip" -DestinationPath deployments
           Get-ChildItem
           echo "CARDANO_NODE_CONFIGS=$Env:GITHUB_WORKSPACE\deployments" >> $Env:GITHUB_ENV
+
+      - name: 'Unpack cardano-node again'
+        shell: powershell
+        run: |
+          Expand-Archive -Force -Path "cardano-node*.zip" -DestinationPath .
+          Get-ChildItem
 
       - name: 'Setup nodejs'
         uses: actions/setup-node@v2
