@@ -287,9 +287,14 @@ export function setupService(
     logger.info(`Service.stop: trying to stop ${cfg.command}`, cfg);
     setStatus(ServiceStatus.Stopping);
     if (proc) {
+      logger.info(`Service.stop: shutdownMethod: ${cfg.shutdownMethod}`);
       if (cfg.shutdownMethod === ShutdownMethod.Signal) {
+        logger.info(`Service.stop: killing process ${proc.pid}`);
         proc.kill('SIGTERM');
       } else if (shutdownFD !== null && proc.stdio[shutdownFD]) {
+        logger.info(
+          `Service.stop: shutdownFD: ${shutdownFD}, proc.stdio[shutdownFD]: ${proc.stdio[shutdownFD]}`
+        );
         const stream = proc.stdio[shutdownFD] as Writable;
         const closeFD = (): void => {
           stream.end();
@@ -304,7 +309,6 @@ export function setupService(
         } else {
           closeFD();
         }
-        proc.kill('SIGTERM');
       }
     }
     killTimer = setTimeout(() => {
