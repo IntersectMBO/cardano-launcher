@@ -1,14 +1,14 @@
 {
     "cardano-node": {
-        "branch": "jordan/separate-shutdown-ipc-shutdown-on-slot",
+        "branch": "master",
         "description": "The core component that is used to participate in a Cardano decentralised blockchain.",
         "homepage": "https://cardano.org",
         "owner": "input-output-hk",
         "repo": "cardano-node",
-        "rev": "3fba101889bf7ab75874f70c71f0b82434fae65a",
-        "sha256": "095716j8q8rgih9qszclajyagjn5z9qc6yhykysj70l2vxddf3wk",
+        "rev": "cbdc6b5aa26c9da9b0fbebcdf33fa874582e3f0a",
+        "sha256": "087i27aq13i4ifshpsl6pv9grqygsn74b06kdxdd17p6pcjj6l1f",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-node/archive/3fba101889bf7ab75874f70c71f0b82434fae65a.tar.gz",
+        "url": "https://github.com/input-output-hk/cardano-node/archive/cbdc6b5aa26c9da9b0fbebcdf33fa874582e3f0a.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cardano-wallet": {
