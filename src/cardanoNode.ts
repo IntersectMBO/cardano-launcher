@@ -235,8 +235,11 @@ function makeArgs(
     delegationCertificate: config.delegationCertificate,
     listen: {
       port: listenPort,
+      // Listen for TCP connections on the loopback interface.
+      // We don't want to listen on 0.0.0.0 by default.
       address: '127.0.0.1',
-      address6: '::1',
+      // Don't listen on IPv6 at all -- this would fail if IPv6 is disabled.
+      address6: undefined,
     },
     configFile: path.join(config.configurationDir, config.network.configFile),
     signingKey: config.signingKey,
