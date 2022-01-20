@@ -5,11 +5,12 @@
         "homepage": null,
         "owner": "input-output-hk",
         "repo": "cardano-wallet",
-        "rev": "6626489542ce442a8451fb46fb5339346e62b4ee",
-        "sha256": "0n1vgbz3m73v33462ifg3qas9djwlpcvi1m0qxc7j15l3w5qhlw5",
+        "rev": "v2022-01-18",
+        "sha256": "1apzfy7qdgf6l0lb3icqz3rvaq2w3a53xq6wvhqnbfi8i7cacy03",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-wallet/archive/6626489542ce442a8451fb46fb5339346e62b4ee.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+        "url": "https://github.com/input-output-hk/cardano-wallet/archive/v2022-01-18.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
+        "version": "v2022-01-18"
     },
     "nixpkgs": {
         "branch": "nixpkgs-20.09-darwin",
