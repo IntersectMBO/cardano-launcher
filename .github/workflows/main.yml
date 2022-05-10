@@ -127,11 +127,11 @@ jobs:
 
   publish-npm-package:
     name: 'Publish NPM Package'
-    if: ${{ github.event.release }}
+    if: '${{ github.event.release || github.event.workflow_dispatch }}'
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2.3.4
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
