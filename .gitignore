@@ -6,3 +6,5 @@ dist
 /docs/*.html
 /docs/*.png
 /coverage/
+.direnv
+.idea
