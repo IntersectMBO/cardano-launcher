@@ -2,7 +2,7 @@
 
 [![cardano-launcher CI](https://github.com/input-output-hk/cardano-launcher/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/input-output-hk/cardano-launcher/actions?query=branch%3Amaster)
 
-`cardano-launcher` is a Node.js module for starting
+`cardano-launcher` is a Node.js module for starting 
 [cardano-wallet](https://github.com/input-output-hk/cardano-wallet)
 and the Shelley
 [cardano-node](https://github.com/input-output-hk/cardano-node).
